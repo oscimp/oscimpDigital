@@ -1,0 +1,10 @@
+#define which board. Must be adapted
+export BOARD_NAME=
+
+# define where to install apps, drivers, etc
+export OSCIMP_DIGITAL_NFS=/opt
+
+source app/setenv.sh
+source fpga_ip/setenv.sh
+source lib/setenv.sh
+source linux_driver/setenv.sh

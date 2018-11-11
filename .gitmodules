@@ -1,0 +1,12 @@
+[submodule "app"]
+	path = app
+	url = https://github.com/oscimp/app.git
+[submodule "fpga_ip"]
+	path = fpga_ip
+	url = https://github.com/oscimp/fpga_ip.git
+[submodule "lib"]
+	path = lib
+	url = https://github.com/oscimp/lib.git
+[submodule "linux_driver"]
+	path = linux_driver
+	url = https://github.com/oscimp/linux_driver.git
