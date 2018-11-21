@@ -1,10 +1,13 @@
 #define which board. Must be adapted
 export BOARD_NAME=
+#define Buildroot location
+export BR_DIR=
 
 # define where to install apps, drivers, etc
-export OSCIMP_DIGITAL_NFS=/opt
+export OSCIMP_DIGITAL_NFS=/nfs
 
-source app/setenv.sh
-source fpga_ip/setenv.sh
-source lib/setenv.sh
-source linux_driver/setenv.sh
+OSCIMP_DIGITAL=$(cd `dirname "${BASH_SOURCE[0]}"` && pwd)
+source $OSCIMP_DIGITAL/app/setenv.sh
+source $OSCIMP_DIGITAL/fpga_ip/setenv.sh
+source $OSCIMP_DIGITAL/lib/setenv.sh
+source $OSCIMP_DIGITAL/linux_driver/setenv.sh
