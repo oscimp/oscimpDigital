@@ -41,6 +41,8 @@ git submodule update
 
 ## Software environnement
 
+Current Vivado version: 2018.2
+
 Software parts (applications, library and drivers), based on a set of
 *Makefile*, uses [buildroot](http://www.buildroot.org) to cross-compiles code.
 
