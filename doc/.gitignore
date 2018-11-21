@@ -1,0 +1,7 @@
+*.jou
+*.log
+*.bit.bin
+*.out
+*.aux
+*.log
+tmp
