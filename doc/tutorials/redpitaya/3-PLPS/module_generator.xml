@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<drivers name="tutorial3" version="1.0">
+	<driver name ="data_to_ram" >
+		<board_driver name="data1600" id = "0"
+			base_addr="0x43c00000" addr_size="0xffff" />
+	</driver>
+</drivers>
+
