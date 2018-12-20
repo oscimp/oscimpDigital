@@ -1,0 +1,177 @@
+\documentclass[12pt,oneside]{article}
+\usepackage{makeidx,anysize,mflogo,xspace,float,epsfig,url}
+\usepackage{amsmath,amsfonts,amssymb,a4wide} 
+\usepackage[utf8]{inputenc}
+%\usepackage[francais]{babel}
+%\usepackage[french]{babel}
+\urlstyle{sf}
+%\usepackage{subcaption}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{graphics}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{colordvi} %??
+\usepackage{listings} 
+\usepackage{subfigure}
+\usepackage{subfloat}
+\usepackage{xcolor}
+\graphicspath{{./figures/}}
+%\usepackage[labelsep=quad,indention=10pt]{subfig}
+\definecolor{grey}{rgb}{0.95,0.95,0.95} % on définit la couleur grise
+	% (c'est un gris très clair)
+	\definecolor{red}{rgb}{1.0,0.0,0.0} 
+	\definecolor{green}{rgb}{0.0,1.0,0.0}
+	\definecolor{blue}{rgb}{0.0,0.0,1.0}
+	\lstloadlanguages{bash,Java,C,C++,csh,make,sh}%%[Visual]Basic,xml}
+	\lstset{frame=none,basicstyle=\footnotesize,breaklines,tabsize=2,captionpos=b,
+		prebreak={\hbox{$\rightarrow$}},postbreak={\hbox{$\hookrightarrow$}},
+		showstringspaces=false,backgroundcolor=\color{grey}\bfseries,
+		keywordstyle=\color{blue},commentstyle=\color{green}\textit,
+		stringstyle=\color{red}\ttfamily,abovecaptionskip=2pt,aboveskip=0pt,
+		belowskip=0pt,belowcaptionskip=0pt,numbers=none,columns=fullflexible, backgroundcolor=\color{grey}}
+%left,numberstyle=\footnotesize,
+%		stepnumber=2,numbersep=1pt}
+
+\begin{document}
+
+
+\begin{center}
+{\bf \Large Redpitaya: third example} \\ \ \\
+G. Goavec-M\'erou, J.-M Friedt \\ \ \\ \today
+\end{center}
+
+This tutorial is a sequel to the previous one on which it is based. In addition to 
+copying the ADC input to the DAC output, we wish to add to the stream of data sent
+to the user (PS) a filtered copy of one of the ADC inputs. The Finite Impulse Response
+(FIR) filter will process the 125~MS/s stream with integer coefficients configured from
+userspace (PS) (Fig. \ref{fin}). Furthermore, we wish to extend capability beyond a single
+complex stream: we will now stream two parallel real data, which could be extended to more than
+two channels.
+
+\begin{figure}[h!tb]
+\begin{center}
+\includegraphics{objective}
+\end{center}
+
+\hspace*{-1.5cm}\includegraphics[width=1.2\linewidth]{design_1.pdf}
+\caption{Schematic of the objective and final processing chain described in this document}
+\label{fin}
+\end{figure}
+
+\section{FIR configuration}
+
+The ADC to DAC and ADC to RAM blocks are the same as before, with stream
+dupplication every time a new datastream must reach two users. The novely
+is now the use of a FIR filter, whose input width the match the incoming
+datastream width.
+
+%JMF : verifier Data Width
+Double click on the FIR block and update the Data Width ({\tt Data In Size}) to 14~bits. The input
+data width (in bits) is called $P$.
+
+The coefficient width $M$ ({\tt COEFF Size}) will define the size of the data transferred from the PS
+to the PL, as stored as a column of decimal values written in human readable ASCII
+format. The number of coefficients $N$ ({\tt Nb COEFF}) and number of bits defining each coefficient are
+defined at synthesis time and must match the largest expected filter (as well as
+available resources).
+
+Theoretically, $Q=P+M+\log_2(N)$ bits are generated at the output of the FIR convolution.
+Practically, this number of bits is grossly over-estimated, and truncation can be 
+considered based on the knowledge of the coefficients defining the FIR. Taking the
+$\log_2$ of the sum of the absolute values of the coefficients will give a much more 
+conservative number of bits relevant at the output. While all internal computations are
+performed on $Q$ bits, the output can be {\em truncated} to the {\em lower}
+Output Size bits ({\tt Data Out Size}).
+% JMF : verifier Output Size
+
+The user might then decide to shift to the right the result to drop some of the 
+least-significant bits, as illustrated here with the selection of outputting 16~bits
+from the FIR filter (e.g. for further computations in the PL) and shifting the 2 least
+significant bits to send 14-bit wide words (as expected from the ADC datastream) to the PS.
+
+\section{PS: Linux kernel driver}
+
+Rather than using a single complex stream to communicate with the PS, we have now
+selected the {\tt dataReal\_to\_ram} to define multiple real streams. The driver
+is the same than {\tt dataComplex\_to\_ram}, so that this part of the XML
+may be left unchanged (memory address must be checked, as shown for example
+on Fig. \ref{addr}), in 
+addition to which we wish to communicate with the FIR to define the coefficients. 
+This time, the {\tt module\_generator} XML configuration file should look like
+
+\lstinputlisting[language=xml]{./module_generator.xml}
+
+%\begin{verbatim}
+%<?xml version="1.0" encoding="utf-8"?>
+%<drivers name="project_1" version="1.0">
+%	<driver name ="data16_multi_to_ram" >
+%		<board_driver name="data1600" id = "0"
+%			base_addr="0x43c00000" addr_size="0xffff" />
+%	</driver>
+%	<driver name ="fir16bits" >
+%		<board_driver name="datafir0" id = "0"
+%			base_addr="0x43c10000" addr_size="0xffff" />
+%	</driver>
+%</drivers>
+%\end{verbatim}
+
+The name of the appropriate module has been found by looking for a directory
+with the name than the IP in the {\tt fpga\_driver} directory.
+
+\begin{figure}[h!tb]
+\includegraphics[width=\linewidth]{address}
+\caption{Address range used by the IPs as defined by Vivado.}
+\label{addr}
+\end{figure}
+
+\section{On the Redpitaya ...}
+
+For communicating with the FIR, we will benefit from an existing library function as
+implemented in {\tt liboscimp\_fpga} (see \$OSCIMP\_DIGITAL\_LIB).
+This library must be installed by:
+\begin{verbatim}
+make && make install
+\end{verbatim}
+to place the .so in {\tt buildroot} {\tt target} dir (the board must be flashed again),
+or by
+\begin{verbatim}
+make && make install_ssh
+\end{verbatim}
+to transfer the .so to the embedded board's {\tt /usr/lib} directory by using {\tt
+ssh}.
+By default target IP is 192.168.0.10, which can be updated to match another
+network configuration with
+\begin{verbatim}
+make && IP=AA.BB.CC.DD.EE make install_ssh
+\end{verbatim}
+
+\lstinputlisting[language=C]{./app/main.c}
+
+Examples of outputs of running this program are given in Fig. \ref{fir}: various
+test FIRs are designed by selecting all coefficients except the first ones, which might be
+either set to 1 for the first 16 coefficients, or to 4 for the first 4 coefficients (keeping
+the total power constant). Since sampling is at 125~MS/s, the cutoff frequency
+of a 16-tap long coefficient must be about 7.8~MHz: most of the recorded datasets
+(1 or 6~MHz) are not affected by the filter except for the bottom one in which the
+signal frequency becomes close to the cutoff frequency of the filter.
+
+\begin{figure}[h!tb]
+\includegraphics[width=\linewidth]{mesures}
+\caption{}
+\label{fir}
+\end{figure}
+\end{document}
+
+cp ./project_1.runs/impl_1/design_1_wrapper.bit .
+bootgen -image design_1_wrapper.bif -arch zynq -process_bitstream bin
+
+jmfriedt@rugged:~/xilinx/oimp/doc/tutorials/4-fpga_FIR/project_1/app$ /home/jmfriedt/enseignement/ufr/platforms/redpitaya/buildroot-2018.08.1/output/build/linux-3f3c7b60919d56119a68813998d3005bca501a40/scripts/dtc/dtc -@ -I dts -O dtb -o project_1.dtbo project_1.dts
+
+ source /home/jmfriedt/xilinx/oimp/fpga_driver/sourceme.ggm 
+ export BOARD_NAME=redpitaya
+ export BR_DIR=/home/jmfriedt/enseignement/ufr/platforms/redpitaya/buildroot-2018.08.1/
+ make
+
+
+/home/jmfriedt/enseignement/ufr/platforms/redpitaya/buildroot-2018.08.1/output/host/usr/bin/arm-linux-gcc -I /home/jmfriedt/xilinx/oimp/fpga_lib -o ma_lecture ma_lecture.c -L/home/jmfriedt/xilinx/oimp/fpga_lib -loscimp_fpga
