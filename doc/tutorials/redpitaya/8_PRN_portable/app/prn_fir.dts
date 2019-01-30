@@ -1,0 +1,29 @@
+/dts-v1/;
+/plugin/;
+
+/ {
+	compatible = "xlnx,zynq-7000";
+
+	fragment0 {
+		target = <&fpga_full>;
+		#address-cells = <1>;
+		#size-cells = <1>;
+		__overlay__ {
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			firmware-name = "prn_fir_wrapper.bit.bin";
+
+			data00: data00@43C20000{
+				compatible = "ggm,dataToRam";
+				reg = <0x43C20000 0xffff>;
+			};
+
+			fir00: fir00@43C10000{
+				compatible = "ggm,fir";
+				reg = <0x43C10000 0xffff>;
+			};
+
+		};
+	};
+};

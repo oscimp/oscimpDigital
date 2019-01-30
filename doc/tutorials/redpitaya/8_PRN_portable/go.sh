@@ -1,0 +1,1 @@
+cat res.txt | sed 's/NAME      string  false      SEG_/<driver name ="/g' | sed 's/_reg0//g' | sed 's/\(.*\)_/\1" id="/' | sed 's/OFFSET    string  false      /  base_addr="/g' | sed 's/$/"/g' | sed 's/--"/addr_size="0xffff" \/>/g'

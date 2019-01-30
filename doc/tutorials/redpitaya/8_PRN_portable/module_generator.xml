@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<drivers name="prn_fir" version="1.0">
+  <driver name ="data_to_ram" >
+    <board_driver name="data00" id="0" base_addr="0x43C20000" addr_size="0xffff" />
+  </driver>
+  <driver name ="fir" id="0" >
+    <board_driver name="fir00"  id="0" base_addr="0x43C10000" addr_size="0xffff" />
+  </driver>
+</drivers>

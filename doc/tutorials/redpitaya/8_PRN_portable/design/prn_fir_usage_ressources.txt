@@ -1,0 +1,29 @@
+Copyright 1986-2018 Xilinx, Inc. All Rights Reserved.
+-----------------------------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2018.2.1 (lin64) Build 2288692 Thu Jul 26 18:23:50 MDT 2018
+| Date         : Mon Jan 28 16:31:50 2019
+| Host         : x230 running 64-bit Gentoo Base System release 2.6
+| Command      : report_utilization -hierarchical -hierarchical_depth 1 -file prn_fir_usage_ressources.txt
+| Design       : prn_fir_wrapper
+| Device       : 7z010clg400-1
+| Design State : Routed
+-----------------------------------------------------------------------------------------------------------
+
+Utilization Design Information
+
+Table of Contents
+-----------------
+1. Utilization by Hierarchy
+
+1. Utilization by Hierarchy
+---------------------------
+
++-----------------+---------+------------+------------+---------+------+------+--------+--------+--------------+
+|     Instance    |  Module | Total LUTs | Logic LUTs | LUTRAMs | SRLs |  FFs | RAMB36 | RAMB18 | DSP48 Blocks |
++-----------------+---------+------------+------------+---------+------+------+--------+--------+--------------+
+| prn_fir_wrapper |   (top) |        763 |        701 |       0 |   62 | 1372 |      8 |      1 |           15 |
+|   prn_fir_i     | prn_fir |        763 |        701 |       0 |   62 | 1372 |      8 |      1 |           15 |
++-----------------+---------+------------+------------+---------+------+------+--------+--------+--------------+
+* Note: The sum of lower-level cells may be larger than their parent cells total, due to cross-hierarchy LUT combining
+
+

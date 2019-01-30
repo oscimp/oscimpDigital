@@ -1,0 +1,14 @@
+NAME      string  false      SEG_data64_1_voie_to_ram_0_reg0
+OFFSET    string  false      0x43C30000
+--
+NAME      string  false      SEG_data64_1_voie_to_ram_1_reg0
+OFFSET    string  false      0x43C40000
+--
+NAME      string  false      SEG_fir_0_reg0
+OFFSET    string  false      0x43C10000
+--
+NAME      string  false      SEG_fir_1_reg0
+OFFSET    string  false      0x43C20000
+--
+NAME      string  false      SEG_prn20b_0_reg0
+OFFSET    string  false      0x43C00000
