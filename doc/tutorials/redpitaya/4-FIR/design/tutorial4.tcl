@@ -92,16 +92,16 @@ connect_bd_net -net redpitaya_adc_dac_clk_0_dac_locked_o \
 	[get_bd_pins ad9767_0/dac_locked_i] [get_bd_pins redpitaya_adc_dac_clk_0/dac_locked_o]
 # ADC -> DAC (intf = connect interfaces)
 connect_bd_intf_net -intf_net adc_dac_a \
-	[get_bd_intf_pins ad9767_0/dataA] \
+	[get_bd_intf_pins ad9767_0/dataA_in] \
 	[get_bd_intf_pins dupplReal_1_to_2_0/data2_out]
 connect_bd_intf_net -intf_net adc_dac_b \
-	[get_bd_intf_pins ad9767_0/dataB] \
+	[get_bd_intf_pins ad9767_0/dataB_in] \
 	[get_bd_intf_pins dupplReal_1_to_2_1/data2_out]
 connect_bd_intf_net -intf_net adc_duppl0 \
-	[get_bd_intf_pins ltc2145_0/data_a] \
+	[get_bd_intf_pins ltc2145_0/dataA_out] \
 	[get_bd_intf_pins dupplReal_1_to_2_0/data_in]
 connect_bd_intf_net -intf_net adc_duppl1 \
-	[get_bd_intf_pins ltc2145_0/data_b] \
+	[get_bd_intf_pins ltc2145_0/dataB_out] \
 	[get_bd_intf_pins dupplReal_1_to_2_1/data_in]
 connect_bd_intf_net -intf_net duppl_conv0 \
 	[get_bd_intf_pins firReal_0/data_in] \
