@@ -74,7 +74,8 @@ two stream doublers). Same for {convertRealToComplex}
 {\tt dupplReal\_1\_to\_2} blocks
 \item Connect {\tt dataA\_out} and {\tt dataB\_out} of the ADCs to the two free inputs
 of the {\tt dupplReal\_1\_to\_2} blocks
-\item {\tt dataComplex\_to\_RAM}: configure {\tt Data Size} to 14 bits et 
+\item {\tt dataComplex\_to\_RAM}: configure {\tt Data Size} to 14 bits, {\tt Nb
+Input} to 1 and 
 {\tt Nb Sample} to the number of samples to be transfered.
 For example, defining 4096 {\bf sample pairs} (complex numbers) each encoded as
 16-bit values, or a total of 16384~bytes available to the PS.
@@ -133,6 +134,9 @@ nor the ``\_wrapper'' part of its name (notice that the default name {\tt tutori
 by Vivado to generate {\tt tutorial3\_wrapper.bit.bin}). The {\tt driver} tag informs
 on the kernel module to be loaded, while {\tt base\_addr} and {\tt addr\_size} provide the
 address starting point and range as provided in each IP attribute by Vivado (Fig. \ref{addr}).
+{\tt option} node tell {\tt module\_generator} to add {\tt DONT\_USE\_LIB} in
+the Makefile. This variable is used to avoid application to be linked to the
+liboscimp\_fpga (see. 4-FIR for library introduction).
 
 \begin{figure}[h!tb]
 \includegraphics[width=\linewidth]{adresses}
