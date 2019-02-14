@@ -151,6 +151,20 @@ $f_o/f_{ck}\times 2^{acc}$.
 %}
 %\end{lstlisting}
 
+The arguments to the \verb!nco_counter_send_conf()! functions are
+\begin{enumerate}
+\item input frequency $f_{in}$ (125000000 Hz)
+\item output frequency $_{out}$ (Hz)
+\item accumulator size $acc$ (32)
+\item offset $offs$ in the lookup table RAM inducing a constant phase offset (0)
+\item phase increment source $pinc$ to specify whether the accumulator increment is driven by
+an FPGA input (0) or PS input (1)
+\item phase offset configuration source $poff$, 0 to drive from FPGA or 1 to drive from PS.
+\end{enumerate}
+
+The output frequency of the NCO is then, based on these definitions
+$$f_{out}=f_{in}\times \frac{word}{2^{acc}}$$
+
 \begin{figure}[h!tb]
 \begin{center}
 \includegraphics[width=.49\linewidth]{10MHz0_0dBm.pdf}
