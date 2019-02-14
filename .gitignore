@@ -1,2 +1,7 @@
 *.swp
 *.swo
+*.bif
+*.o
+*.dtbo
+*_us
+vivado_*.*
