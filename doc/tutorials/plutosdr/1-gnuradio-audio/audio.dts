@@ -1,0 +1,45 @@
+	audio_clock: audio_clock {
+		compatible = "fixed-clock";
+		#clock-cells = <0>;
+		clock-frequency = <24576000>;
+	};
+
+	codec_out: spdif-transmitter {
+		#sound-dai-cells = <0>;
+		compatible = "ggm,fake_codec";
+		clocks = <&audio_clock>;
+		clock-names = "mclk";
+
+		status = "okay";
+	};
+
+	axi_deltaSigma_0: axi-deltaSigma@43c00000 {
+		#sound-dai-cells = <0>;
+		compatible = "ggm,axi-deltaSigma";
+		reg = <0x43c00000 0x1000>;
+		dmas = <&dmac_s 0>;
+		dma-names = "tx";
+		clocks = <&clkc 15>, <&audio_clock>;
+		clock-names = "axi", "ref";
+	};
+
+	pluto_sound {
+		compatible = "simple-audio-card";
+		simple-audio-card,name = "PlutoSDR PWM";
+		simple-audio-card,widgets = "Line", "Line Out";
+        simple-audio-card,routing = 
+            "Line Out", "LOUT",
+            "Line Out", "ROUT";
+
+		simple-audio-card,dai-link@0 {
+			format = "i2s";
+			cpu {
+				sound-dai = <&axi_deltaSigma_0>;
+				frame-master;
+				bitclock-master;
+			};
+			codec {
+				sound-dai = <&codec_out>;
+			};
+		};
+	};
