@@ -1,4 +1,4 @@
-variable fpga_ip    $::env(GGM_FPGA_IP)
+variable fpga_ip    $::env(OSCIMP_DIGITAL_IP)
 puts $lib_dirs
 set_property  ip_repo_paths [list ${fpga_ip} ${lib_dirs}] [current_project]
 update_ip_catalog

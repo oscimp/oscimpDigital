@@ -5,12 +5,12 @@
 
 PROJECT_NAME := pluto
 
-M_DEPS += /home/gwe/boards/pluto/plutosdr-fw/hdl/library/xilinx/common/ad_iobuf.v
-M_DEPS += /home/gwe/boards/pluto/plutosdr-fw/hdl/library/axi_ad9361/axi_ad9361_delay.tcl
+M_DEPS += $(ADI_HDL_DIR)/library/xilinx/common/ad_iobuf.v
+M_DEPS += $(ADI_HDL_DIR)/library/axi_ad9361/axi_ad9361_delay.tcl
 
 LIB_DEPS += axi_ad9361
 LIB_DEPS += axi_dmac
 LIB_DEPS += util_fir_dec
 LIB_DEPS += util_fir_int
 
-include /home/gwe/boards/pluto/plutosdr-fw/hdl/projects/scripts/project-xilinx.mk
+include $(ADI_HDL_DIR)/projects/scripts/project-xilinx.mk
