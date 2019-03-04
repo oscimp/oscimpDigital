@@ -89,7 +89,7 @@ in the user's *~/.bashrc*.
 ## How it compares with existing solutions ?
 
 Various FPGA design frameworks have been available. Here we list the reasons for pursuing this particular approach of close FPGA/Linux module/GNULinux userspace codesign with respect to other approaches:
-- the proprietary approach: of course Xilinx (Vivado) & Altera/Intel (Quartus) provide ready made blackbox solutions to FPGA programming. If you want a vendor-locked solution, these are probably the best alternatives. We want to invest in vendor indepent solution that will allow to deploy the framework on any programmable field array, whether from current (Xilinx/Altera-Intel/Lattice-Microsemi) or future vendors
+- the proprietary approach: of course Xilinx (Vivado) & Altera/Intel (Quartus) provide ready made blackbox solutions to FPGA programming. If you want a vendor-locked solution, these are probably the best alternatives. We want to invest in vendor independent solution that will allow to deploy the framework on any field programmable gate arrays, whether from current (Xilinx/Altera-Intel/Lattice-Microsemi) or future vendors
 - Ettus Research has developed RFNOC, an excellent tool for their board but hardly portable to any other platform. A fixed bitstream allows routing packets amongst a fixed set of IPs, as opposed to the proposed approach of a close co-design between the IPs needed for a given design and the associated Linux tools (kernel space and userspace) generated for each new design.
 - HLS (High-level Language Synthesis): at the moment most HLS designs require FIFOs and are not compatible with high throughput
 streaming data processing, as considered in the radiofrequency data processing for software defined radio
