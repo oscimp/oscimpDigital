@@ -1,0 +1,29 @@
+/dts-v1/;
+/plugin/;
+
+/ {
+	compatible = "xlnx,zynq-7000";
+
+	fragment0 {
+		target = <&fpga_axi>;
+		#address-cells = <1>;
+		#size-cells = <1>;
+		__overlay__ {
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+//			firmware-name = "tutorial4_wrapper.bit.bin";
+
+			data00: data00@43c00000{
+				compatible = "ggm,dataToRam";
+				reg = <0x43c10000 0xffff>;
+			};
+
+			nco00: nco00@43c10000{
+				compatible = "ggm,nco_counter";
+				reg = <0x43c00000 0xffff>;
+			};
+
+		};
+	};
+};
