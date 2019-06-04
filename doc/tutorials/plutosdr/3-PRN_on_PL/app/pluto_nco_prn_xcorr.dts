@@ -1,0 +1,31 @@
+/dts-v1/;
+/plugin/;
+
+/ {
+	compatible = "xlnx,zynq-7000";
+
+	fragment0 {
+		target = <&fpga_axi>;
+		#address-cells = <1>;
+		#size-cells = <1>;
+		__overlay__ {
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			nco: nco@43c00000{
+				compatible = "ggm,nco_counter";
+				reg = <0x43c00000 0xffff>;
+			};
+
+			use_nco: use_nco@43c10000{
+				compatible = "ggm,switch";
+				reg = <0x43c10000 0xffff>;
+			};
+
+			data3200: data3200@43c30000{
+				compatible = "ggm,dataToRam";
+				reg = <0x43c20000 0xffff>;
+			};
+		};
+	};
+};
