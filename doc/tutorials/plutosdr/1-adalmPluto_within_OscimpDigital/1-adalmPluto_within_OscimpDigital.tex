@@ -6,8 +6,8 @@
 
 % dans le .dts : on remplace target = <&fpga_full>; par target = <&fpga_axi>; et on commente le nom du bitstream
 
-\documentclass[12pt,oneside]{article}
-\usepackage{makeidx,anysize,mflogo,xspace,float,epsfig,url}
+\documentclass{article}
+\usepackage{makeidx,anysize,mflogo,xspace,float,epsfig,url,fullpage}
 \usepackage{amsmath,amsfonts,amssymb,a4wide} 
 \usepackage[utf8]{inputenc}
 %\usepackage[francais]{babel}
@@ -241,7 +241,7 @@ FCLK\_CLK0 at 100~MHz. We might as well clock and reset all blocks on the AD936x
 \end{figure}
 
 At last, click on ``Generate Bitstream'', and once the synthesis is done, place
-the {\tt /pathTo\_adi/hdl/projects/pluto/pluto.runs/impl\_1/system\_top.bit}
+the \\{\tt /pathTo\_adi/hdl/projects/pluto/pluto.runs/impl\_1/system\_top.bit}
 into the \\{\tt /somewhere/PlutoSDR/board/pluto} BR2\_EXTERNAL directory.
 
 %--------------------------------

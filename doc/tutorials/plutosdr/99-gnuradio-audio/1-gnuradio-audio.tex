@@ -107,6 +107,10 @@ ADi requires first cloning their repository:
 git clone https://github.com/analogdevicesinc/hdl     # clone repository
 git checkout 401395cdd1980827fd1f7043ce1a10770f666c64 # select hash of current official git
 \end{lstlisting}
+
+The original PlutoSDR firmware can always be recovered by {\tt cd projects/pluto} and
+{\tt make} from there. Such a synthesis does not require a Vivado license, since the Webpack
+is enough for Zynq-7010 support.
 %}
 
 To generate the design there are two possibilities:
