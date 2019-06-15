@@ -1,7 +1,18 @@
 #define which board. Must be adapted
+#name is not really strict but must be coherent
+#but for PlutoSDR must be plutosdr
 export BOARD_NAME=
+
 #define Buildroot location
 export BR_DIR=
+
+# define target IP
+# 192.168.0.10 for RedPitaya
+# 192.168.2.1 for PlutoSDR
+export IP=
+
+#only mandatory for plutosdr
+#export ADI_HDL_DIR=
 
 # define where to install apps, drivers, etc
 export OSCIMP_DIGITAL_NFS=/nfs
