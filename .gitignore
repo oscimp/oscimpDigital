@@ -5,3 +5,8 @@
 *.dtbo
 *_us
 vivado_*.*
+*.xpr
+*.cache
+*.hw
+*.runs
+*.srcs
