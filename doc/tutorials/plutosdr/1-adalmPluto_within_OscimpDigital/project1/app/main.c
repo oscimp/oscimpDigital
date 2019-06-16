@@ -15,7 +15,7 @@
 
 #define ELEMENT_SIZE 1024	// Nb Sample
 
-#define CLK_FREQ 2000000
+#define CLK_FREQ 50000000
 #define MOD_FREQ 100000
 #define NCO_ACCUM_SIZE 28
 
