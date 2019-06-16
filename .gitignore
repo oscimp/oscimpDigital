@@ -4,9 +4,11 @@
 *.o
 *.dtbo
 *_us
+*.sh
 vivado_*.*
 *.xpr
 *.cache
 *.hw
 *.runs
 *.srcs
+pluto.ip_user_files
