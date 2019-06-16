@@ -16,7 +16,7 @@
 #define ELEMENT_SIZE 1024 // Nb Sample
 #define CHANNELS     3    // NB input
 
-#define CLK_FREQ 50000000 
+#define CLK_FREQ 2000000 
 #define MOD_FREQ 100000 
 #define NCO_ACCUM_SIZE 28
 
@@ -54,7 +54,7 @@ int main(int argc,char **argv)
         iio_channel_attr_write_longlong(
                 iio_device_find_channel(phy, "voltage0", false),
                 "sampling_frequency",
-                50000000); /* RX baseband rate 5 MSPS */
+                CLK_FREQ); /* baseband rate 2 MSPS */
 
         nco_counter_send_conf("/dev/nco00", CLK_FREQ, df,
 		NCO_ACCUM_SIZE, 0, 1, 1);

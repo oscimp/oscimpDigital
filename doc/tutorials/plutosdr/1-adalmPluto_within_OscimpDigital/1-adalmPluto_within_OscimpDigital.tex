@@ -7,7 +7,7 @@
 % dans le .dts : on remplace target = <&fpga_full>; par target = <&fpga_axi>; et on commente le nom du bitstream
 
 \documentclass{article}
-\usepackage{makeidx,anysize,mflogo,xspace,float,epsfig,url,fullpage}
+\usepackage{makeidx,anysize,mflogo,xspace,float,epsfig,url}
 \usepackage{amsmath,amsfonts,amssymb,a4wide} 
 \usepackage[utf8]{inputenc}
 %\usepackage[francais]{babel}
@@ -45,19 +45,20 @@
 
 
 \begin{center}
-{\bf \Large Using ADALM-PLUTO within \\ the OscimpDigital Ecosystem} \\ \ \\
-P.-Y. Bourgeois \\ \href{mailto:pyb2@femto-st.fr}{pyb2\_at\_femto-st.fr}\ \\ \today
+{\bf \Large Using ADALM-PLUTO with the OscImpDigital Ecosystem} \\ \ \\
+P.-Y. Bourgeois, G. Goavec-Merou, J.-M Friedt \\ 
+\href{mailto:pyb2@femto-st.fr}{\{pyb2,gwenhael.goavec,jmfriedt\}\_at\_femto-st.fr}\ \\ \today
 \end{center}
 
 
-This tutorial is intended to help you to handle the ADALM-PLUTO board within the
-OSCIMP framework.
+This tutorial is intended to help you to handle the ADALM-PLUTO (PlutoSDR) board within the
+OscImpDigital framework.
 It is focused on
 
 \begin{itemize}
 	\item Providing general guidelines to set up the environment
-	\item Performing a Pluto's harware independant check (NCO$\to$RAM, check the data)
-	\item Connecting the Pluto data stream into the RAM and recovering the data
+	\item Performing a PlutoSDR's harware independant check (NCO$\to$RAM, check the data)
+	\item Connecting the PlutoSDR data stream into the RAM and recovering the data
 \end{itemize}
 
 \begin{figure}[h!]
@@ -68,26 +69,25 @@ processing chains.}}
 
 
 %-----------------------------------
-\section*{Disclaimer}
+%\section*{Disclaimer}
 %-----------------------------------
-Neither the author nor the developpers of the OSCIMP repositories shall be
-responsible for misuse of the presented Software and Hardware.
-All the given codes and guidelines of this tutorial are provided 'as is'.
-
-
+%Neither the author nor the developpers of the OscImpDigital repositories shall be
+%responsible for misuse of the presented Software and Hardware.
+%All the given codes and guidelines of this tutorial are provided ``as is''.
 
 %-----------------------------------
 \section{Objectives / Experimental set-up}
 %-----------------------------------
 
 Right out of the box, the ADALM-PLUTO board, when fired up, is able to be fully
-configurable and flawlessly accessible thanks to \emph{iio} contexts of the {\bf{libiio}}.
-Thanksfully AnalogDevicesInc provide the library but also distribute the HDL
-code:)
-It becomes then interresting to test the compatibility of the original Pluto HDL
-project within the OSCIMP ecosystem and beneficiate for extra HDR/SDR features.
+configurable and flawlessly accessible thanks to the \emph{iio} contexts of {\bf{libiio}}.
+Analog Devices Inc. (ADI) provides the library but also distributes the HDL code.
+It becomes then interresting to test the compatibility of the original PlutoSDR HDL
+project with the OscImpDigital ecosystem and benefit from extra features by pre-processing
+the radiofrequency datastream on the high bandwith Programmable Logic (PL) FPGA of the
+Zynq processor before transferring the lower bandwith dataset to the Processing System (PS).
 
-For this tutorial, we want to recover I/Q samples of a 100 kHz beatnote. Achieving this
+For this tutorial, we want to recover I/Q samples of a 100~kHz beatnote. Achieving this
 result is first assessed by fetching samples from the output of a 100~kHz NCO operating
 independently of the AXI Stream provided by ADI. Having checked that the samples are
 properly generated and recovered, we mix the output of the AXI Stream including the
@@ -95,7 +95,7 @@ I/Q coefficients from the AD9363 and check that the result is consistent. Thus:
 
 \begin{itemize}
 \item the first part aims at checking the correct bitstream synthesis of the project
-provided by ADI using an additional NCO and RAM transfer from the OSCIMP
+provided by ADI using an additional NCO and RAM transfer from the OscImpDigital
 ecosystem. In this setup (called sanity check), the NCO acts as a fake 100~kHz
 beatnote generator, the added IPs having no relationship with the initial
 firmware,
@@ -113,22 +113,24 @@ In order to create a ``beatnote'', one can use the following setup:
 \begin{minipage}[c]{0.49\linewidth}
 	\includegraphics[width=\linewidth]{20190213_105039_640.jpg}
 \end{minipage}
+\vspace{0.1cm}
 %\end{figure}
 
-The {\bf Tx} port of the PlutoSDR board is set to transmit at 2.2 GHz. When connecting
+The {\bf Tx} port of the PlutoSDR board is set to transmit at 2.2~GHz. When connecting
 the PlutoSDR Sink (select an input level lower than 1 to avoid saturation and 
-unwanted signal beyond the carrier), the Tx transmits nothing but the carrier at 2.2 GHz 
+unwanted signal beyond the carrier), the Tx transmits the unmodulated carrier at 2.2~GHz 
 (i.e. with no signal of interrest nor message). The receiver part is slightly detuned at 
 $2.2$~GHz$+100$~kHz. After demodulation (RF-hardware) and decimating filter ({\tt fir\_decimator}
 block within the PL-side of the FPGA), a remaining ``beatnote'' at $f_b=100$~kHz occurs.
 Once we know in advance the frequency of this beatnote, when the sampling rate
-is set up at $fs=50$~MHz ({\bf JUSTIFIER : AXI Stream clock bus}), we also know that a window 
-of $N=2048$ samples will present around 4 periods of the beatnote ($N/fs/fb$).
-This ``beatnote'' trick is  an easy trick that is routinely used when developping
-RF applications, to check the correctness of the data.
+is set up at $fs=2$~MHz (as defined in the application to be discussed in section \ref{fs}
+), we also know that a window 
+of $N=2048$ samples will present $N\times fb/fs\simeq 102$~periods of the beatnote.
+This ``beatnote'' trick is routinely used when developping
+RF applications, to check that collected data are sound.
 
 On the photography, a splitter has been added (before the 10~dB attenuator) to also send the 
-{\bf Tx} port on a spectrum analyzer which enable to check if the right transmit carrier frequency 
+{\bf Tx} port output to a spectrum analyzer which allows to check if the right carrier frequency 
 has been set up through {\it iio}. 
 % comprends pas le sens ci-dessous, comme on ne voit pas l'echelle de la courbe l'ecart entre
 % TX LO et RX LO n'est pas visible ... ne me semble pas utile
@@ -139,22 +141,25 @@ has been set up through {\it iio}.
 %-----------------------------------
 \section{Setting up the environment}
 %-----------------------------------
-To complete this tutorial, we suppose some experience in using the \mbox{OSCIMP} ecosystem has
-been acquired. Also up to date versions of the following repositories must be fetched:
-	\begin{itemize}
-		\item oscimpDigital (\href{https://github.com/oscimp/oscimpDigital}{https://github.com/oscimp/oscimpDigital}). Remember to recursively clone the repository\\
-{\tt git clone --recursive https://github.com/oscimp/oscimpDigital} \\
-and set the {\tt BOARD\_NAME} to redpitaya since the PlutoSDR is fitted with the same Zynq model than
-the Redpitaya
-		\item The BR2\_EXTERNAL framework for Analog Device's PlutoSDR Zynq \\ (\href{https://github.com/oscimp/PlutoSDR}{https://github.com/oscimp/PlutoSDR})
-		\item The HDL project from analogDevices (see further below).
-	\end{itemize}
 
+Up to date versions of the following repositories must be fetched:
+	\begin{itemize}
+		\item The BR2\_EXTERNAL framework for Analog Device's PlutoSDR Zynq \\ (\href{https://github.com/oscimp/PlutoSDR}{https://github.com/oscimp/PlutoSDR}) and compile the Buildroot environment following the instructions
+provided in the github repository {\tt README.md} file,
+		\item The HDL project from Analog Devices (see further below).
 In order to build the HDL project for the ADALM-PLUTO board, only the {\bf{hdl}} repository
 (\href{https://github.com/analogdevicesinc/hdl}{https://github.com/analogdevicesinc/hdl}) is needed.
 % but it is recommended to checkout the conservative commit used in
 % \href{https://github.com/analogdevicesinc/plutosdr-fw}{https://github.com/analogdevicesinc/plutosdr-fw}. 
 % JMF : je vire car inutile (cf hash ci-dessous en cas de doute)
+		\item OscImpDigital (\href{https://github.com/oscimp/oscimpDigital}{https://github.com/oscimp/oscimpDigital}). Remember to recursively clone the repository\\
+{\tt git clone --recursive https://github.com/oscimp/oscimpDigital} \\
+			and set the {\tt BOARD\_NAME} to {\tt plutosdr} in the {\tt settings.sh} script. 
+Although the PlutoSDR is fitted with the same Zynq model than
+the Redpitaya, this variable will allow us to execute commands such as generating the DFU image or flashing
+the embedded board. Furthermore, we will have to inform where the ADI HDL repository is located by defining the
+{\tt ADI\_HDL\_DIR} variable in addition to {\tt BR\_DIR} indicating where the BuildRoot repository is located.
+	\end{itemize}
 
 \smallskip
 At the time of writing (\today), the following versions are functional:
@@ -163,42 +168,44 @@ At the time of writing (\today), the following versions are functional:
 		\item Vivado 2018.3
 	\end{itemize}
 
-
-To build the HDL project for the Pluto board, {\tt source} the
-{\tt settings64.sh} script of your Vivado 2018.2, and {\tt make} the
-{\tt /somewhere\_analogdevicesinc/hdl/projects/pluto}.
-
-(On some computers, several {\tt make} in a row are required to undergo some error messages). 
-
-A successful build of the HDL project is returned by the console message:\\
-\noindent {\tt
-Building {\bf{pluto}} project
-[/pathTo\_adi\_hdl/projects/pluto/pluto\_vivado.log] ... {\bf{OK}}
-}
-
-
 %-----------------------------------
 \section{Sanity check (NCO$\to$RAM$\to$UserSpace)}
 %-----------------------------------
 This tutorial allows us to use the OscimpDigital blocks with the embedded Zynq of
-the PlutoSDR board. It is seen as a first-step demonstration of compatibility.
+the PlutoSDR board. It is seen as a first demonstration of compatibility.
 
 \subsection{Design}
 
-Once the pluto HDL project is successfully built, open \emph{pluto.xpr} within
-Vivado. 
+To build the HDL project for the PlutoSDR board, {\tt source} the
+{\tt settings64.sh} script of Vivado 2018.2, the OscImpDigital
+{\tt settings.sh}. Go to the first tutorial directory located in\\
+{\tt oscimpDigital/doc/tutorials/plutosdr/1-adalmPluto\_within\_OscimpDigital}
+and from the {\tt project1/design} sub-directory of this tutorial, run {\tt make xpr}.
 
-Add the \emph{oscimpDigital/fpga\_ip} repository (Icon ``Settings'' $\to$ ``Project
-Settings'' $\to$ ``IP'' $\to$ ``Repository'' $\to$ + then Apply and close the window).
+A successful build of the HDL project is returned by the console message:\\
+\noindent {\tt
+Building {\bf{pluto}} project
+[[...]/project1/design/pluto\_vivado.log] ... {\bf{OK}}
+}
+
+Once the pluto HDL project is successfully generated,
+%built GGM
+open \emph{pluto.xpr} within Vivado ({\tt vivado pluto.xpr}). 
+
+%Add 
+Check if the \emph{oscimpDigital/fpga\_ip} repository is present in the list of
+IP repository (Icon ``Settings'' $\to$ ``Project
+Settings'' $\to$ ``IP'' $\to$ ``Repository'' $\to$).% + then Apply and close the window).
 
 Open the block design, right-click, ``Add IP'', then add the \emph{dataComplex\_to\_ram} 
 and \emph{nco\_counter}. Run the ``Connection Automation'': the NCO counter and dataComplex\_to\_ram
 should connect to the AXI bus and have addresses assigned to their registers: dataComplex\_to\_ram
-base address should be 0x43C0\_0000 and nco\_counter base address should be 0x43C1\_0000. 
-If adresses mismatch, keep them in mind as you will need it for the Device Tree overlay.
+base address should be 0x43C1\_0000 and nco\_counter base address should be 0x43C0\_0000. 
+Refer to {\tt Address Editor} to verify, and if adresses mismatch, keep them in mind as you
+will need it for the Device Tree overlay.
 
 The next step is to configure the added IPs: %as shown in Fig. \ref{configs}, 
-we set
+we set (double click on each block icon)
 \begin{itemize}
 \item the NCO block {\tt Data Size} to 16~bits, {\tt Counter Size} to 28~bits, and {\tt LUT
 Size} to 10~bit,
@@ -216,14 +223,16 @@ to 1, and {\tt Number of Samples} to 1024. % JMF/GGM : j'ai 1024 et non 2048 ech
 %\label{configs}
 %\end{figure}
 
-Additional connections (Fig. \ref{con}):
+Additional connections (Fig. \ref{con}) for control signals:
 
 \begin{itemize}
 \item NCO
 	\begin{itemize}
 	\item {\tt ref\_rst\_i} $\to$ {\tt s00\_axi\_reset} on the same block
 	\item {\tt ref\_clk\_i} $\to$ {\tt s00\_axi\_aclk} which refers to the PS7's
-FCLK\_CLK0 at 100~MHz. We might as well clock and reset all blocks on the AD936x signals.
+FCLK\_CLK0 at 100~MHz. We might as well clock and reset all blocks on the AD936x
+signals (AD936x clock frequency depends on sampling frequency configured through
+IIO API or GNURadio flowgraph).
 	\end{itemize}
 \item NCO $\to$ RAM
         \begin{itemize}
@@ -240,25 +249,82 @@ FCLK\_CLK0 at 100~MHz. We might as well clock and reset all blocks on the AD936x
 \label{con}
 \end{figure}
 
-At last, click on ``Generate Bitstream'', and once the synthesis is done, place
-the \\{\tt /pathTo\_adi/hdl/projects/pluto/pluto.runs/impl\_1/system\_top.bit}
-into the \\{\tt /somewhere/PlutoSDR/board/pluto} BR2\_EXTERNAL directory.
+At last, click on ``Generate Bitstream''.% and once the synthesis is done.%, place
+%the {\tt /pathTo\_adi/hdl/projects/pluto/pluto.runs/impl\_1/system\_top.bit}
+%into the \\{\tt /somewhere/PlutoSDR/board/pluto} BR2\_EXTERNAL directory.
+%go back to terminal to use:
+%\begin{lstlisting}
+%make dfu_frm
+%\end{lstlisting}
+%to generate image/pluto.dfu and image/pluto.frm files.
+
+Bistream generation is quite and lengthy task (depending on the host CPU). This time
+is best spent compiling OscImpDigital libraries and drivers as well as creating
+application for the PS as described in the next section.
 
 %--------------------------------
-\subsection{Oscimp library / Linux Drivers}
+\subsection{Preparing all OscimpDigital lib/driver/tools mandatories}
 %--------------------------------
-The library {\bf{liboscimp\_fpga}} should be compiled for your environment. We have selected
-to statically link the library to the application to avoid confusion with multiple library
-versions: when compiling the userspace application using the {\tt Makefile} provided by
-{\tt module\_generator} (see below) by adding {\tt USE\_STATIC\_LIB=1} after the
-{\tt BASE\_NAME}
 
-Also both drivers for the NCO ({\tt nco\_counter\_core.ko}) and RAM ({\tt
-data\_to\_ram\_core.ko}) should be compiled. 
+The NCO needs to be configured: rather than directly interacting with low level registers, the 
+simpliest way is to benefit from the functions provided by the OscImpDigital library to do this task.
+
+To build the library, go to {\tt \$OSCIMP\_DIGITAL\_LIB} and use the command:
+\begin{lstlisting}
+make
+\end{lstlisting}
+After that the current directory must contain two files: {\tt
+liboscimp\_fpga.so} and {\tt liboscimp\_fpga\_static.a}: the latter can be linked with
+an application by defining at {\tt USE\_STATIC\_LIB=1} option as will be discussed below.
+
+Communications between PS userspace applications and IPs in the PL are achieved thanks
+to Linux drivers. To build mandatory drivers go to {\tt \$OSCIMP\_DIGITAL\_DRIVER} and use
+\begin{lstlisting}
+make
+\end{lstlisting}
+as this command will iterate on all subdirectories and build each driver.
+
+The last element to build is {\tt module\_generator}. This tool will be used to
+build a skeleton for applications based on an XML description (see bellow).
+Go to {\tt \$OSCIMP\_DIGITAL\_APP/tools/module\_generator} and again use
+\begin{lstlisting}
+make
+\end{lstlisting}
+
+%%GGM: a revoir 
+%The library {\bf{liboscimp\_fpga}} should be compiled for your environment. We have selected
+%to statically link the library to the application to avoid
+%%GGM
+%the need to reinstall library after each reboot:
+%%confusion with multiple library
+%%versions:
+%% GGM: utile ?
+%when compiling the userspace application using the {\tt Makefile} provided by
+%{\tt module\_generator} (see below) by adding {\tt USE\_STATIC\_LIB=1} after the
+%{\tt BASE\_NAME}
+%
+%Also both drivers for the NCO ({\tt nco\_counter\_core.ko}) and RAM ({\tt
+%data\_to\_ram\_core.ko}) should be compiled. 
 
 %--------------------------------
-\subsection{Device Tree Overlay}
+\subsection{Userspace application}
 %--------------------------------
+
+{\tt module\_generator}
+(\url{https://github.com/oscimp/app/tree/master/tools/module_generator}) is used
+to generates a skeleton for the application:
+\begin{itemize}
+\item {\tt Makefile} to cross-compile and install application and devicetree overlay;
+\item devicetree source {\tt dts} file to inform the linux kernel about drivers to load and base memory
+area to communicate with IP in PL;
+\item script to prepare everything (load drivers and devicetree) before using
+the binary application.
+\end{itemize}
+
+This tool uses a XML file which describes the list of IPs and its base address.
+This file may contain options (if the OscImpDigital library is statically or
+dynamically linked
+or not used, if the application must be linked with others libraries, ...).
 
 %The linux-side of the Pluto board uses the Device Tree overlays mechanism to
 %affect the kernel side tree which allows for PL configuration dynamically.
@@ -305,116 +371,283 @@ data\_to\_ram\_core.ko}) should be compiled.
 %...
 %\end{verbatim}
 
-The devicetree overlay will be generated by {\tt modules\_generator}: the configuration
-file ({\tt config.xml}) looks like
-{\footnotesize
+The configuration file ({\tt project1/module\_generator.xml}) for this first
+application looks like
+{
 \begin{verbatim}
 <?xml version="1.0" encoding="utf-8"?>
-<drivers name="PlutoSDR_custom" version="1.0">
-  <driver name ="data_to_ram" >
-    <board_driver name="data00" id = "0" base_addr="0x43c10000" addr_size="0xffff" />
-  </driver>
-  <driver name ="nco_counter" >
-     <board_driver name="nco00" id = "0" base_addr="0x43c00000" addr_size="0xffff" />
-  </driver>
-</drivers>
+<project name="project1" version="1.0">
+  <options>
+    <option target="makefile" name="USE_STATIC_LIB">1</option>
+    <option target="makefile" name="LDFLAGS">-liio</option>
+  </options>
+  <ips>
+    <ip name="dataComplex_to_ram" >
+      <instance name="data00" id="0" base_addr="0x43c10000" addr_size="0xffff" />
+    </ip>
+    <ip name="nco_counter" >
+      <instance name="nco00" id="0" base_addr="0x43c00000" addr_size="0xffff" />
+    </ip>
+  </ips>
+</project>
 \end{verbatim}
+%\begin{verbatim}
+%<?xml version="1.0" encoding="utf-8"?>
+%<drivers name="PlutoSDR_custom" version="1.0">
+%  <driver name ="data_to_ram" >
+%    <board_driver name="data00" id = "0" base_addr="0x43c10000" addr_size="0xffff" />
+%  </driver>
+%  <driver name ="nco_counter" >
+%     <board_driver name="nco00" id = "0" base_addr="0x43c00000" addr_size="0xffff" />
+%  </driver>
+%</drivers>
+%\end{verbatim}
 }
 where {\tt data00} and {\tt nco00} are the {\tt /dev} entries and the base addresses
-should match thoses provided by Vivado. A few updates must be brought to the output
-of {\tt module\_generator} after running {\tt module\_generator -dts config.xml}
-\begin{itemize}
-\item in dans le {\tt .dts}: replace \verb~target = <&fpga_full>;~ with \verb~target = <&fpga_axi>;~ 
-and comment out the bitstream name
-\item in the {\tt Makefile}, add {\tt USE\_STATIC\_LIB=1} and {\tt LDFLAGS+=-liio} after the project
-name but prior to the {\tt Makefile.inc} inclusion
-\item in the shell script, comment the lines creating the firmware directory and attempting to copy
-the bitstream to this location.
-\end{itemize}
+should match those provided by Vivado.
+The {\tt USE\_STATIC\_LIB} option is used to add a constant in the
+{\tt Makefile} to specify that the static library should be linked with the
+application and LDFLAGS
+specify a dynamic link to the libiio since we will use IIO API to configure RF
+frontends (see bellow).
 
-The last step is then to rebuild the firmware ({\tt pluto.frm}) :
+The command:\\
+{\tt \$OSCIMP\_DIGITAL\_APP/tools/module\_generator/module\_generator
+module\_generator.xml}\\
+will create a new directory called {\tt app} and fill it with the
+{\tt Makefile}, a script called {\tt project1\_us.sh} and the {\tt dts} file {\tt
+project1.dts}.
+%GGM: obsolete
+%A few updates must be brought to the output
+%of {\tt module\_generator} after running {\tt module\_generator -dts config.xml}
+%\begin{itemize}
+%\item in dans le {\tt .dts}: replace \verb~target = <&fpga_full>;~ with \verb~target = <&fpga_axi>;~ 
+%and comment out the bitstream name
+%\item in the {\tt Makefile}, add {\tt USE\_STATIC\_LIB=1} and {\tt LDFLAGS+=-liio} after the project
+%name but prior to the {\tt Makefile.inc} inclusion
+%\item in the shell script, comment the lines creating the firmware directory and attempting to copy
+%the bitstream to this location.
+%\end{itemize}
 
-\begin{itemize}
-	\item remember that we have copied the bitstream to the PlutoSDR
-directory in \\
-{\tt /somewhere/PlutoSDR/board/pluto}, hence providing buildroot with the appropriate
-bitstream named {\tt system\_top.bit}.
-	\item {\tt cd pathTo/buildroot-version/}
-%	\item {\tt touch output/build/linux-something/.config} % JMF ne me semble pas utile
-	\item {\tt make}
-\end{itemize}
-
-%--------------------------------
-\subsection{Flash the pluto}
-%--------------------------------
-
-\paragraph{NB:} For the moment, the repository PlutoSDR provides only support
-for rootfs and linux (the bootloader part still remains to be added). Hence, any
-change of the bistream requires to perform the steps presented here:
-
-\begin{itemize}
-	\item Fire up the PlutoSDR // wait for the mass-storage to be available (via
-{\tt dmseg -w} for example)
-	\item {\tt mount /dev/sdX1\footnote{X is the index of the pluto mass-storage, e.g.
-/dev/sde1} /mnt/somewhere/}
-	\item {\tt cp pathTo/buildroot-version/output/images/pluto.frm /mnt/somewhere/}
-	\item {\tt eject /dev/sdX1}  % JMF : moi j'ai toujours fait sdX : est-ce correct ?
-\end{itemize}
-
-You should see the {\bf \textcolor{blue}{blue LED1}} flashing quickly, thus do not disconnect
-nor touch anything until the PlutoSDR has rebooted or you may brick the board at
-this stage. 
-
-Alternatively, the DFU image can be transfered to the PlutoSDR flash by rebooting,
-from the target GNU/Linux prompt, to DFU mode with
-{\footnotesize
-\begin{verbatim}
-device_reboot sf
-\end{verbatim}
-}
-and then running on the host personnal computer
-{\footnotesize
-\begin{verbatim}
-dfu-util -a firmware.dfu -D my_pluto_firmware.dfu
-\end{verbatim}
-}
-with {\tt my\_pluto\_firmware.dfu} matching the name of the image to be flashed. Again wait for
-the transfer to complete and the message stating that no error was detected to appear.
-
-The PlutoSDR is now ready to be tested.
-
-%--------------------------------
-\subsection{Application}
-%--------------------------------
+The final task is to write the application behaviour {\tt project1/app/main.c}
 
 The application-side makes use of \emph{libiio} as well as \emph{liboscimp}. For
-the former, one can find examples from M. Hennerich presentation at GNU Radio
-Conference 2018
-
-\href{https://www.gnuradio.org/grcon/grcon18/presentations/plutosdr/}{https://www.gnuradio.org/grcon/grcon18/presentations/plutosdr/}
-
+the former, one can find examples from M. Hennerich presentation at GNU Radio Conference 2018
+\footnote{
+\href{https://www.gnuradio.org/grcon/grcon18/presentations/plutosdr/}{www.gnuradio.org/grcon/grcon18/presentations/plutosdr/}}
 or following guidelines written in the ADI wiki website
-
-\href{https://wiki.analog.com/resources/tools-software/linux-drivers/iio-transceiver/ad9361}{https://wiki.analog.com/resources/tools-software/linux-drivers/iio-transceiver/ad9361}
-
-and 
-
-\href{https://wiki.analog.com/university/tools/pluto/controlling\_the\_transceiver\_and\_transferring\_data}{https://wiki.analog.com/university/tools/pluto/controlling\_the\_transceiver\_and\_transferring\_data}
-
+\footnote{
+\href{https://wiki.analog.com/resources/tools-software/linux-drivers/iio-transceiver/ad9361}{wiki.analog.com/resources/tools-software/linux-drivers/iio-transceiver/ad9361}}
+\footnote{
+\href{https://wiki.analog.com/university/tools/pluto/controlling\_the\_transceiver\_and\_transferring\_data}{wiki.analog.com/university/tools/pluto/controlling\_the\_transceiver\_and\_transferring\_data}}
 to tweek the configuration.
 
 For this part, we have just changed Hennerich's snippet code to the desired
-configuration of TX and RX carriers, Sampling rate, the ``process'' part only
-consists of writing the ram buffer into a data file.
+configuration of TX and RX carriers, sampling rate, while the processing part only
+consists in writing the RAM buffer into a data file.
 
-An example file is provided in the folder {\bf{get\_data/nco\_data2ram}}. Running this example
-requires loading the devicetree overlay and the kernel modules: all operations are taken care
-of by the bash script in the application directory. The {\tt dmesg} output should display
-something like
-{\footnotesize
+\label{fs}
+\begin{lstlisting}[language=C, numbers=left]
+[...]
+#include <iio.h> /* IIO API */
+#include <nco_conf.h> /* NCO function */
+
+#define ELEMENT_SIZE 1024	// Nb Sample
+
+#define CLK_FREQ 2000000
+#define MOD_FREQ 100000
+#define NCO_ACCUM_SIZE 28
+
+int main()
+{
+	int16_t *rawData;
+	int ramfd = 0, i;
+
+	struct iio_device *dev, *phy;
+	struct iio_context *ctx;
+	struct iio_channel *rx0_i, *rx0_q;
+
+	rawData = (int16_t *) malloc(2 * ELEMENT_SIZE * sizeof(int16_t));
+
+	ctx = iio_create_local_context();
+
+	dev = iio_context_find_device(ctx, "cf-ad9361-lpc");
+	phy = iio_context_find_device(ctx, "ad9361-phy");
+
+	iio_channel_attr_write_longlong(iio_device_find_channel(phy, "altvoltage1", true),
+		"frequency", 2200000000);	/* TX LO frequency 2.4GHz */
+
+	iio_channel_attr_write_longlong(iio_device_find_channel(phy, "altvoltage0", true),
+		"frequency", 2200100000);	/* RX LO frequency 2.4GHz + 100 kHz */
+
+	iio_channel_attr_write_longlong(iio_device_find_channel(phy, "voltage0", false),
+		"sampling_frequency", CLK_FREQ);	/* RX baseband rate 2 MSPS */
+
+	rx0_i = iio_device_find_channel(dev, "voltage0", 0);
+	rx0_q = iio_device_find_channel(dev, "voltage1", 0);
+
+	iio_channel_enable(rx0_i);
+	iio_channel_enable(rx0_q);
+
+	/* NCO configuration */
+	nco_counter_send_conf("/dev/nco00", CLK_FREQ, MOD_FREQ,
+			      NCO_ACCUM_SIZE, 0, 1, 1); // 0, 1, 1 => offset, PINC HW/SF, POFF HW/SF
+
+	ramfd = open("/dev/data00", O_RDONLY);
+	if (ramfd < 0) {
+		perror("ram open error\n");
+		return EXIT_FAILURE;
+	}
+	read(ramfd, rawData, 2 * ELEMENT_SIZE * sizeof(int16_t));
+	FILE *fd = fopen("data.dat", "w");
+	for (i = 0; i < 2 * ELEMENT_SIZE; i+=2)
+		fprintf(fd, "%d %d\n", rawData[i], rawData[i+1]);
+	fclose(fd);
+	close(ramfd);
+	iio_context_destroy(ctx);
+	free(rawData);
+	return EXIT_SUCCESS;
+}
+\end{lstlisting}
+
+The most important lines for this first project where we only fetch the data
+stream produce by the NCO are:
+\begin{itemize}
+\item lines 33-34: set the sample frequency (here 2~MS/s for consistency, although
+sampling rates up to 64~MS/s can be achieved between the AD9363 and the Zynq). This frequency
+corresponds to the {\tt l\_clk} output from {\tt axi\_ad9361} IP and is used by the
+NCO though {\tt ref\_clk} input for clocking frequency.
+\item lines 43-44: {\tt nco\_counter\_send\_conf} is the OscImpDigital library
+function to configure the NCO IP. We found:
+\begin{itemize}
+\item a {\tt /dev/nco00} according to the
+dev name provided in the XML file;
+\item the same constant used to configure the sampling frequency and here specifying the
+IP clocking frequency to compute phase increment work;
+\item the output, requested, frequency corresponding to the beatnote between TX
+LO frequency and RX LO frequency;
+\item the phase accumulator size again used to compute the phase increment;
+\item and, but out of the scope of this tutorial, a phase offset, and a mux
+configuration to driver phase increment and offset from AXI or from NCO IP
+inputs
+\end{itemize}
+\item finally lines 46-51: the {\tt /dev/data00} is opened and a simple read is
+used to fetch samples from data stream. we read 16bits $\times 1024 \times 2$
+(the $\times 2$ is due to the complex I/Q samples)
+\end{itemize}
+
+{\tt make} will produce both {\tt project1.dtbo} and {\tt project1\_us}.
+
+%--------------------------------
+\subsection{Update PlutoSDR firmware and install application}
+%--------------------------------
+
+Now we have a {\tt .bit} for the PL and application for the PS.
+
+First a new firmware image must be produced containing the custom bitstream. In
+the {\tt design} directory the command {\tt make dfu\_frm} will produce both {\tt .dfu}
+and {\tt .frm} images.
+
+Two firmware flashing strategies can be followed:
+\begin{itemize}
+\item using the {\tt .frm}, we copy the file to the PlutoSDR mass storage and reboot by:
+	\begin{itemize}
+	\item {\tt sudo mount /dev/sdx /mnt/sd} (see {\tt dmesg} for corresponding device)
+	\item {\tt cp image/pluto.frm /mnt/sd}
+	\item {\tt sudo eject /dev/sdx}
+	\end{itemize}
+	You should see the {\bf \textcolor{blue}{blue LED1}} flashing quickly: {\bf do not disconnect
+	nor touch anything until the PlutoSDR has rebooted} or you may brick the board at
+	this stage. 
+\item using the {\tt .dfu:} use the command {\tt make flash\_dfu\_frm} to reboot the
+board in dfu mode (password will be asked: analog) and to flash the {\tt pluto.dfu} image. This
+option is prefered for large images which sometimes do not fit in the remaining mass storage space.
+
+	When {\tt dfu-util} displays:
+	\begin{verbatim}_firmware
+Copying data from PC to DFU device
+Download        [=========================] 100%     30669815 bytes
+Download done.
+state(7) = dfuMANIFEST, status(0) = No error condition is present
+state(2) = dfuIDLE, status(0) = No error condition is present
+Done!
+	\end{verbatim}
+	unplug and replug the PlutoSDR.
+\end{itemize}
+
+%The last step is then to rebuild the firmware ({\tt pluto.frm}) :
+%
+%\begin{itemize}
+%	\item remember that we have copied the bitstream to the PlutoSDR
+%directory in \\
+%{\tt /somewhere/PlutoSDR/board/pluto}, hence providing buildroot with the appropriate
+%bitstream named {\tt system\_top.bit}.
+%	\item {\tt cd pathTo/buildroot-version/}
+%	\item {\tt make}
+%\end{itemize}
+%
+%\paragraph{NB:} For the moment, the repository PlutoSDR provides only support
+%for rootfs and linux (the bootloader part still remains to be added). Hence, any
+%change of the bistream requires to perform the steps presented here:
+%
+%\begin{itemize}
+%	\item Fire up the PlutoSDR // wait for the mass-storage to be available (via
+%{\tt dmseg -w} for example)
+%	\item {\tt mount /dev/sdX1\footnote{X is the index of the pluto mass-storage, e.g.
+%/dev/sde1} /mnt/somewhere/}
+%	\item {\tt cp pathTo/buildroot-version/output/images/pluto.frm /mnt/somewhere/}
+%	\item {\tt eject /dev/sdX1}  % JMF : moi j'ai toujours fait sdX : est-ce correct ?
+%\end{itemize}
+
+
+%Alternatively, the DFU image can be transfered to the PlutoSDR flash by rebooting,
+%from the target GNU/Linux prompt, to DFU mode with
+%{\footnotesize
+%\begin{verbatim}
+%device_reboot sf
+%\end{verbatim}
+%}
+%and then running on the host personnal computer
+%{\footnotesize
+%\begin{verbatim}
+%dfu-util -a firmware.dfu -D my_pluto_firmware.dfu
+%\end{verbatim}
+%}
+%with {\tt my\_pluto\_firmware.dfu} matching the name of the image to be flashed. Again wait for
+%the transfer to complete and the message stating that no error was detected to appear.
+%
+Now that the firmware including the updated bitstream has been flashed, the PlutoSDR is ready to be tested.
+
+In the {\tt app} directory use:
+\begin{lstlisting}
+make install_ssh
+\end{lstlisting}
+Again, the PlutoSDR root password ({\tt analog}) is required.
+
+To test the application:
+\begin{lstlisting}
+ssh root@192.168.2.1
+\end{lstlisting}
+and go to the directory in which the applications were stored, namely a sub-directory of {\tt /tmp}:
+\begin{lstlisting}
+cd /tmp/project1/bin/
+\end{lstlisting}
+
+%--------------------------------
+\subsection{Testing the application}
+%--------------------------------
+
+%An example file is provided in the folder {\bf{get\_data/nco\_data2ram}}. Running this example
+%requires loading the devicetree overlay and the kernel modules: all operations are taken care
+%of by the bash script in the application directory. The {\tt dmesg} output should display
+%something like
+
+Before using the application, dtbo overides must be applied and drivers loaded:
+this is done by executing {\tt ./project1\_us.sh}. The command {\tt dmesg} must
+display something like:
+{
 \begin{verbatim}
-[<c01d64b0>] (SyS_read) from [<c01070a0>] (ret_fast_syscall+0x0/0x48)           
----[ end trace 3cf21b0945e698e4 ]---                                            
+[...]
 data_to_ram_core: loading out-of-tree module taints kernel.                     
 probing data00 with dts                                                         
 name: data00 4 6                                                                
@@ -426,15 +659,11 @@ nco_counter 43c10000.nco00: nco00: Add the device to the kernel, connecting cde
 nco_counter 43c10000.nco00: 6nco00 loaded                                       
 \end{verbatim}
 }
-with the first two lines kernel messages resulting from the bitstream loading, then the
+with the first two lines exhibiting kernel messages resulting from the bitstream loading, then the
 {\tt data\_to\_ram} driver and the {\tt nco} driver. The two {\tt /dev/nco00} and {\tt /dev/data00}
 defined in the devicetree source should have been created.
 
-%--------------------------------
-\subsection{Testing}
-%--------------------------------
-
-The example is run from the PlutoSDR: the {\tt /dev/data00} device is opened, the output
+Now launch {\tt ./project1\_us}: the {\tt /dev/data00} device is opened, the output
 of the NCO fed to this block read from the PS, and stored in a file. Plotting the resulting
 dataset yields charts similar to those shown in Fig. \ref{nco}.
 
@@ -448,8 +677,8 @@ dataset yields charts similar to those shown in Fig. \ref{nco}.
 %\begin{minipage}[c]{0.49\linewidth}
 %	\includegraphics[width=\linewidth]{iio_fft_iq_data.pdf}
 %\end{minipage}
-\caption{Collected I/Q datasets. The 500~samples/period match the expected sampling
-rate of 5~MS/s as a 100~kHz sine wave is generated by the NCO. Three successive (discontinuous)
+\caption{Collected I/Q datasets. The 200~samples/period match the expected sampling
+rate of 2~MS/s as a 100~kHz sine wave is generated by the NCO. Three successive (discontinuous)
 datasets were collected.}% Right: Fourier transform.}
 \label{nco}
 \end{figure}
@@ -457,7 +686,8 @@ datasets were collected.}% Right: Fourier transform.}
 %-------------------------------------------------------
 \section{PlutoSDR data stream $\to$ RAM $\to$ Userspace}
 %-------------------------------------------------------
-This second tutorial is a demonstration of the compatibility of the OSCIMP
+\subsection{Design update}
+This second tutorial is a demonstration of the compatibility of the OscImpDigital
 ecosystem with the use of the existing Pluto HDL.
 Once complete, you should be able to plug any DSP task to the initial design and
 perform extra processing chains (Figs. \ref{chain1} and \ref{chain2}).
@@ -470,6 +700,13 @@ axiStreamToComplex, two duppComplex, convertComplextoReal, mixer\_sin and
 finally dataComplex\_to\_ram).}
 \label{chain1}
 \end{figure}
+
+This project is an update of the previous one. Instead of only fetching data
+stream generated by the NCO, we will use this data flow to frequency transpose the AD9361
+data stream by mixing. A second update is to be done:
+three datastreams lead to the DataToRAM block: the (complex) NCO output as addressed 
+previously, the raw ADC (complex) data resulting from the I/Q demodulation within 
+the AD9363 RF frontend, and the output of the mixer of the NCO with the ADC I/Q stream.
 
 This time, since data from the AD9363 will be used in the flow chart, a consistent
 clocking and signal reset distribution must be used:
@@ -486,6 +723,70 @@ Failing to use these connections will result in timing errors including negative
 values related to the fact that the mixer is fed data from two different clock domains -- 100~MHz
 for the AXI bus and 50~MHz for the AD9361.
 
+We must add these IPs:
+\begin{itemize}
+\item {\em axiStreamToComplex}: since ADI IP uses AXI Stream interfaces and OscImpDigital custom real
+	or complex interfaces, this IP must be used to convert interfaces.
+	According to the RF frontend bus size, this block must be configured with
+	{\tt Data Size = 16};
+\item $2 \times$ {\em dupplComplex\_1\_to\_2}: when connection between two IPs is done
+	using interfaces (instead of manually connecting wire/bus contained in an
+	interface) a relation 1 to many is forbidden. The dupplXX IP acts as a splitter
+	to copy inputs to both ouput ports. These two IPs must configured with
+	{\tt Data Size = 16};
+\item {\em mixerComplex\_sin}: this IP is used to apply a complex multiplication
+	between the two input port data flow. This IP must be configured with {\tt
+	Data Size = 16} according to the RF frondend size, and {\tt Nco Size = 16}
+	according to the NCO configuration. 
+\end{itemize}
+
+Now it is time to connect blocks, but before that the connection between
+{\tt NCO} and {\tt dataComplex\_to\_ram} set previously must be suppressed and the {\tt
+dataComplex\_to\_ram} configuration must be modified to change {\tt NB input} to
+3.
+
+For connecting:
+\begin{itemize}
+\item {\tt fir\_decimator} $\to$ {\tt axiStreamToComplex}: click on {\tt '+'} before
+{\tt axiStreamToComplex} {\tt s00\_axis} interface to expose all signals included in
+this interface. Connect:
+	\begin{itemize}
+	\item {\tt fir\_decimator} {\tt m\_axis\_data\_tdata} $\to$ {\tt
+	axiStreamToComplex} {\tt s00\_axis\_tdata};
+	\item {\tt fir\_decimator} {\tt m\_axis\_data\_tvalid} $\to$ {\tt
+	axiStreamToComplex} {\tt s00\_axis\_tvalid}
+	\end{itemize}
+\item {\tt axiStreamToComplex} $\to$ {\tt dupplComplex\_XX\_0}: connect {\tt
+axiStreamToComplex} {\tt data\_out} $\to$ {\tt dupplComplex\_XX\_0} {\tt
+data\_in};
+\item {\tt nco\_counter} $\to$ {\tt dupplComplex\_XX\_1}: connect {\tt
+nco\_counter} {\tt sine\_out} $\to$ {\tt dupplComplex\_XX\_1} {\tt
+data\_in};
+\item {\tt dupplComplex\_XX\_0} $\to$ {\tt mixerComplex}: connect
+{\tt dupplComplex\_XX\_0} {\tt data1\_out} $\to$ {\tt mixerComplex} {\tt
+data\_in};
+\item {\tt dupplComplex\_XX\_1} $\to$ {\tt mixerComplex}: connect
+{\tt dupplComplex\_XX\_1} {\tt data1\_out} $\to$ {\tt mixerComplex} {\tt
+nco\_in};
+\item {\tt dupplComplex\_XX\_0} $\to$ {\tt dataComplex\_to\_ram}: connect
+{\tt dupplComplex\_XX\_0} {\tt data2\_out} $\to$ {\tt dataComplex\_to\_ram} {\tt
+data1\_in};
+\item {\tt dupplComplex\_XX\_1} $\to$ {\tt dataComplex\_to\_ram}: connect
+{\tt dupplComplex\_XX\_1} {\tt data2\_out} $\to$ {\tt dataComplex\_to\_ram} {\tt
+data2\_in};
+\item {\tt mixerComplex\_sin} $\to$ {\tt dataComplex\_to\_ram}: connect
+{\tt mixerComplex\_sin} {\tt data\_out} $\to$ {\tt dataComplex\_to\_ram} {\tt
+data3\_in};
+\end{itemize}
+
+Additional connections for clock and reset signals:
+\begin{itemize}
+\item {\tt axiStreamToComplex} {\tt s00\_axis\_aclk} $\to$ {\tt axi\_ad9361}
+{\tt l\_clk};
+\item {\tt axiStreamToComplex} {\tt s00\_axis\_reset} $\to$ {\tt axi\_ad9361}
+{\tt rst};
+\end{itemize}
+
 \begin{figure}[h!tb]
 \includegraphics[width=\linewidth]{address.png}
 \caption{Address map generated by Vivado: the devicetree source file must match
@@ -493,14 +794,36 @@ this configuration for the Linux drivers to reach registers at the right address
 \label{chain2}
 \end{figure}
 
-Three datastreams lead to the DataToRAM block: the (complex) NCO output as addressed 
-previously, the raw ADC (complex) data resulting from the I/Q demodulation within 
-the AD9363 RF frontend, and the output of the mixer of the NCO with the ADC I/Q stream.
-Since the ADI ADC is fed to a FIR decimator with no interface on the AXI Stream bus,
-a direct connection to the axiStreamToComplex block is possible. Since the complex
-valued output exhibits an interface, the resulting stream must be dupplicated 
-(dupplCompl) when multiple processing -- here communication and mixing -- are to be
-performed on the complex valued datastreams.
+Once these modifications are done, click on {\tt Generate bitstream} and switch to
+application update while {\em Vivado} is working.
+
+%Since the ADI ADC is fed to a FIR decimator with no interface on the AXI Stream bus,
+%a direct connection to the axiStreamToComplex block is possible. Since the complex
+%valued output exhibits an interface, the resulting stream must be dupplicated 
+%(dupplCompl) when multiple processing -- here communication and mixing -- are to be
+%performed on the complex valued datastreams.
+
+\subsection{Application update}
+
+Compared to the design, updates to apply to the PS part is small:
+\begin{itemize}
+\item since we want to feedback TX RF signal to the RX RF input, we will use
+GNU Radio on the host computer to handle TX stream and to configure the {\em
+AD936x} so we must remove all lines related to the RF frontend configuration
+though IIO in the C source code.
+\item using USB communication is a bottleneck, which is the reason why since the
+beginning of this tutorial we have selected a sampling frequency if 2~MS/s. This
+setting must be applied to the GNU Radio flowchart {\tt samp\_rate}. Check that this value
+is selected as NCO clock frequency ({\tt \#define CLK\_FREQ});
+\item in the previous project, {\tt dataComplex\_to\_ram} stored and transmitted 1
+channel, 1024 $\times$ 16~bit complex integers. In this design update we have 3 input
+channels. All references to buffer sizes must be updated accordingly.
+\end{itemize}
+
+\subsection{Testing}
+
+Flashing firmware and application install to the PlutoSDR are exactly the same as
+previously, so please refer to this section.
 
 The resulting datasets are plotted on Fig. \ref{openclosed}, left with the
 PlutoSDR disconnected from its input (noise measurement on the ADC) and right with
@@ -531,20 +854,37 @@ Rather than bothering with the graphical user interface, adding new functionalit
 brought by the OscimpDigital framework to the original ADI PL configuration file is most
 efficiently achieved by updating the TCL script.
 
-The TCL script provided by ADI is located at {\tt /somewhere/hdl/projects/pluto/system\_bd.tcl} and
-must updated with the following:
-\begin{itemize}
-\item at the beginning of the file, insert the location of the OscimpDigital IP repository with
-{\footnotesize
+A default design for PlutoSDR, with OscimpDigital support, is available in the
+tutorial subdirectory
+{\tt project2/design} or alternatively in
+{\tt \$OSCIMP\_DIGITAL\_APP/plutosdr/plutosdr\_template}.
+
+%The TCL script provided by ADI is located at {\tt /somewhere/hdl/projects/pluto/system\_bd.tcl} and
+%must updated with the following:
+The TCL script must be updated with the additional blocks:
+
+%\begin{itemize}
+%\item at the beginning of the file, insert the location of the OscimpDigital IP repository with
+%{\footnotesize
+%\begin{verbatim}
+%variable fpga_ip    $::env(OSCIMP_DIGITAL_IP)
+%set_property  ip_repo_paths [list ${fpga_ip} ${lib_dirs}] [current_project]
+%update_ip_catalog
+%\end{verbatim}
+%}
+%\item append the design with the additional blocks:
+{
 \begin{verbatim}
-variable fpga_ip    $::env(OSCIMP_DIGITAL_IP)
-set_property  ip_repo_paths [list ${fpga_ip} ${lib_dirs}] [current_project]
-update_ip_catalog
-\end{verbatim}
-}
-\item append the design with the additional blocks:
-{\footnotesize
-\begin{verbatim}
+# axiStreamToComplex
+ad_ip_instance axiStreamToComplex axis2Complex
+ad_ip_parameter axis2Complex CONFIG.DATA_SIZE 16
+
+ad_connect axi_ad9361/rst axis2Complex/s00_axis_reset
+ad_connect axi_ad9361/l_clk axis2Complex/s00_axis_aclk
+
+ad_connect fir_decimator/m_axis_data_tdata axis2Complex/s00_axis_tdata
+ad_connect fir_decimator/m_axis_data_tvalid axis2Complex/s00_axis_tvalid
+
 #nco
 ad_ip_instance nco_counter nco
 ad_ip_parameter nco CONFIG.DATA_SIZE 16
@@ -552,67 +892,115 @@ ad_ip_parameter nco CONFIG.COUNTER_SIZE 28
 ad_ip_parameter nco CONFIG.LUT_SIZE 10
 
 ad_connect axi_ad9361/rst nco/ref_rst_i
-ad_connect sys_rstgen/peripheral_reset nco/s00_axi_reset
 ad_connect axi_ad9361/l_clk nco/ref_clk_i
 
+ad_connect sys_rstgen/peripheral_reset nco/s00_axi_reset
 ad_cpu_interconnect 0x43C00000 nco
+
+# duppl raw data -> mixer and dataComplex_to_ram
+ad_ip_instance dupplComplex_1_to_2 duppl_0
+ad_ip_parameter duppl_0 CONFIG.DATA_SIZE 16
+
+ad_connect axis2Complex/data_out duppl_0/data_in
+
+# duppl NCO -> mixer and dataComplex_to_ram
+ad_ip_instance dupplComplex_1_to_2 duppl_1
+ad_ip_parameter duppl_1 CONFIG.DATA_SIZE 16
+
+ad_connect nco/sine_out duppl_1/data_in
+
+# mixer
+ad_ip_instance mixerComplex_sin mixer
+ad_ip_parameter mixer CONFIG.NCO_SIZE 16
+ad_ip_parameter mixer CONFIG.DATA_SIZE 16
+
+ad_connect duppl_0/data1_out mixer/data_in
+ad_connect duppl_1/data1_out mixer/nco_in
 
 #dataComplex
 ad_ip_instance dataComplex_to_ram data_to_ram
-ad_ip_parameter data_to_ram CONFIG.NB_INPUT 1
+ad_ip_parameter data_to_ram CONFIG.NB_INPUT 3
 ad_ip_parameter data_to_ram CONFIG.DATA_SIZE 16
-ad_ip_parameter data_to_ram CONFIG.NB_SAMPLE 2048
+ad_ip_parameter data_to_ram CONFIG.NB_SAMPLE 1024
 
-ad_connect nco/sine_out data_to_ram/data1_in
+ad_connect duppl_0/data2_out data_to_ram/data1_in
+ad_connect duppl_1/data2_out data_to_ram/data2_in
+ad_connect mixer/data_out data_to_ram/data3_in
+
 ad_connect sys_rstgen/peripheral_reset data_to_ram/s00_axi_reset
-
 ad_cpu_interconnect 0x43C10000 data_to_ram
+
 \end{verbatim}
 }
-\item update the {\tt Makefile} by removing
-{\footnotesize
-\begin{verbatim}
-M_DEPS += ../../library/xilinx/common/ad_iobuf.v
-M_DEPS += ../../library/axi_ad9361/axi_ad9361_delay.tcl
-\end{verbatim}
-}
-and replacing with
-{\footnotesize
-\begin{verbatim}
-M_DEPS += $(ADI_HDL_DIR)/library/xilinx/common/ad_iobuf.v
-M_DEPS += $(ADI_HDL_DIR)/library/axi_ad9361/axi_ad9361_delay.tcl
-\end{verbatim}
-}
-with {\tt ADI\_HDL\_DIR} set to the {\tt /somewhere/hdl/} location,
-\item 
-in the {\tt Makefile}, remove
-{\footnotesize
-\begin{verbatim}
-include ../scripts/project-xilinx.mk
-\end{verbatim}
-}
-and replace with
-{\footnotesize
-\begin{verbatim}
-include $(ADI_HDL_DIR)/projects/scripts/project-xilinx.mk
-\end{verbatim}
-}
-\item in the {\tt system\_project.tcl}, replace
-{\footnotesize
-\begin{verbatim}
-source ../scripts/adi_env.tcl
-\end{verbatim}
-}
-with
-{\footnotesize
-\begin{verbatim}
-variable adi_hdl_dir $::env(ADI_HDL_DIR)
-source $adi_hdl_dir/projects/scripts/adi_env.tcl
-\end{verbatim}
-}
+
+TCL functions starting with {\em ad\_} are from ADI's {\tt hdl} repository:
+\begin{itemize}
+\item {\tt ad\_ip\_instance} is used to add an instance of an IP. The first
+parameter is the name of the IP (not the {\em VLNV} ({\em Vendor Library Name
+Version}) and the second is the instance name;
+\item {\tt ad\_ip\_parameter} configures, for one instance whose name is given
+as first argument, one parameter (second argument) with name
+{\em CONFIG.XXX} with the value passed as third argument;
+\item {\tt ad\_connect} to connect signals/interfaces between IPs with format
+{\em instance\_name/interface\_name};
+\item {\tt ad\_cpu\_interconnect} to connect the {\tt AXI Lite} interface for an
+instance (second argument) to the Zynq PS, with base address provided as first
+parameter.
 \end{itemize}
 
-Following these updates, {\tt make} with synthesize the bitstream which can be
+Note: ADI {\tt ad\_cpu\_interconnect} automatically connects AXI clock and AXI
+reset to the CPU, if this was not done previously. However, this function always
+considers reset as active low. When the reset signal
+is active high, as for most of OscImpDigital IPs, this signal must be {\bf explictly
+connected} before using this function.
+
+The most difficult aspect with this approach is to know interface names and
+parameters: see {\tt \$OSCIMP\_DIGITAL\_IP/README.md} for a detailed description of each IP.
+%\item update the {\tt Makefile} by removing
+%{\footnotesize
+%\begin{verbatim}
+%M_DEPS += ../../library/xilinx/common/ad_iobuf.v
+%M_DEPS += ../../library/axi_ad9361/axi_ad9361_delay.tcl
+%\end{verbatim}
+%}
+%and replacing with
+%{\footnotesize
+%\begin{verbatim}
+%M_DEPS += $(ADI_HDL_DIR)/library/xilinx/common/ad_iobuf.v
+%M_DEPS += $(ADI_HDL_DIR)/library/axi_ad9361/axi_ad9361_delay.tcl
+%\end{verbatim}
+%}
+%with {\tt ADI\_HDL\_DIR} set to the {\tt /somewhere/hdl/} location,
+%\item 
+%in the {\tt Makefile}, remove
+%{\footnotesize
+%\begin{verbatim}
+%include ../scripts/project-xilinx.mk
+%\end{verbatim}
+%}
+%and replace with
+%{\footnotesize
+%\begin{verbatim}
+%include $(ADI_HDL_DIR)/projects/scripts/project-xilinx.mk
+%\end{verbatim}
+%}
+%\item in the {\tt system\_project.tcl}, replace
+%{\footnotesize
+%\begin{verbatim}
+%source ../scripts/adi_env.tcl
+%\end{verbatim}
+%}
+%with
+%{\footnotesize
+%\begin{verbatim}
+%variable adi_hdl_dir $::env(ADI_HDL_DIR)
+%source $adi_hdl_dir/projects/scripts/adi_env.tcl
+%\end{verbatim}
+%}
+%\end{itemize}
+
+Following these updates, {\tt make} will generates {\tt pluto.xpr} and then
+synthesize the bistream which can be
 used as described earlier in the text to generate the {\tt .frm} and {\tt .dfu}
 images to reflash the PlutoSDR.
 \end{document}
