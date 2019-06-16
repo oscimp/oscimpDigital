@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="project2" version="1.0">
+	<options>
+		<option target="makefile" name="USE_STATIC_LIB">1</option>
+		<option target="makefile" name="LDFLAGS">-liio</option>
+	</options>
+
+	<ips>
+		<ip name ="dataComplex_to_ram" >
+			<instance name="data00" id = "0"
+				base_addr="0x43c10000" addr_size="0xffff" />
+		</ip>
+		<ip name ="nco_counter" >
+			<instance name="nco00" id = "0"
+				base_addr="0x43c00000" addr_size="0xffff" />
+		</ip>
+	</ips>
+</project>
