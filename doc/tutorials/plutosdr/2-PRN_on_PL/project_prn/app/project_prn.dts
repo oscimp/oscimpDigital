@@ -1,0 +1,17 @@
+/dts-v1/;
+/plugin/;
+
+/ {
+	compatible = "xlnx,zynq-7000";
+
+	fragment0 {
+		target = <&fpga_axi>;
+		#address-cells = <1>;
+		#size-cells = <1>;
+		__overlay__ {
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+		};
+	};
+};

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="project_gps" version="1.0">
+	<options>
+		<option target="makefile" name="USE_STATIC_LIB">1</option>
+		<option target="makefile" name="LDFLAGS">-liio -lad9361</option>
+	</options>
+	<ips>
+		<ip name="slv_to_sl_axi" >
+			<instance name="select_cacode" id = "0"
+				base_addr="0x43c20000" addr_size="0xffff" />
+		</ip>
+		<ip name ="dataComplex_to_ram" >
+			<instance name="data3200" id = "0"
+				base_addr="0x43c30000" addr_size="0xffff" />
+		</ip>
+	</ips>
+</project>

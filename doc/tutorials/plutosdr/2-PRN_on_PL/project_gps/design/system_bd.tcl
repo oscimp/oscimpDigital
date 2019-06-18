@@ -1,6 +1,7 @@
 variable fpga_ip    $::env(OSCIMP_DIGITAL_IP)
-
-set_property  ip_repo_paths [list ${fpga_ip} ${lib_dirs}] [current_project]
+variable ggm_fpga_ip    $::env(GGM_FPGA_IP)
+puts $lib_dirs
+set_property  ip_repo_paths [list ${ggm_fpga_ip} ${fpga_ip} ${lib_dirs}] [current_project]
 update_ip_catalog
 
 # create board design
@@ -268,6 +269,21 @@ ad_cpu_interrupt ps-12 mb-12 axi_ad9361_dac_dma/irq
 
 # GGM
 
+# nco
+ad_ip_instance nco_counter nco
+ad_ip_parameter nco CONFIG.DATA_SIZE 16
+ad_ip_parameter nco CONFIG.LUT_SIZE 12
+ad_ip_parameter nco CONFIG.COUNTER_SIZE 32
+
+ad_connect axi_ad9361/rst nco/ref_rst_i
+ad_connect sys_rstgen/peripheral_reset nco/s00_axi_reset
+ad_connect axi_ad9361/l_clk nco/ref_clk_i
+
+create_bd_port -dir O cos_fake_o
+ad_connect cos_fake_o nco/cos_fake_o
+
+ad_cpu_interconnect 0x43C00000 nco
+
 # axiStreamToComplex
 ad_ip_instance axiStreamToComplex axis2Complex
 ad_ip_parameter axis2Complex CONFIG.DATA_SIZE 16
@@ -284,21 +300,6 @@ ad_ip_parameter duppl CONFIG.DATA_SIZE 16
 
 ad_connect axis2Complex/data_out duppl/data_in
 
-# nco
-ad_ip_instance nco_counter nco
-ad_ip_parameter nco CONFIG.DATA_SIZE 16
-ad_ip_parameter nco CONFIG.LUT_SIZE 12
-ad_ip_parameter nco CONFIG.COUNTER_SIZE 32
-
-ad_connect axi_ad9361/rst nco/ref_rst_i
-ad_connect sys_rstgen/peripheral_reset nco/s00_axi_reset
-ad_connect axi_ad9361/l_clk nco/ref_clk_i
-
-create_bd_port -dir O cos_fake_o
-ad_connect cos_fake_o nco/cos_fake_o
-
-ad_cpu_interconnect 0x43C00000 nco
-
 # mixer
 ad_ip_instance mixerComplex_sin mixer
 ad_ip_parameter mixer CONFIG.NCO_SIZE 16
@@ -308,27 +309,27 @@ ad_connect duppl/data1_out mixer/data_in
 ad_connect nco/sine_out mixer/nco_in
 
 # switch
-ad_ip_instance switchComplex use_nco
-ad_ip_parameter use_nco CONFIG.DEFAULT_INPUT 0
-ad_ip_parameter use_nco CONFIG.DATA_SIZE 16
+ad_ip_instance switchComplex bp_nco
+ad_ip_parameter bp_nco CONFIG.DEFAULT_INPUT 0
+ad_ip_parameter bp_nco CONFIG.DATA_SIZE 16
 
-ad_connect duppl/data2_out use_nco/data1_in
-ad_connect mixer/data_out use_nco/data2_in
-ad_connect sys_rstgen/peripheral_reset use_nco/s00_axi_reset
+ad_connect duppl/data2_out bp_nco/data1_in
+ad_connect mixer/data_out bp_nco/data2_in
+ad_connect sys_rstgen/peripheral_reset bp_nco/s00_axi_reset
 
-ad_cpu_interconnect 0x43C10000 use_nco
+ad_cpu_interconnect 0x43C10000 bp_nco
 
 # clk domain change
 
-# complex to axis
-ad_ip_instance complexToAxiStream cplx_to_axis
-ad_ip_parameter cplx_to_axis CONFIG.DATA_SIZE 16
+ad_ip_instance fifo_clk_change_complex clk_fifo_x
+ad_ip_parameter clk_fifo_x CONFIG.DATA_SIZE 16
 
-ad_connect use_nco/data_out cplx_to_axis/data_in
+ad_connect bp_nco/data_out clk_fifo_x/data_in
 
-ad_connect axi_ad9361/l_clk cplx_to_axis/m00_axis_aclk
+ad_connect axi_ad9361/l_clk clk_fifo_x/m00_axis_aclk
+ad_connect sys_ps7/FCLK_CLK0 clk_fifo_x/s00_axis_aclk
+ad_connect sys_rstgen/peripheral_reset clk_fifo_x/s00_axis_reset
 
-# fifo
 ad_ip_instance fifo_generator fifo_clk_x
 ad_ip_parameter fifo_clk_x CONFIG.INTERFACE_TYPE {AXI_STREAM}
 ad_ip_parameter fifo_clk_x CONFIG.Clock_Type_AXI {Independent_Clock}
@@ -349,7 +350,7 @@ ad_ip_parameter fifo_clk_x CONFIG.Full_Threshold_Assert_Value_axis 15
 ad_ip_parameter fifo_clk_x CONFIG.Full_Threshold_Assert_Value_rach 15
 ad_ip_parameter fifo_clk_x CONFIG.Full_Threshold_Assert_Value_wach 15
 ad_ip_parameter fifo_clk_x CONFIG.Full_Threshold_Assert_Value_wrch 15
-ad_ip_parameter fifo_clk_x CONFIG.HAS_ACLKEN {false}
+ad_ip_parameter fifo_clk_x CONFIG.HAS_ACLKEN {true}
 ad_ip_parameter fifo_clk_x CONFIG.Input_Depth_axis 16
 ad_ip_parameter fifo_clk_x CONFIG.Reset_Type {Asynchronous_Reset}
 ad_ip_parameter fifo_clk_x CONFIG.TDATA_NUM_BYTES 4
@@ -357,75 +358,53 @@ ad_ip_parameter fifo_clk_x CONFIG.TKEEP_WIDTH 4
 ad_ip_parameter fifo_clk_x CONFIG.TSTRB_WIDTH 4
 ad_ip_parameter fifo_clk_x CONFIG.TUSER_WIDTH 0
 
-ad_connect cplx_to_axis/m00_axis fifo_clk_x/S_AXIS
+ad_connect fifo_clk_x/M_AXIS clk_fifo_x/s00_axis
+ad_connect fifo_clk_x/S_AXIS clk_fifo_x/m00_axis
+ad_connect clk_fifo_x/m00_aclk_en fifo_clk_x/s_aclk_en
 
 ad_connect axi_ad9361/l_clk fifo_clk_x/s_aclk
 ad_connect sys_ps7/FCLK_CLK0 fifo_clk_x/m_aclk
 ad_connect sys_rstgen/peripheral_aresetn fifo_clk_x/s_aresetn
 
-# fifo axis to complex
-ad_ip_instance axiStreamToComplex fifo2Cplx
-ad_ip_parameter fifo2Cplx CONFIG.DATA_SIZE 16
+# cacode
+ad_ip_instance cacode cacode_gen
+ad_ip_parameter cacode_gen CONFIG.PERIOD_LEN 1
 
-ad_connect fifo_clk_x/M_AXIS fifo2Cplx/s00_axis
-ad_connect sys_rstgen/peripheral_reset fifo2Cplx/s00_axis_reset
-ad_connect sys_ps7/FCLK_CLK0 fifo2Cplx/s00_axis_aclk
+ad_connect sys_ps7/FCLK_CLK0 cacode_gen/clk
+ad_connect sys_rstgen/peripheral_reset cacode_gen/reset
 
-# duppl to prns
-ad_ip_instance dupplComplex_1_to_2 duppl_xcorr
-ad_ip_parameter duppl_xcorr CONFIG.DATA_SIZE 16
+# slv_to_sl
+ad_ip_instance slv_to_sl_axi select_cacode
+ad_ip_parameter select_cacode CONFIG.SLV_SIZE 32
+ad_ip_parameter select_cacode CONFIG.DEFAULT_BIT_OFFSET 0
 
-ad_connect fifo2Cplx/data_out duppl_xcorr/data_in
+ad_connect sys_rstgen/peripheral_reset select_cacode/s00_axi_reset
 
-# prn1
-ad_ip_instance prn prn1_gen
-ad_ip_parameter prn1_gen CONFIG.PERIOD_LEN 1
-ad_ip_parameter prn1_gen CONFIG.BIT_LEN 7
-ad_ip_parameter prn1_gen CONFIG.PRN_NUM 1
+ad_connect sys_rstgen/peripheral_reset select_cacode/ref_rst_i
+ad_connect sys_ps7/FCLK_CLK0 select_cacode/ref_clk_i
+ad_connect cacode_gen/gold_code_o select_cacode/slv_i
 
-ad_connect sys_ps7/FCLK_CLK0 prn1_gen/clk
-ad_connect sys_rstgen/peripheral_reset prn1_gen/reset
+ad_cpu_interconnect 0x43C20000 select_cacode
 
-# prn1
-ad_ip_instance prn prn4_gen
-ad_ip_parameter prn4_gen CONFIG.PERIOD_LEN 1
-ad_ip_parameter prn4_gen CONFIG.BIT_LEN 7
-ad_ip_parameter prn4_gen CONFIG.PRN_NUM 4
+# xcorr
+ad_ip_instance xcorr_gps_slow_complex xcorr_gps
+ad_ip_parameter xcorr_gps CONFIG.LENGTH 1023
+ad_ip_parameter xcorr_gps CONFIG.NB_BLK 12
+ad_ip_parameter xcorr_gps CONFIG.IN_SIZE 16
+ad_ip_parameter xcorr_gps CONFIG.OUT_SIZE 32
 
-ad_connect sys_ps7/FCLK_CLK0 prn4_gen/clk
-ad_connect sys_rstgen/peripheral_reset prn4_gen/reset
-
-# xcorr1
-ad_ip_instance xcorr_prn_slow_complex xcorr1
-ad_ip_parameter xcorr1 CONFIG.LENGTH 127
-ad_ip_parameter xcorr1 CONFIG.NB_BLK 1
-ad_ip_parameter xcorr1 CONFIG.IN_SIZE 16
-ad_ip_parameter xcorr1 CONFIG.OUT_SIZE 32
-
-ad_connect duppl_xcorr/data1_out xcorr1/data_in
-ad_connect prn1_gen/prn_o xcorr1/prn_i
-ad_connect xcorr1/prn_sync_o prn1_gen/tick_i
-
-# xcorr4
-ad_ip_instance xcorr_prn_slow_complex xcorr4
-ad_ip_parameter xcorr4 CONFIG.LENGTH 127
-ad_ip_parameter xcorr4 CONFIG.NB_BLK 1
-ad_ip_parameter xcorr4 CONFIG.IN_SIZE 16
-ad_ip_parameter xcorr4 CONFIG.OUT_SIZE 32
-
-ad_connect duppl_xcorr/data2_out xcorr4/data_in
-ad_connect prn4_gen/prn_o xcorr4/prn_i
-ad_connect xcorr4/prn_sync_o prn4_gen/tick_i
+ad_connect clk_fifo_x/data_out xcorr_gps/data_in
+ad_connect select_cacode/sl_o xcorr_gps/prn_i
+ad_connect xcorr_gps/prn_sync_o cacode_gen/tick_i
 
 #dataComplex
 ad_ip_instance dataComplex_to_ram data_to_ram
-ad_ip_parameter data_to_ram CONFIG.NB_INPUT 2
+ad_ip_parameter data_to_ram CONFIG.NB_INPUT 1
 ad_ip_parameter data_to_ram CONFIG.DATA_SIZE 32
 ad_ip_parameter data_to_ram CONFIG.NB_SAMPLE 2048
 
-ad_connect xcorr1/data_out data_to_ram/data1_in
-ad_connect xcorr4/data_out data_to_ram/data2_in
+ad_connect xcorr_gps/data_out data_to_ram/data1_in
 ad_connect sys_rstgen/peripheral_reset data_to_ram/s00_axi_reset
 
-ad_cpu_interconnect 0x43C20000 data_to_ram
+ad_cpu_interconnect 0x43C30000 data_to_ram
 

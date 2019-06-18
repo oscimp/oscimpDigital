@@ -211,6 +211,11 @@ ad_ip_parameter prn1_gen CONFIG.PRN_NUM 1
 ad_connect sys_ps7/FCLK_CLK0 prn1_gen/clk
 ad_connect sys_rstgen/peripheral_reset prn1_gen/reset
 
+[...]
+
+# prn4
+[...]
+
 # xcorr1
 ad_ip_instance xcorr_prn_slow_complex xcorr1
 ad_ip_parameter xcorr1 CONFIG.LENGTH 127
@@ -221,6 +226,9 @@ ad_ip_parameter xcorr1 CONFIG.OUT_SIZE 32
 ad_connect duppl_xcorr/data1_out xcorr1/data_in
 ad_connect prn1_gen/prn_o xcorr1/prn_i
 ad_connect xcorr1/prn_sync_o prn1_gen/tick_i
+
+# xcorr4
+[...]
 
 #dataComplex
 ad_ip_instance dataComplex_to_ram data_to_ram
