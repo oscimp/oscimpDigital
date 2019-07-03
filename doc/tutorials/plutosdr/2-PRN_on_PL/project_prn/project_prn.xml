@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="project_prn" version="1.0">
+	<options>
+		<option target="makefile" name="USE_STATIC_LIB">1</option>
+	</options>
+
+	<ips>
+		<ip name ="nco_counter" >
+			<board_driver name="nco" id = "0"
+				base_addr="0x43c00000" addr_size="0xffff" />
+		</ip>
+		<ip name ="switchComplex" >
+			<board_driver name="use_nco" id = "0"
+				base_addr="0x43c10000" addr_size="0xffff" />
+		</ip>
+		<ip name ="dataComplex_to_ram" >
+			<board_driver name="data3200" id = "0"
+				base_addr="0x43c20000" addr_size="0xffff" />
+		</ip>
+	</ips>
+</project>
+

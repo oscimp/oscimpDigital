@@ -12,20 +12,16 @@
 			#address-cells = <1>;
 			#size-cells = <1>;
 
-			nco: nco@43c00000{
-				compatible = "ggm,nco_counter";
-				reg = <0x43c00000 0xffff>;
-			};
-
-			use_nco: use_nco@43c10000{
-				compatible = "ggm,switch";
-				reg = <0x43c10000 0xffff>;
+			select_cacode: select_cacode@43c20000{
+				compatible = "ggm,fpgagen";
+				reg = <0x43c20000 0xffff>;
 			};
 
 			data3200: data3200@43c30000{
 				compatible = "ggm,dataToRam";
-				reg = <0x43c20000 0xffff>;
+				reg = <0x43c30000 0xffff>;
 			};
+
 		};
 	};
 };

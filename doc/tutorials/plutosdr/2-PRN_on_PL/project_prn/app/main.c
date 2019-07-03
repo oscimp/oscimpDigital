@@ -10,9 +10,7 @@
 #define USE_NCO 1
 #undef USE_NCO
 
-#undef USE_NCO_SWITCH
-
-#define NUM_PRN 1 // 2
+#define NUM_PRN 2
 
 int fpga_configure();
 
@@ -39,22 +37,10 @@ int fpga_configure()
 #ifdef USE_NCO
 	int freq = 20000;
 	int ret;
-	int use_nco = 1;
-	ret = nco_counter_send_conf("/dev/nco", 20000000, freq, 32, 0, 1, 1);
-	printf("plop\n");
-	if (ret == EXIT_FAILURE) {
-		printf("erreur conf nco\n");
-		return EXIT_FAILURE;
-	}
 	ret = nco_counter_send_conf("/dev/nco", 1000000/*20000000*/, freq, 32, 0, 1, 1);
 	if (ret == EXIT_FAILURE) return EXIT_FAILURE;
+	return switch_send_conf("/dev/use_nco", 1);
 #else
-	int use_nco = 0;
+	return switch_send_conf("/dev/use_nco", 0);
 #endif
-#ifdef USE_NCO_SWITCH
-	return switch_send_conf("/dev/use_nco", use_nco);
-#else 
-	return(use_nco);
-#endif
-
 }
