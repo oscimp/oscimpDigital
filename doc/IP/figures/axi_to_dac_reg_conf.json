@@ -1,0 +1,7 @@
+{"reg":[
+    { "name": "SEN",   "bits": 1, "attr": "RW" },
+    { "name": "DAEH",   "bits": 1, "attr": "RW" },
+    { "name": "DBEH",   "bits": 1, "attr": "RW" },
+	{ "bits": 29 }
+]
+}
