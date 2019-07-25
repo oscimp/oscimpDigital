@@ -1,4 +1,4 @@
 {"reg":[
-    { "name": "DATAA_VAL",   "bits": 32, "attr": "RW" }
+    { "name": "DATAB_VAL",   "bits": 32, "attr": "RW" }
 ]
 }

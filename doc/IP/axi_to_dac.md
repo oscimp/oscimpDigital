@@ -73,7 +73,6 @@ __**REG_DATAB**__ (*BASE_ADDR + 0x08*)
 *Note*: if *DATA_SIZE* < 32, upper bits from this register are discarded to fit *DATA_SIZE* bits
 
 __**REG_CONF**__ (*BASE_ADDR + 0x0C*)
-
 ![axi_to_dac_reg_conf](figures/axi_to_dac_reg_conf.svg)
 
 | bit  | name       |                        |
