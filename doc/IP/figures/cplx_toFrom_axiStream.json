@@ -1,0 +1,19 @@
+{"signal": [
+	{ "name": "clk",         "wave": "p........."},
+	{ "name": "reset",       "wave": "10........"},
+	["complex_to_axiStream",
+	{ "name": "data_en_i",   "wave": "0..10.10.."},
+	{ "name": "data_i_i",    "wave": "x3.3..3...", "data":["0x00", "0x30", "0x02"]},
+	{ "name": "data_q_i",    "wave": "x3.3..3...", "data":["0x00", "0x50", "0x05"]},
+	{ "name": "tvalid",      "wave": "0..10.10.."},
+	{ "name": "tdata",       "wave": "x3.3..3...", "data":["0x0000", "0x5030", "0x0502"]}
+	],
+	{},
+	["axiStream_to_complex",
+	{ "name": "tvalid",      "wave": "0..10.10.."},
+	{ "name": "tdata",       "wave": "x3.3..3...", "data":["0x0000", "0x5030", "0x0502"]},
+	{ "name": "data_en_o",   "wave": "0..10.10.."},
+	{ "name": "data_i_o",    "wave": "x3.3..3...", "data":["0x00", "0x30", "0x02"]},
+	{ "name": "data_q_o",    "wave": "x3.3..3...", "data":["0x00", "0x50", "0x05"]}
+	]
+]}
