@@ -1,0 +1,17 @@
+{"signal": [
+	{ "name": "clk",       "wave": "p......", "period":2},
+	["input",
+	{ "name": "data_en_i", "wave": "lh.....", "period":2},
+	{ "name": "data_i",    "wave": "x333333", "phase":0.8, "period":2, "data":["d1", "d2", "d3","d4", "d5", "d6"]},
+	{ "name": "nco_i_i",   "wave": "x333333", "phase":0.8, "period":2, "data":["nI1", "nI2", "nI3","nI4", "nI5", "nI6"]},
+	{ "name": "nco_q_i",   "wave": "x333333", "phase":0.8, "period":2, "data":["nQ1", "nQ2", "nQ3","nQ4", "nQ5", "nQ6"]}
+	],
+	["output",
+	{ "name": "data_en_o", "wave": "l..h...", "period":2},
+	{ "name": "data_i_o",  "wave": "x..3333", "phase":0.8, "period":2,
+		"data":["d1*nI1", "d2*nI2", "d3*nI3", "d4*nI4", "d5*nI5", "d6*nI6"]},
+	{ "name": "data_i_o",  "wave": "x..3333", "phase":0.8, "period":2,
+		"data":["d1*nQ1", "d2*nQ2", "d3*nQ3", "d4*nQ4", "d5*nQ5", "d6*nQ6"]}
+	]
+]
+}

@@ -1,5 +1,5 @@
 {"signal": [
-	{ "name": "clk",         "wave": "p........."},
+	{ "name": "clk",         "wave": "p.........", "phase":0.5},
 	{ "name": "reset",       "wave": "10........"},
 	["complex_to_axiStream",
 	{ "name": "data_en_i",   "wave": "0..10.10.."},
