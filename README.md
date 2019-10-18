@@ -1,6 +1,6 @@
 # oscimpDigital
-OscillatorIMP ecosystem for the digital characterization of ultrastable
-oscillators
+OscillatorIMP ecosystem originally designed for the digital characterization of ultrastable
+oscillators, provides most frontend processing blocks for Software Defined Radio (SDR) reception.
 
 ## Motivation
 
