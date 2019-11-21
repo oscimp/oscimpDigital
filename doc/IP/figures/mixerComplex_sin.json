@@ -1,0 +1,22 @@
+{"signal": [
+	{ "name": "clk",       "wave": "p....", "period":3},
+	["input",
+	{ "name": "data_en_i", "wave": "lh...", "period":3},
+	{ "name": "data_i_i",  "wave": "x3333", "phase":0.8, "period":3,
+			"data":["dI1", "dI2", "dI3","d4"]},
+	{ "name": "data_q_i",  "wave": "x3333", "phase":0.8, "period":3,
+			"data":["dQ1", "dQ2", "dQ3","d4"]},
+	{ "name": "nco_i_i",   "wave": "x3333", "phase":0.8, "period":3,
+			"data":["nI1", "nI2", "nI3","nI4", "nI5", "nI6"]},
+	{ "name": "nco_q_i",   "wave": "x3333", "phase":0.8, "period":3,
+			"data":["nQ1", "nQ2", "nQ3","nQ4"]}
+	],
+	["output",
+	{ "name": "data_en_o", "wave": "l..h.", "period":3},
+	{ "name": "data_i_o",  "wave": "x..33", "phase":0.8, "period":3,
+			"data":["dI1*nI1-dQ1*nQ1", "dI2*nI2-dQ2*nQ2"]},
+	{ "name": "data_i_o",  "wave": "x..33", "phase":0.8,"period":3,
+			"data":["dI1*nQ1+dQ1*nI1", "dI2*nQ2+dQ2*nI2"]}
+	]
+]
+}

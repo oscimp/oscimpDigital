@@ -1,0 +1,20 @@
+{"signal": [
+	{ "name": "clk",         "wave": "p.........", "period":1},
+	["real_to_axiStream",
+	{ "name": "data_en_i",   "wave": "0.10.10...", "node":"..a..e.......", "phase":0.5},
+	{ "name": "data_i",      "wave": "x33..3....", "data":["0x00", "0x30", "0x02"], "phase":0.5, "node":"..c..g....."},
+	{ "name": "tvalid",      "wave": "0.10.10...", "phase":0, "node":"..b..f....."},
+	{ "name": "tdata",       "wave": "x33..3....", "data":["0x00", "0x30", "0x02"], "phase":0, "node":"..d..h....."}
+	],
+	{},
+	["axiStream_to_real",
+	{ "name": "tvalid",      "wave": "0.10.10...", "node":"..i..m.......", "phase":0.5},
+	{ "name": "tdata",       "wave": "x33..3....", "phase":0.5, "data":["0x00", "0x30", "0x02"], "phase":0.5, "node":"..k..o....."},
+	{ "name": "data_en_o",   "wave": "0.10.10...", "phase":0, "node":"..j..n....."},
+	{ "name": "data_o",      "wave": "x33..3....", "data":["0x00", "0x30", "0x02"], "phase":0, "node":"..l..p....."}
+	]
+],
+"edge": [
+	"a~>b", "c~>d", "e~>f", "g~>h", "i~>j", "k~>l", "m~>n", "o~p"
+]
+}
