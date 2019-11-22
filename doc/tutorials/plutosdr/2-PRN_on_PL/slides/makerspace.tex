@@ -6,7 +6,7 @@
 \usetheme{Hannover}
 \setbeamertemplate{headline}{}
 \setbeamersize{text margin left=0cm}
-\graphicspath{{../images/}}
+\graphicspath{{../images/}{./gnuradioDays2019/}}
 
 \beamertemplatefootpagenumber
 \beamertemplatenavigationsymbolsempty
@@ -43,20 +43,11 @@
 FEMTO-ST Time \& Frequency department, Besan\c con, France \\ 
 }
 Contact: {\tt \{gwenhael.goavec,jmfriedt\}@femto-st.fr} \\ \vspace{0.6cm}
-\begin{minipage}[t]{\linewidth}
-\begin{minipage}{.25\linewidth}
-\includegraphics[height=1cm]{logo_femto.pdf}
-\end{minipage}
-\begin{minipage}{.47\linewidth}
 \begin{center}
-References at \\
-\url{http://jmfriedt.free.fr}
+Slides at \\
+\url{https://github.com/oscimp/oscimpDigital/tree/master/doc/tutorials/plutosdr/2-PRN_on_PL}\\\ \\ \ \\
+\includegraphics[height=1cm]{logo_femto.pdf}\vspace{-1cm}
 \end{center}
-\end{minipage}
-\begin{minipage}{.21\linewidth}
-%\includegraphics[height=2.3cm]{}
-\end{minipage}
-\end{minipage}%\vspace{-1.6cm}
 }
 \title[]{OscImpDigital CPU-FPGA co-design framework in the context of satellite communication}
 
@@ -225,7 +216,7 @@ over USB
 \begin{frame}[fragile]\frametitle{Principle}
 
 \begin{center}
-\includegraphics[width=.8\linewidth]{pluto-oscimpDigital-objective}
+\includegraphics[width=\linewidth]{plutopluto-oscimpDigital-makerspace}
 \end{center}
 
 \begin{itemize}
@@ -238,19 +229,196 @@ Linux drivers (modules)
 \end{frame}
 
 \section{OscimpDigital}
-\begin{frame}[fragile]\frametitle{The OscimpDigital framework}
 
+%\begin{frame}[fragile]\frametitle{The OscimpDigital framework}
+%
+%\vspace{-0.2cm}
+%\hspace{-0.5cm}
+%\begin{minipage}[t]{\linewidth}
+%\begin{minipage}{0.8\linewidth}
+%\hspace{-0.6cm}
+%\begin{itemize}
+%\item one algorithm $\Rightarrow$ one or more flavor (data type, performance vs.
+%resources, ...): {\tt fpga\_ip} directory
+%\item need to communicate between FPGA and CPU: {\tt linux\_driver} directory
+%\item some IPs are widely used or complex to configure \\$\Rightarrow$ need
+%to provide library with CPU code (reduce redundance, simplify application): {\tt
+%liboscimp} in {\tt lib} directory.
+%\end{itemize}
+%\end{minipage}
+%\begin{minipage}{0.1\linewidth}
+%\center\includegraphics[width=2.6\textwidth]{./img/structureEco}
+%\end{minipage}
+%\end{minipage}
+%\end{frame}
+
+
+\frame{\frametitle{Oscimp EcoSystem}
+Purpose: provide a coherent environment to create design (FPGA), and
+application:
+
+\vspace{-0.3cm}
 \begin{minipage}[t]{\linewidth}
-\begin{minipage}{.49\linewidth}
+\begin{minipage}{0.6\linewidth}
+\hspace{-0.2cm}
+\begin{itemize}
+\item blocks (IP) with algorithm level of implementation (FPGA);
+\item GNU/Linux hierarchy compliance (driver/library/application);
+\item tools to generate some files and scripts/Makefile to factorize most common
+part.
+\end{itemize}
 \end{minipage}
-\begin{minipage}{.49\linewidth}
+\begin{minipage}{0.3\linewidth}
+\center\includegraphics[width=0.7\textwidth]{./img/structureEco}
 \end{minipage}
 \end{minipage}
+\vspace{-0.5cm}
+\center\includegraphics[width=1.0\textwidth]{./img/structRepo}
+}
+%\frame{\frametitle{Structure}
+%}
+\frame{\frametitle{FPGA}
+\begin{minipage}[t]{\linewidth}
+\begin{minipage}{0.6\linewidth}
+Algorithms or utilities functions.
+
+Developer aspect:
+\begin{itemize}
+\item normalize interfaces between blocks
+\item isolation between implementation and communication
+\end{itemize}
+
+End user aspect:
+\begin{itemize}
+\item 0, 1 or more interface to connect;
+\item AXI interface automatically connected.
+\end{itemize}
+\end{minipage}
+\begin{minipage}{0.35\linewidth}
+\includegraphics[width=1.2\textwidth]{./img/structureIp}
+\end{minipage}
+\end{minipage}
+\includegraphics[width=0.9\textwidth]{./img/displayIf}
+}
+\frame{\frametitle{CPU: environment}
+{\bf Char device drivers} to add abstraction, GNU/Linux hierarchy compliance and
+communication improvement:
+\begin{itemize}
+\item 1 IP with communication $\Rightarrow$ 1 (or more) driver(s);
+\item a {\tt core} driver knows how to communicate with an IP but not where;
+\item {\tt device tree overlay} used to provide which drivers must be probed and
+base address for each of them;
+\end{itemize}
+TODO $\Rightarrow$ IIO integration
+
+{\bf libraries} to simplify some common and long (number of line) tasks.
+}
+
+\frame{\frametitle{CPU: application}
+Application structure:
+\begin{itemize}
+\item {\tt dts} to provides which driver must be used and base address;
+\item {\tt Makefile} to cross-compile application and generate the {\tt dtbo} from dts
+\item {\tt applicationName\_us.sh}: a shell script used to flash FPGA, load devicetree
+and drivers;
+\item {\tt main.c}: user application
+\end{itemize}
+
+\includegraphics[width=1.0\textwidth]{img/structApp.pdf}
+}
+
+\begin{frame}[containsverbatim]
+\frametitle{CPU: module\_generator}
+\begin{itemize}
+\item Used to generate some files in app directory.
+\item use an XML file for design's informations.
+\end{itemize}
+
+{\small \verb!module_generator -dts myApp.xml!}
+
+\hspace{-0.6cm}
+%\begin{columns}[t]
+%\begin{column}{0.57\textwidth}
+%myApp.xml
+%\vspace{-0.2cm}
+{\footnotesize \begin{verbatim}
+<?xml version="1.0" encoding="utf-8"?>
+<project name="tutorial5" version="1.0">
+  <options>
+    <option target="makefile" name="USE_STATIC_LIB">1</option>
+    <option target="makefile" name="LDFLAGS">-liio</option>
+  </options>
+  <ips>
+    <ip name ="dataComplex_to_ram" >
+      <instance name="data1600" id = "0"
+        base_addr="0x43c00000" addr_size="0xffff" />
+    </ip>
+    <ip name ="nco_counter">
+      <instance name="nco" id = "0"
+        base_addr="0x43c10000" addr_size="0xffff" />
+    </ip>
+  </ips>
+</project>
+\end{verbatim}
+}
 \end{frame}
 
-\begin{frame}[fragile]\frametitle{The OscimpDigital framework}
-\hspace*{-1.3cm}\includegraphics[width=1.15\linewidth]{1xcorr_1PRN_crop.pdf}
+\begin{frame}[fragile]\frametitle{Application to GPS decoding}
+
+\begin{itemize}
+\item
+TCL scripts define the processing functions, their settings and how they are 
+connected to each other
+\item Zynq on the PlutoSDR $\Rightarrow$ Xilinx Vivado (despite platform
+independence of OscimpDigital)
+\end{itemize}
+
+\begin{center}
+\includegraphics[width=1.04\linewidth]{2xcorr_2PRN_NCO_crop.pdf}
+{\footnotesize Dual PRN generator and cross-correlation with the received datastream frequency
+transposed using the NCO.\par}
+\end{center}
+
+\vfill
+{\bf 22~s on Zynq PL} (limited by the FPGA area limiting the number of parallel correlations) v.s {\bf 108~s on 2.6 GHz PC} (GNU/Octave)
 \end{frame}
+
+\begin{frame}[fragile]\frametitle{Conclusion}
+
+\begin{itemize}
+\item OscimpDigital as a flexible framework for assembling signal processing
+blocks on the FPGA in charge of collecting radiofrequency data
+\item Platform independence (useful investment for Intel/Altera SoC as well)
+\item Consistent IP--Linux kernel module--library--userspace application
+\item Application to GPS decoding (dual channel, acquisition step)
+\item {\bf Perspective}: port to ADRV9361 (Zynq 7035 $\gg$ 7010)
+\end{itemize}
+
+\vfill
+\fbox{\parbox{\linewidth}{
+Users {\bf not familiar with VHDL will benefit} from this framework since functional
+processing blocks are provided
+}}
+
+\vfill
+\noindent{\bf Resources:}
+
+{\footnotesize
+{\url{https://github.com/trabucayre/redpitaya}} (Buildroot BR2\_external)
+
+{\url{https://github.com/oscimp/PlutoSDR}} (Buildroot BR2\_external)
+
+{\url{https://github.com/oscimp/oscimpDigital}} (IP, driver, lib, tools \& doc)
+}
+
+\vfill
+\noindent{Clone repository and submodules:}
+
+{\footnotesize
+{\verb!git clone --recursive https://github.com/oscimp/oscimpDigital.git!}
+}
+\end{frame}
+
 \end{document}
 
 Remember for synthesizing the project for the PlutoSDR to export the {\tt ADI\_HDL\_DIR} variable
@@ -441,9 +609,6 @@ one emitter or the other, two PRN generators and two correlators can be included
 decoding path (Fig. \ref{ex3}).
 
 \begin{figure}[h!tb]
-\includegraphics[width=\linewidth]{2xcorr_2PRN_NCO_crop.pdf}
-\caption{Dual PRN generator and cross-correlation with the received datastream frequency
-transposed using the NCO.}
 \label{ex3}
 \end{figure}
 
