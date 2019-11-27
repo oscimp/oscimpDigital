@@ -38,6 +38,7 @@
 \setbeamertemplate{footline}{28 Nov 2019, Swiss Aeropole, Payerne (CH)}
 
 \begin{document}
+\date{November 28, 2019}
 \author[G. Goavec- Merou \& al.]{Goavec-Merou, Jean-Michel Friedt\\
 {\footnotesize
 FEMTO-ST Time \& Frequency department, Besan\c con, France \\ 
@@ -300,19 +301,19 @@ End user aspect:
 \end{minipage}
 \includegraphics[width=0.9\textwidth]{./img/displayIf}
 }
-\frame{\frametitle{CPU: environment}
-{\bf Char device drivers} to add abstraction, GNU/Linux hierarchy compliance and
-communication improvement:
-\begin{itemize}
-\item 1 IP with communication $\Rightarrow$ 1 (or more) driver(s);
-\item a {\tt core} driver knows how to communicate with an IP but not where;
-\item {\tt device tree overlay} used to provide which drivers must be probed and
-base address for each of them;
-\end{itemize}
-TODO $\Rightarrow$ IIO integration
-
-{\bf libraries} to simplify some common and long (number of line) tasks.
-}
+%\frame{\frametitle{CPU: environment}
+%{\bf Char device drivers} to add abstraction, GNU/Linux hierarchy compliance and
+%communication improvement:
+%\begin{itemize}
+%\item 1 IP with communication $\Rightarrow$ 1 (or more) driver(s);
+%\item a {\tt core} driver knows how to communicate with an IP but not where;
+%\item {\tt device tree overlay} used to provide which drivers must be probed and
+%base address for each of them;
+%\end{itemize}
+%TODO $\Rightarrow$ IIO integration
+%
+%{\bf libraries} to simplify some common and long (number of line) tasks.
+%}
 
 \frame{\frametitle{CPU: application}
 Application structure:
