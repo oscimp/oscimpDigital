@@ -160,7 +160,13 @@ Redpitaya hardware configuration (amount of RAM, peripherals ...): defining such
 a configuration of the processing system is needed for further work. Such a result
 is achieved by double-clicking on the {\em processing system} block: on top
 of the newly created window, in the {\tt Presets} menu, select {\em Apply configuration} 
-and load the configuration file {\tt redpitaya.tcl} found in the {\tt red\_vivado\_support} 
+and load the configuration file {\tt redpitaya.tcl} (or {\tt redpitaya16.tcl} for the
+16-bit Redpitaya version
+\footnote{In case of the 16-bit Redpitaya, we wish to echo the 16-bit ADC measurement to
+the 14-bit DAC. A bit-shift -- \url{https://github.com/oscimp/oscimpDigital/blob/master/doc/IP/shifter.md} -- 
+to the right by two bits is necessary to match data bus sizes.
+This shifter is automatically inserted when generating the Vivado project from the TCL script
+found in the {\tt design} directory.}) found in the {\tt red\_vivado\_support} 
 directory of the \url{https://github.com/trabucayre/redpitaya/} repository, or
 locally at\\
 {\tt /somewhere/oscimpDigital/fpga\_ip/preset/redpitaya.tcl}.
