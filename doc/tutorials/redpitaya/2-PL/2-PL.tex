@@ -1,3 +1,11 @@
+% 1. add ip: redpitaya_converters
+% 2. physical interface: CTRL-t to Make External
+% 3. adc_rst_i -> periph_reset of rst_ps
+% 4. configure redpitaya_converters to 14 or 16 bits
+% 5. dataAout -> Ain and same for B
+% 6. left window: sources -> constraints -> constrs_1 Right click: add Sources -> Add or
+%    Create Files -> fpga_ip -> redpit_converters -> adc or adc16 in addition to redpitaya_converters
+
 \documentclass[10pt,oneside]{article}
 \usepackage{makeidx,anysize,mflogo,xspace,float,epsfig,url}
 \usepackage{amsmath,amsfonts,amssymb,a4wide} 
@@ -181,7 +189,8 @@ Since this design will not allow communicating with the PS, some blocks that wil
 be used later are not added, such as the {\em axi interconnect} and the
 {\em Processor System Reset}. The latter block is however mandatory in the current case
 since it handles reset signals. Hence, having again hit {\tt CTRL + i}, select 
-{\em Processor System Reset} (search keyword {\tt reset}).
+{\em Processor System Reset} (search keyword {\tt reset}). Now connect the {\tt redpitaya\_converters}
+{\tt adc\_rst\_i} input to the {\tt proc\_sys\_reset} output named {\tt peripher\_reset}.
 
 \section{Connecting blocks to the FPGA pins}
 
@@ -190,8 +199,8 @@ to the FPGA pins (Fig. \ref{bloc_design_final}).
 
 Exporting a signal to the outer world is achieved by using the {\em make external} command
 obtained by selecting a given signal on a block (the line and its name should turn brown) 
-and right-mouse click or using the shortcut {\tt CTRL + t}: apply this command to the
-``phys\_interface'' of the {\tt redpitaya\_converters} block.
+and right-mouse click, or using the shortcut {\tt CTRL + t}: apply this command to the
+{\tt phys\_interface} of the {\tt redpitaya\_converters} block.
 
 %The following signal must be exported:
 %\begin{itemize}
@@ -219,8 +228,8 @@ and right-mouse click or using the shortcut {\tt CTRL + t}: apply this command t
 The {\tt make external} command we have just used (CTRL+t shortcut) has exported
 each signal and now requires defining which of the FPGA pins they are connected to.
 Such constraints are defined by dedicated files with the {\tt .xdc} extension. For the
-three IPs we have used in this design, these files are provided in their respective 
-sub-directories in the repository and must be added:
+IP we have used in this design, these files are provided in the sub-directory with the
+IP name in the repository and must be added:
 \begin{itemize}
 \item in the {\tt Sources} tab on the left of the schematic, unwrap {\tt Constraints} 
 and right-click on {\tt constrs\_1} (Fig. \ref{addSources}) and select {\em Add Sources}
