@@ -50,7 +50,7 @@ the sample values from the PS for storage or further processing (Fig. \ref{fin})
 \includegraphics{objective}
 \end{center}
 
-\hspace*{-2cm}\includegraphics[width=1.2\linewidth]{design_1.pdf}
+\hspace*{-2cm}\includegraphics[width=1.2\linewidth]{combinedADC_DAC_data2ram}
 \caption{Objective (top) of this tutorial and final schematic of the processing chain described
 in this document.}
 \label{fin}
@@ -66,15 +66,17 @@ Doing so is achieved by:
 \begin{enumerate}
 \item add {\tt dupplReal\_1\_to\_2}, {\tt convertRealToComplex} (converting two real
 data streams to one complex) and then {\tt dataComplex\_to\_ram}
-\item Double click on {\tt dupplReal\_1\_to\_2} to configure to 14 bit data (doing so on the
-two stream doublers). Same for {convertRealToComplex}
+\item Double click on {\tt dupplReal\_1\_to\_2} to configure to 14 bit (or 16-bit if using
+the 16-bit Redpitaya) data (doing so on the two stream doublers). Same for 
+{convertRealToComplex} 
 \item Link {\tt data1\_out} of each {\tt dupplReal} to {\tt data1\_in} and
 {\tt data2\_in} respectively of \\{\tt convertRealToComplex}
 \item Cut the wires linking the ADC and DAC, and use the two free outputs of the 
 {\tt dupplReal\_1\_to\_2} blocks
 \item Connect {\tt dataA\_out} and {\tt dataB\_out} of the ADCs to the two free inputs
 of the {\tt dupplReal\_1\_to\_2} blocks
-\item {\tt dataComplex\_to\_RAM}: configure {\tt Data Size} to 14 bits, {\tt Nb
+\item {\tt dataComplex\_to\_RAM}: configure {\tt Data Size} to 14 bits (or 16-bit if using
+the 16-bit Redpitaya), {\tt Nb
 Input} to 1 and 
 {\tt Nb Sample} to the number of samples to be transfered.
 For example, defining 4096 {\bf sample pairs} (complex numbers) each encoded as
