@@ -54,9 +54,9 @@ output to the DAC input (Fig. \ref{bloc_design_final}).
 \includegraphics{objective}
 \end{center}
 %\hspace{-1cm}\includegraphics[width=0.97\textwidth]{./block_design.pdf}
-\hspace{-1cm}\includegraphics{./block_design.pdf}
-\caption{Objective of the tutorial (top) and block design (bottom) including the processor, the reset 
-signals, and ADC and a DAC, as well as the clock generation block for the latters.}
+\hspace{-1cm}\includegraphics[width=0.97\textwidth]{combinedADC_DAC.png}
+\caption{Objective of the tutorial (top) and block design (bottom) including the processor, and
+the combined ADC/DAC block including clocking circuit.}
 \label{bloc_design_final}
 \end{figure}
 
@@ -165,52 +165,56 @@ $\rightarrow$ {\tt Repository} $\rightarrow$ {\tt +} and add
 Vivado installation, when accessing for the first time the custom IPs provided by
 the OscImp project.
 
-\section{Inserting new blocks in Vivado}
+\section{Inserting a new block in Vivado}
 
-Three processing blocks must be included to transfer the ADC input to the DAC output:
-\begin{itemize}
-\item the ADC description {\tt ltc2145}
-\item the {\tt ad9767} DAC,
-\item the {\tt redpitaya\_adc\_clk} block handling clocks for the ADC and DAC
-\end{itemize}
+Handling ADC, DAC and the associated clocking circuitry is being taken care
+of by a single processing block: {\tt redpitaya\_converters}. This block is designed
+to handle the legacy 14-bit Redpitaya as well as the newer 16-bit Redpitaya.
+%Three processing blocks must be included to transfer the ADC input to the DAC output:
+%\begin{itemize}
+%\item the ADC description {\tt ltc2145}
+%\item the {\tt ad9767} DAC,
+%\item the {\tt redpitaya\_adc\_clk} block handling clocks for the ADC and DAC
+%\end{itemize}
 
 Since this design will not allow communicating with the PS, some blocks that will
-be used lated are not added, such as the {\em axi interconnect} and the
-{\em Processor System Reset}. The latter block us however mandatory in the current case
-since it handle reset signals. Hence, having again hit {\tt CTRL + i}, select 
+be used later are not added, such as the {\em axi interconnect} and the
+{\em Processor System Reset}. The latter block is however mandatory in the current case
+since it handles reset signals. Hence, having again hit {\tt CTRL + i}, select 
 {\em Processor System Reset} (search keyword {\tt reset}).
 
 \section{Connecting blocks to the FPGA pins}
 
-The three blocks describing the ADC, DAC and internal signals must be connected
+The block describing the ADC, DAC and internal signals must be connected
 to the FPGA pins (Fig. \ref{bloc_design_final}).
 
 Exporting a signal to the outer world is achieved by using the {\em make external} command
 obtained by selecting a given signal on a block (the line and its name should turn brown) 
-and right-mouse click or using the shortcut {\tt CTRL + t}.
+and right-mouse click or using the shortcut {\tt CTRL + t}: apply this command to the
+``phys\_interface'' of the {\tt redpitaya\_converters} block.
 
-The following signal must be exported:
-\begin{itemize}
-\item for the ADC: 
-	\begin{itemize}
-	\item {\tt adc\_data\_a\_i};
-	\item {\tt adc\_data\_b\_i};
-	\item {\tt adc\_cdcs}.
-	\end{itemize}
-\item for the DAC:
-	\begin{itemize}
-	\item {\tt dac\_dat\_o};
-	\item {\tt dac\_wrt\_o};
-	\item {\tt dac\_sel\_o};
-	\item {\tt dac\_clk\_o};
-	\item {\tt dac\_rst\_o}.
-	\end{itemize}
-\item for the clock signal handling block:
-	\begin{itemize}
-	\item {\tt adc\_clk\_p\_i};
-	\item {\tt adc\_clk\_n\_i};
-	\end{itemize}
-\end{itemize}
+%The following signal must be exported:
+%\begin{itemize}
+%\item for the ADC: 
+%	\begin{itemize}
+%	\item {\tt adc\_data\_a\_i};
+%	\item {\tt adc\_data\_b\_i};
+%	\item {\tt adc\_cdcs}.
+%	\end{itemize}
+%\item for the DAC:
+%	\begin{itemize}
+%	\item {\tt dac\_dat\_o};
+%	\item {\tt dac\_wrt\_o};
+%	\item {\tt dac\_sel\_o};
+%	\item {\tt dac\_clk\_o};
+%	\item {\tt dac\_rst\_o}.
+%	\end{itemize}
+%\item for the clock signal handling block:
+%	\begin{itemize}
+%	\item {\tt adc\_clk\_p\_i};
+%	\item {\tt adc\_clk\_n\_i};
+%	\end{itemize}
+%\end{itemize}
 
 The {\tt make external} command we have just used (CTRL+t shortcut) has exported
 each signal and now requires defining which of the FPGA pins they are connected to.
@@ -223,9 +227,12 @@ and right-click on {\tt constrs\_1} (Fig. \ref{addSources}) and select {\em Add 
 \item {\em Add or create constraints};
 \item using the ``+'' button, {\em Add Files} and select the {\tt xdc} files
 	\begin{itemize}
-	\item {\tt ad9767.xdc};
-	\item {\tt ltc2145-redpy.xdc};
-	\item {\tt redpitaya\_clk\_pin.xdc}
+\item {\tt redpit\_converters} must alway be selected;
+\item add either {\tt adc} or {\tt adc16} depending whether the legacy (14-bit) or newer (16-bit)
+Redpitaya is used % JMFXX
+%	\item {\tt ad9767.xdc};
+%	\item {\tt ltc2145-redpy.xdc};
+%	\item {\tt redpitaya\_clk\_pin.xdc}
 	\end{itemize}
 located in the IP directories of the {\tt oscimpDigital/fpga\_ip} repository.
 \item before validating with {\tt Finish}, select {\em Copy constraints
@@ -242,59 +249,59 @@ computer or directory (collaborative work).
 \label{addSources}
 \end{figure}
 
-\section{Connecting clock and reset signals}
+%\section{Connecting clock and reset signals}
+%
+%The {\tt ltc2145} and {\tt ad9767} blocks require clock and reset signal to operate
+%properly:
+%
+%For the ADC:
+%\begin{itemize}
+%\item {\tt processing\_rst\_i} must be connected to the {\tt
+%adc\_rst\_o} signal of the {\tt redpitaya\_adc\_clk};
+%\item {\tt resetn} must be connected to the {\tt peripheral\_aresetn} 
+%signal of the {\tt Processor system Reset};
+%\item {\tt adc\_clk\_i} must be connected to the {\tt adc\_clk\_o} signal of
+%{\tt redpitaya\_adc\_clk}.
+%\end{itemize}
+%
+%For the DAC:
+%\begin{itemize}
+%\item {\tt dac\_clk\_i} is connected to {\tt dac\_clk\_o} of {\tt
+%redpitaya\_adc\_clk};
+%\item {\tt dac\_2clk\_i} is connected to {\tt dac\_2clk\_o} of {\tt
+%redpitaya\_adc\_clk};
+%\item {\tt dac\_2ph\_i} is connected to {\tt dac\_2ph\_o} of {\tt
+%redpitaya\_adc\_clk};
+%\item {\tt dac\_locked\_i} is connected to {\tt dac\_locked\_o} of {\tt
+%redpitaya\_adc\_clk}.
+%\end{itemize}
+%
+%For the clock signal generator:
+%\begin{itemize}
+%\item {\tt adc\_rst\_i} de {\tt redpitaya\_adc\_dac\_clk} is connected to {\tt 
+%peripheral\_reset} of {\tt proc\_sys\_reset}
+%\end{itemize}
+%
+%Connect the output of the ADC to the input of the DAC:
+%\begin{itemize}
+%\item {\tt dataA\_out} of the ltc2145 is connected to {\tt dataA\_in} of {\tt ad9767}
+%\item {\tt dataB\_out} of the ltc2145 is connected to {\tt dataB\_in} of {\tt ad9767}
+%\end{itemize}
 
-The {\tt ltc2145} and {\tt ad9767} blocks require clock and reset signal to operate
-properly:
-
-For the ADC:
-\begin{itemize}
-\item {\tt processing\_rst\_i} must be connected to the {\tt
-adc\_rst\_o} signal of the {\tt redpitaya\_adc\_clk};
-\item {\tt resetn} must be connected to the {\tt peripheral\_aresetn} 
-signal of the {\tt Processor system Reset};
-\item {\tt adc\_clk\_i} must be connected to the {\tt adc\_clk\_o} signal of
-{\tt redpitaya\_adc\_clk}.
-\end{itemize}
-
-For the DAC:
-\begin{itemize}
-\item {\tt dac\_clk\_i} is connected to {\tt dac\_clk\_o} of {\tt
-redpitaya\_adc\_clk};
-\item {\tt dac\_2clk\_i} is connected to {\tt dac\_2clk\_o} of {\tt
-redpitaya\_adc\_clk};
-\item {\tt dac\_2ph\_i} is connected to {\tt dac\_2ph\_o} of {\tt
-redpitaya\_adc\_clk};
-\item {\tt dac\_locked\_i} is connected to {\tt dac\_locked\_o} of {\tt
-redpitaya\_adc\_clk}.
-\end{itemize}
-
-For the clock signal generator:
-\begin{itemize}
-\item {\tt adc\_rst\_i} de {\tt redpitaya\_adc\_dac\_clk} is connected to {\tt 
-peripheral\_reset} of {\tt proc\_sys\_reset}
-\end{itemize}
-
-Connect the output of the ADC to the input of the DAC:
-\begin{itemize}
-\item {\tt dataA\_out} of the ltc2145 is connected to {\tt dataA\_in} of {\tt ad9767}
-\item {\tt dataB\_out} of the ltc2145 is connected to {\tt dataB\_in} of {\tt ad9767}
-\end{itemize}
-
-\section{Other connections}
-
-Designs communicating between PL and PS through the AXI bus allow for automated
-routing of some of the signals. Lacking such functionalities here, we must connect
-manually:
-\begin{itemize}
-\item the {\tt FCLK\_CLK0} signal of {\tt processing\_system7\_0} is connected to
-	\begin{itemize}
-	\item {\tt M\_AXI\_GP0\_ACLK} signal of the same block,
-	\item {\tt slowest\_sync\_clk} signal of the {\tt rst\_processing\_system7\_0\_125M} block.
-	\end{itemize}
-\item the signal {\tt FCLK\_RESET0\_N} of {\tt processing\_system7\_0} is connected to the
-{\tt ext\_reset\_in} signal of the {\tt rst\_processing\_system7\_0\_125M} block.
-\end{itemize}
+%\section{Other connections}
+%
+%Designs communicating between PL and PS through the AXI bus allow for automated
+%routing of some of the signals. Lacking such functionalities here, we must connect
+%manually:
+%\begin{itemize}
+%\item the {\tt FCLK\_CLK0} signal of {\tt processing\_system7\_0} is connected to
+%	\begin{itemize}
+%	\item {\tt M\_AXI\_GP0\_ACLK} signal of the same block,
+%	\item {\tt slowest\_sync\_clk} signal of the {\tt rst\_processing\_system7\_0\_125M} block.
+%	\end{itemize}
+%\item the signal {\tt FCLK\_RESET0\_N} of {\tt processing\_system7\_0} is connected to the
+%{\tt ext\_reset\_in} signal of the {\tt rst\_processing\_system7\_0\_125M} block.
+%\end{itemize}
 
 \section{Bitstream generation}
 
