@@ -163,15 +163,15 @@ val = AXI_TO_DAC_DATAB_EN_HIGH;
 ioctl(fd, AXI_TO_DAC_SET(AXI_TO_DAC_EN_HIGH), &val);
 
 /* write data_a out */
-val = 0x0A
+val = 0x0A;
 ioctl(fd, AXI_TO_DAC_SET(AXI_TO_DAC_DATA_A), &val);
 
 /* write data_b out */
-val = 0x03
+val = 0x03;
 ioctl(fd, AXI_TO_DAC_SET(AXI_TO_DAC_DATA_B), &val);
 
 /* read data_a register value */
-ioctl(fd, AXI_TO_DAC_GET(AXI_TO_DAC_DATA_A), &val;
+ioctl(fd, AXI_TO_DAC_GET(AXI_TO_DAC_DATA_A), &val);
 
 /* close device */
 close(fd);
