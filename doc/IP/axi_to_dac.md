@@ -134,8 +134,8 @@ where reg is:
 * **AXI_TO_DAC_DATA_A**: access to reg DATA_A 
 * **AXI_TO_DAC_DATA_B**: access to reg DATA_B
 * **AXI_TO_DAC_EN_HIGH**: to configure enable behavior. Values allowed:
-  * **AXI_TO_DAC_DATAA_EN_HIGH**: dataA enable out is always high
-  * **AXI_TO_DAC_DATAB_EN_HIGH**: dataB enable out is always high
+  * **AXI_TO_DAC_DATAA_EN_HIGH**: dataA enable out is always high and dataB enable out is high when write
+  * **AXI_TO_DAC_DATAB_EN_HIGH**: dataA enable out is high when write and dataB enable out is always high
   * **AXI_TO_DAC_BOTH_EN_HIGH**: both output enable are always high
 * **AXI_TO_DAC_SYNC_CHAN**: to enable channels synchronization. Allowed values are **AXI_TO_DAC_SYNC_EN** or 0
 
@@ -158,8 +158,10 @@ if (fd < 0) {
 val = AXI_TO_DAC_SYNC_EN;
 ioctl(fd, AXI_TO_DAC_SET(AXI_TO_DAC_SYNC_CHAN), &val);
 
-/* configure data_b enable always high */
+/* configure data_a oneshot high and data_b enable always high */
 val = AXI_TO_DAC_DATAB_EN_HIGH;
+/* val = AXI_TO_DAC_DATAA_EN_HIGH; to have opposite */
+/* val = AXI_TO_DAC_BOTH_EN_HIGH; to data_a AND data_b enable always_high */
 ioctl(fd, AXI_TO_DAC_SET(AXI_TO_DAC_EN_HIGH), &val);
 
 /* write data_a out */
