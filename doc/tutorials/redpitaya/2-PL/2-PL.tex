@@ -171,6 +171,10 @@ directory of the \url{https://github.com/trabucayre/redpitaya/} repository, or
 locally at\\
 {\tt /somewhere/oscimpDigital/fpga\_ip/preset/redpitaya.tcl}.
 
+\noindent\fbox{\parbox{\linewidth}{In case of error about the clock settings of the
+Ethernet interface, make sure {\tt LANG="en\_US.UTF-8"} or erroneous decimal separators
+will be used.}}
+
 \section{Configuring Vivado to use custom IPs}
 
 {\tt Tools} $\rightarrow$ {\tt Settings} $\rightarrow$ {\tt IP} 
@@ -197,6 +201,11 @@ be used later are not added, such as the {\em axi interconnect} and the
 since it handles reset signals. Hence, having again hit {\tt CTRL + i}, select 
 {\em Processor System Reset} (search keyword {\tt reset}). Now connect the {\tt redpitaya\_converters}
 {\tt adc\_rst\_i} input to the {\tt proc\_sys\_reset} output named {\tt peripher\_reset}.
+
+Forthermore, clock settings must be manually defined since here we do not rely on AXI
+communication to set these signals automatically as will be done later:
+connect {\tt FCLK\_CLK0} (of ps7) to {\tt M\_AXI\_GP0\_ACLK} (same block) and 
+{\tt slowest\_sync\_clk} (of {\tt rst\_ps7}).
 
 \section{Connecting blocks to the FPGA pins}
 
@@ -250,7 +259,7 @@ depending whether the legacy (14-bit) or newer (16-bit) Redpitaya is used
 %	\item {\tt ltc2145-redpy.xdc};
 %	\item {\tt redpitaya\_clk\_pin.xdc}
 	\end{itemize}
-located in the IP directories of the {\tt oscimpDigital/fpga\_ip} repository.
+located in the IP directories of the {\tt oscimpDigital/fpga\_ip/redpitaya\_converters} repository.
 \item before validating with {\tt Finish}, select {\em Copy constraints
 files into project}, otherwise the project will refer to the repository file
 using absolute paths, preventing the use of the project if moved to another
