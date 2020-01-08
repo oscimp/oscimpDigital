@@ -133,12 +133,22 @@ resources from an XML file written manually. In this example, the configuration 
 \noindent
 with the {\tt name} tag including the name of the bitstream without the {\tt .bit.bin} extension
 nor the ``\_wrapper'' part of its name (notice that the default name {\tt tutorial3} is given
-by Vivado to generate {\tt tutorial3\_wrapper.bit.bin}). The {\tt driver} tag informs
-on the kernel module to be loaded, while {\tt base\_addr} and {\tt addr\_size} provide the
+by Vivado to generate {\tt tutorial3\_wrapper.bit.bin}). The {\tt ip} tag informs
+on the IP (module\_generator uses this information to deduce which driver is
+used), while {\tt base\_addr} and {\tt addr\_size} provide the
 address starting point and range as provided in each IP attribute by Vivado (Fig. \ref{addr}).
 {\tt option} node tell {\tt module\_generator} to add {\tt DONT\_USE\_LIB} in
 the Makefile. This variable is used to avoid application to be linked to the
 liboscimp\_fpga (see. 4-FIR for library introduction).
+
+This XML file may be written manually or by using a script~:
+\begin{lstlisting}
+vivado -mode batch -source $OSCIMP_DIGITAL_IP/scripts/gen_module_generator_xml.tcl -tclargs . project_name bd_name
+\end{lstlisting}
+Where the first argument is the directory where .xpr is stored, the second is
+the name of the project and the last is the name of the block design.
+
+This script generate a file called project\_name.xml in the upper directory.
 
 \begin{figure}[h!tb]
 \includegraphics[width=\linewidth]{adresses}
@@ -152,7 +162,7 @@ and a Makefile dedicated to compile the application, the dtbo and to install all
 {\tt \$OSCIMP\_DIGITAL\_NFS/tutorial3}.
 
 This task is done by this command:\\
-{\tt fpga\_app/tools/module\_generator/module\_generator -dts my\_file.xml}
+{\tt fpga\_app/tools/module\_generator/module\_generator my\_file.xml}
 
 After generation, a new directory, called {\tt app} is present in the current
 directory, containing all files. The Makefile is basic since it provides the

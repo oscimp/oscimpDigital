@@ -1,6 +1,20 @@
 variable fpga_ip	$::env(OSCIMP_DIGITAL_IP)
+variable board_name $::env(BOARD_NAME)
 
-set part_name xc7z010clg400-1
+# change to upper
+set up_board [string toupper $board_name]
+
+if {$up_board == "REDPITAYA"} {
+	set part_name xc7z010clg400-1
+	set board_preset "$fpga_ip/preset/redpitaya_preset.xml"
+	set ADC_SIZE 14
+} else {
+	if {$up_board == "REDPITAYA16"} {
+		set part_name xc7z020clg400-1
+		set board_preset "$fpga_ip/preset/redpitaya16_preset.xml"
+		set ADC_SIZE 16
+	}
+}
 set project_name tutorial3
 set build_path tmp
 set bd_path $build_path/$project_name.srcs/sources_1/bd/$project_name
@@ -12,11 +26,6 @@ file delete -force $build_path
 create_project $project_name $build_path -part $part_name
 create_bd_design $project_name
 
-# Load RedPitaya ports: only for blocks to be connected to hardware ports/pins
-source $repo_path/ltc2145/ltc2145.tcl
-source $repo_path/ad9767/ad9767.tcl
-source $repo_path/redpitaya_adc_dac_clk/redpitaya_adc_dac_clk.tcl
-
 # Set Path for the custom IP cores
 set_property IP_REPO_PATHS $repo_path [current_project]
 update_ip_catalog
@@ -25,23 +34,33 @@ update_ip_catalog
 ## instances (CTRL-i) ##
 ########################
 
-# ltc2145_0
-set ltc2145_0 [create_bd_cell -type ip -vlnv gwbs:user:ltc2145:1.0 ltc2145_0]
-# ad9767_0
-set ad9767_0 [create_bd_cell -type ip -vlnv ggm:cogen:ad9767:1.0 ad9767_0]
-# redpitaya_adc_dac_clk_0
-set redpitaya_adc_dac_clk_0 [create_bd_cell -type ip \
-	-vlnv ggm:cogen:redpitaya_adc_dac_clk:1.0 redpitaya_adc_dac_clk_0]
+source $repo_path/redpitaya_converters/redpitaya_converters.tcl
+set converters [ create_bd_cell -type ip -vlnv ggm:cogen:redpitaya_converters:1.0 converters]
+set_property -dict [ list CONFIG.ADC_SIZE $ADC_SIZE \
+	CONFIG.ADC_EN true \
+	CONFIG.DAC_EN true] $converters
+
+# shifter is mandatory for redpitaya 16 : ADC is 16bits DAC 14bits
+set shiftA [ create_bd_cell -type ip -vlnv ggm:cogen:shifterReal:1.0 shiftA]
+set_property -dict [ list \
+	CONFIG.SIGNED_FORMAT true \
+	CONFIG.DATA_IN_SIZE $ADC_SIZE \
+	CONFIG.DATA_OUT_SIZE 14] $shiftA
+set shiftB [ create_bd_cell -type ip -vlnv ggm:cogen:shifterReal:1.0 shiftB]
+set_property -dict [ list \
+	CONFIG.SIGNED_FORMAT true \
+	CONFIG.DATA_IN_SIZE $ADC_SIZE \
+	CONFIG.DATA_OUT_SIZE 14] $shiftB
 # dupplReal_1_to_2
 set dupplReal_1_to_2_0 [create_bd_cell -type ip -vlnv ggm:cogen:dupplReal_1_to_2:1.0 dupplReal_1_to_2_0]
 set dupplReal_1_to_2_1 [create_bd_cell -type ip -vlnv ggm:cogen:dupplReal_1_to_2:1.0 dupplReal_1_to_2_1]
 set convertRealToComplex_0 [create_bd_cell -type ip -vlnv ggm:cogen:convertRealToComplex:1.0 convertRealToComplex_0]
 set dataComplex_to_ram_0 [create_bd_cell -type ip -vlnv ggm:cogen:dataComplex_to_ram:1.0 dataComplex_to_ram_0]
 
-set_property -dict [ list CONFIG.DATA_SIZE {14}] $dupplReal_1_to_2_0
-set_property -dict [ list CONFIG.DATA_SIZE {14}] $dupplReal_1_to_2_1
-set_property -dict [ list CONFIG.DATA_SIZE {14}] $convertRealToComplex_0
-set_property -dict [ list CONFIG.DATA_SIZE {14} \
+set_property -dict [ list CONFIG.DATA_SIZE $ADC_SIZE] $dupplReal_1_to_2_0
+set_property -dict [ list CONFIG.DATA_SIZE $ADC_SIZE] $dupplReal_1_to_2_1
+set_property -dict [ list CONFIG.DATA_SIZE $ADC_SIZE] $convertRealToComplex_0
+set_property -dict [ list CONFIG.DATA_SIZE $ADC_SIZE \
 						CONFIG.NB_INPUT {1} \
 						CONFIG.NB_SAMPLE {4096}] $dataComplex_to_ram_0
 
@@ -49,7 +68,7 @@ set_property -dict [ list CONFIG.DATA_SIZE {14} \
 startgroup
 set ps7 [ create_bd_cell -type ip \
 	-vlnv xilinx.com:ip:processing_system7:5.5 ps7 ]
-set_property -dict [list CONFIG.PCW_IMPORT_BOARD_PRESET "$fpga_ip/preset/redpitaya_preset.xml" ] $ps7
+set_property -dict [list CONFIG.PCW_IMPORT_BOARD_PRESET $board_preset ] $ps7
 endgroup
 
 # ====================================================================================
@@ -57,50 +76,26 @@ endgroup
 #
 
 # Create port connections (make external = CTRL-t)
-# ADC
-connect_bd_net -net adc_data_a_i_1 [get_bd_ports adc_data_a_i_0] [get_bd_pins ltc2145_0/adc_data_a_i]
-connect_bd_net -net adc_data_b_i_1 [get_bd_ports adc_data_b_i_0] [get_bd_pins ltc2145_0/adc_data_b_i]
-connect_bd_net -net ltc2145_0_adc_cdcs [get_bd_ports adc_cdcs_0] [get_bd_pins ltc2145_0/adc_cdcs]
+connect_bd_intf_net [get_bd_intf_pins $converters/phys_interface] \
+	[get_bd_intf_ports phys_interface_0]
 
-# clock
-connect_bd_net -net adc_clk_n_i_1 [get_bd_ports adc_clk_n_i_0] [get_bd_pins redpitaya_adc_dac_clk_0/adc_clk_n_i]
-connect_bd_net -net adc_clk_p_i_1 [get_bd_ports adc_clk_p_i_0] [get_bd_pins redpitaya_adc_dac_clk_0/adc_clk_p_i]
-# DAC
-connect_bd_net -net ad9767_0_dac_clk_o [get_bd_ports dac_clk_o_0] [get_bd_pins ad9767_0/dac_clk_o]
-connect_bd_net -net ad9767_0_dac_dat_o [get_bd_ports dac_dat_o_0] [get_bd_pins ad9767_0/dac_dat_o]
-connect_bd_net -net ad9767_0_dac_rst_o [get_bd_ports dac_rst_o_0] [get_bd_pins ad9767_0/dac_rst_o]
-connect_bd_net -net ad9767_0_dac_sel_o [get_bd_ports dac_sel_o_0] [get_bd_pins ad9767_0/dac_sel_o]
-connect_bd_net -net ad9767_0_dac_wrt_o [get_bd_ports dac_wrt_o_0] [get_bd_pins ad9767_0/dac_wrt_o]
-
-# Create connections between blocks
-# ADC (connect signals)
-connect_bd_net -net redpitaya_adc_dac_clk_0_adc_clk_o \
-	[get_bd_pins ltc2145_0/adc_clk_i] [get_bd_pins redpitaya_adc_dac_clk_0/adc_clk_o]
-connect_bd_net -net redpitaya_adc_dac_clk_0_adc_rst_i \
-	[get_bd_pins ltc2145_0/processing_rst_i] [get_bd_pins redpitaya_adc_dac_clk_0/adc_rst_o]
-connect_bd_net -net redpitaya_adc_dac_clk_0_adc_rstn_i \
-	[get_bd_pins ltc2145_0/resetn] [get_bd_pins redpitaya_adc_dac_clk_0/adc_rstn_o]
-# DAC
-connect_bd_net -net redpitaya_adc_dac_clk_0_dac_2clk_o \
-	[get_bd_pins ad9767_0/dac_2clk_i] [get_bd_pins redpitaya_adc_dac_clk_0/dac_2clk_o]
-connect_bd_net -net redpitaya_adc_dac_clk_0_dac_2ph_o \
-	[get_bd_pins ad9767_0/dac_2ph_i] [get_bd_pins redpitaya_adc_dac_clk_0/dac_2ph_o]
-connect_bd_net -net redpitaya_adc_dac_clk_0_dac_clk_o \
-	[get_bd_pins ad9767_0/dac_clk_i] [get_bd_pins redpitaya_adc_dac_clk_0/dac_clk_o]
-connect_bd_net -net redpitaya_adc_dac_clk_0_dac_locked_o \
-	[get_bd_pins ad9767_0/dac_locked_i] [get_bd_pins redpitaya_adc_dac_clk_0/dac_locked_o]
 # ADC -> DAC (intf = connect interfaces)
-connect_bd_intf_net -intf_net adc_dac_a \
-	[get_bd_intf_pins ad9767_0/dataA_in] \
+connect_bd_intf_net [get_bd_intf_pins $converters/dataA_in] \
+	[get_bd_intf_pins shiftA/data_out]
+connect_bd_intf_net [get_bd_intf_pins $converters/dataB_in] \
+	[get_bd_intf_pins shiftB/data_out]
+
+connect_bd_intf_net [get_bd_intf_pins $shiftA/data_in] \
 	[get_bd_intf_pins dupplReal_1_to_2_0/data2_out]
-connect_bd_intf_net -intf_net adc_dac_b \
-	[get_bd_intf_pins ad9767_0/dataB_in] \
+
+connect_bd_intf_net [get_bd_intf_pins $shiftB/data_in] \
 	[get_bd_intf_pins dupplReal_1_to_2_1/data2_out]
+
 connect_bd_intf_net -intf_net adc_duppl0 \
-	[get_bd_intf_pins ltc2145_0/dataA_out] \
+	[get_bd_intf_pins $converters/dataA_out] \
 	[get_bd_intf_pins dupplReal_1_to_2_0/data_in]
 connect_bd_intf_net -intf_net adc_duppl1 \
-	[get_bd_intf_pins ltc2145_0/dataB_out] \
+	[get_bd_intf_pins $converters/dataB_out] \
 	[get_bd_intf_pins dupplReal_1_to_2_1/data_in]
 connect_bd_intf_net -intf_net duppl_conv0 \
 	[get_bd_intf_pins convertRealToComplex_0/dataI_in] \
@@ -123,10 +118,9 @@ apply_bd_automation -rule xilinx.com:bd_rule:processing_system7 \
 	-config {make_external "FIXED_IO, DDR" Master "Disable" Slave "Disable" } \
 	$ps7
 
-# Global connections CPU/RESET
 ## reset processing_rst : reset
 connect_bd_net -net rst_ps7_125M_peripheral_reset \
-	[get_bd_pins redpitaya_adc_dac_clk_0/adc_rst_i] \
+	[get_bd_pins $converters/adc_rst_i] \
 	[get_bd_pins rst_ps7_125M/peripheral_reset]
 
 save_bd_design
@@ -148,15 +142,16 @@ if {[llength $files] > 0} {
 }
 
 # Load RedPitaya constraint files
-add_files -norecurse -fileset constrs_1 $repo_path/ltc2145/ltc2145-redpy.xdc
-add_files -norecurse -fileset constrs_1 $repo_path/ad9767/ad9767.xdc
-add_files -norecurse -fileset constrs_1 $repo_path/redpitaya_adc_dac_clk/redpitaya_clk_pin.xdc
+add_files -norecurse -fileset constrs_1 $repo_path/redpitaya_converters/redpitaya_converters.xdc
+add_files -norecurse -fileset constrs_1 $repo_path/redpitaya_converters/redpitaya_converters_adc.xdc
 
 set_property VERILOG_DEFINE {TOOL_VIVADO} [current_fileset]
 
 # =================================================
 # synth & impl
 # =================================================
+
+exit
 
 set_property "needs_refresh" "1" [get_runs impl_1]
 # set the current impl run
