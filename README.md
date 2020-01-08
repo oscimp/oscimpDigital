@@ -1,6 +1,6 @@
 # oscimpDigital
-OscillatorIMP ecosystem for the digital characterization of ultrastable
-oscillators
+OscillatorIMP ecosystem originally designed for the digital characterization of ultrastable
+oscillators, provides most frontend processing blocks for Software Defined Radio (SDR) reception.
 
 ## Motivation
 
@@ -8,7 +8,10 @@ This ecosystem aims to provide a consistent software/hardware, chip independent
 (Xilinx Zynq, Altera/Intel Cyclone V soc, ...) solution, to assemble and build
 designs targeted for FPGA and to generate and cross-compile software, running
 on the CPU running embedded GNU/Linux, dedicated to communicate/configure
-logic parts.
+logic parts. The highlights of oscimpDigital were [presented at the Maker Space conference](https://www.youtube.com/watch?v=SSzR_pnZnjs&feature=youtu.be) in 2019.
+
+The assumption underlying all IP block design is a pipelined stream of data 
+processed at each clock cycle, with no latencies introduced by FIFOs between blocks.
 
 ## Install
 

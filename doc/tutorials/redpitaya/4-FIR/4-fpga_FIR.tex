@@ -21,7 +21,7 @@
 \definecolor{grey}{rgb}{0.95,0.95,0.95} % on définit la couleur grise
 	% (c'est un gris très clair)
 	\definecolor{red}{rgb}{1.0,0.0,0.0} 
-	\definecolor{green}{rgb}{0.0,1.0,0.0}
+	\definecolor{green}{rgb}{0.0,0.8,0.0}
 	\definecolor{blue}{rgb}{0.0,0.0,1.0}
 	\lstloadlanguages{bash,Java,C,C++,csh,make,sh}%%[Visual]Basic,xml}
 	\lstset{frame=none,basicstyle=\footnotesize,breaklines,tabsize=2,captionpos=b,
@@ -54,7 +54,7 @@ two channels.
 \includegraphics{objective}
 \end{center}
 
-\hspace*{-1.5cm}\includegraphics[width=1.2\linewidth]{design_1.pdf}
+\hspace*{-1.5cm}\includegraphics[width=1.2\linewidth]{combinedADC_DAC_data2ram_FIR.pdf}
 \caption{Schematic of the objective and final processing chain described in this document}
 \label{fin}
 \end{figure}
@@ -67,8 +67,8 @@ is now the use of a FIR filter, whose input width the match the incoming
 datastream width.
 
 %JMF : verifier Data Width
-Double click on the FIR block and update the Data Width ({\tt Data In Size}) to 14~bits. The input
-data width (in bits) is called $P$.
+Double click on the FIR block and update the Data Width ({\tt Data In Size}) to 14~bits (or 16-bits for
+the 16-bit Redpitaya). The input data width (in bits) is called $P$.
 
 The coefficient width $M$ ({\tt COEFF Size}) will define the size of the data transferred from the PS
 to the PL, as stored as a column of decimal values written in human readable ASCII
@@ -88,7 +88,8 @@ Output Size bits ({\tt Data Out Size}).
 The user might then decide to shift to the right the result to drop some of the 
 least-significant bits, as illustrated here with the selection of outputting 16~bits
 from the FIR filter (e.g. for further computations in the PL) and shifting the 2 least
-significant bits to send 14-bit wide words (as expected from the ADC datastream) to the PS.
+significant bits to send 14-bit wide words (as expected from the legacy Redpitaya ADC 
+datastream -- 16 bits for the 16-bit Redpitaya) to the PS.
 
 \section{PS: Linux kernel driver}
 
