@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<drivers name="tutorial4" version="1.0">
-	<driver name ="data_to_ram" >
-		<board_driver name="data00" id = "0"
-			base_addr="0x43c00000" addr_size="0xffff" />
-	</driver>
-	<driver name ="fir" >
-		<board_driver name="fir00" id = "0"
-			base_addr="0x43c10000" addr_size="0xffff" />
-	</driver>
-</drivers>
+<project name="tutorial4" version="1.0">
+	<ips>
+		<ip name ="dataReal_to_ram" >
+			<instance name="data00" id = "0"
+				base_addr="0x43c00000" addr_size="0xffff" />
+		</ip>
+		<ip name ="firReal" >
+			<instance name="fir00" id = "0"
+				base_addr="0x43c10000" addr_size="0xffff" />
+		</ip>
+	</ips>
+</project>
