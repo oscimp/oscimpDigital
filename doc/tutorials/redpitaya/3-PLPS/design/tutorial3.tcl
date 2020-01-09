@@ -151,8 +151,6 @@ set_property VERILOG_DEFINE {TOOL_VIVADO} [current_fileset]
 # synth & impl
 # =================================================
 
-exit
-
 set_property "needs_refresh" "1" [get_runs impl_1]
 # set the current impl run
 current_run -implementation [get_runs impl_1]							
