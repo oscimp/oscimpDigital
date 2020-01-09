@@ -1,0 +1,3 @@
+pip3 install wavedrom
+wavedrompy --input adderComplex.json --svg adderComplex.svg
+

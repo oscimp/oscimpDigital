@@ -1,0 +1,14 @@
+{"signal": [
+	{ "name": "clk",       "wave": "p......", "period":2},
+	["input",
+	{ "name": "data_en_i", "wave": "lh.....", "period":2},
+	{ "name": "data1_i",   "wave": "x333333", "phase":0.8, "period":2, "data":["d1_1", "d1_2", "d1_3","d1_4", "d1_5", "d1_6"]},
+	{ "name": "data2_i",   "wave": "x333333", "phase":0.8, "period":2, "data":["d2_1", "d2_2", "d2_3","d2_4", "d2_5", "d2_6"]}
+	],
+	["output",
+	{ "name": "data_en_o", "wave": "l..h...", "period":2},
+	{ "name": "data_o",  "wave": "x..3333", "phase":0.8, "period":2,
+		"data":["d1_1+d2_1", "d1_2+d2_2", "d1_3+d2_3", "d1_4+d2_4", "d1_5+d2_5", "d1_6+d2_6"]}
+	]
+]
+}
