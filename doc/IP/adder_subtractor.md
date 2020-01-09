@@ -9,14 +9,14 @@ Output size is *DATA_SIZE+1* with *DATA_SIZE* the input size.
 
 [adderReal]: figures/adderReal.svg "adderReal"
 ![**adder_substracter_real** chronogram. *data1_i* and *data1_en_i* are from *data1_in* interface, 
-and *data2_i* and *data2_en_i* from *data2_in* interface.][mixer_sin]
+and *data2_i* and *data2_en_i* from *data2_in* interface.][adderReal]
 __Figure1__: **adder_substracter_real** chronogram. *data1_i* and *data1_en_i* are from *data1_in* 
 interface, and *data2_i* and *data2_en_i* from *data2_in* interface.
 
 [adderComplex]: figures/adderComplex.svg "adderComplex"
 ![**adder_substracter_complex** chronogram. *data1_i_i*, *data1_i_q* and *data1_en_i* are
 from *data1_in* interface, and *data2_i_i*, *data2_i_q* and *data2_en_i* from *data2_in* 
-interface.][mixerComplex_sin]
+interface.][adderComplex]
 
 __Figure2__: **adder_substracter_complex** chronogram. *data1_i_i*, *data1_i_q* and *data1_en_i* are
 from *data1_in* interface, and *data2_i_i*, *data2_i_q* and *data2_en_i* from *data2_in* 
