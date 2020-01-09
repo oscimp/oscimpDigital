@@ -1,6 +1,6 @@
 # mixer_sin and mixerComplex_sin
 
-These IPs are used to do complex multiplication between two data stream. These
+These IPs are used to perform complex multiplication between two data streams. These
 two stream are always considered as signed data. The first data stream may be
 a real interface (**mixer_sin** (figure [1](#mixer_sin)) or a complex interface (**mixerComplex_sin** figure [2](#mixerComplex_sin)). 
 

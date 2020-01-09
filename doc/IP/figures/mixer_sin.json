@@ -10,7 +10,7 @@
 	{ "name": "data_en_o", "wave": "l..h...", "period":2},
 	{ "name": "data_i_o",  "wave": "x..3333", "phase":0.8, "period":2,
 		"data":["d1*nI1", "d2*nI2", "d3*nI3", "d4*nI4", "d5*nI5", "d6*nI6"]},
-	{ "name": "data_i_o",  "wave": "x..3333", "phase":0.8, "period":2,
+	{ "name": "data_q_o",  "wave": "x..3333", "phase":0.8, "period":2,
 		"data":["d1*nQ1", "d2*nQ2", "d3*nQ3", "d4*nQ4", "d5*nQ5", "d6*nQ6"]}
 	]
 ]

@@ -15,7 +15,7 @@
 	{ "name": "data_en_o", "wave": "l..h.", "period":3},
 	{ "name": "data_i_o",  "wave": "x..33", "phase":0.8, "period":3,
 			"data":["dI1*nI1-dQ1*nQ1", "dI2*nI2-dQ2*nQ2"]},
-	{ "name": "data_i_o",  "wave": "x..33", "phase":0.8,"period":3,
+	{ "name": "data_q_o",  "wave": "x..33", "phase":0.8,"period":3,
 			"data":["dI1*nQ1+dQ1*nI1", "dI2*nQ2+dQ2*nI2"]}
 	]
 ]
