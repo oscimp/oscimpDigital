@@ -4,7 +4,7 @@ this IP selects one out of two input streams as configured from the processor
 and outputs a single stream. Input and output are either real or complex data
 streams.
 
-![switch](figures/switch.svg)
+![switch](figures/switchReal.svg)
 
 __Figure1__: switch configured to output datastream 0
 
