@@ -146,19 +146,54 @@ make && IP=AA.BB.CC.DD.EE make install_ssh
 
 \lstinputlisting[language=C]{./app/main.c}
 
-Examples of outputs of running this program are given in Fig. \ref{fir}: various
-test FIRs are designed by selecting all coefficients except the first ones, which might be
-either set to 1 for the first 16 coefficients, or to 4 for the first 4 coefficients (keeping
-the total power constant). Since sampling is at 125~MS/s, the cutoff frequency
-of a 16-tap long coefficient must be about 7.8~MHz: most of the recorded datasets
-(1 or 6~MHz) are not affected by the filter except for the bottom one in which the
-signal frequency becomes close to the cutoff frequency of the filter.
+Examples of outputs of running this program are given in Figs. \ref{fir1} and
+\ref{fir2}: all filter
+lengths are set to 32, with a varying number of non-null values set to 1 in the beginning
+of the filter. Since in this design the FIR output is routed to the DAC, an oscilloscope is
+first used to monitor the generated signal frequency and the filtered signal amplitude
+(oscilloscope ``Measure'' functions set to ``Frequency C1'' and ``Peak to Peak Amplitude C3'').
+In all cases the generated signal is 1.5~V$_{pp}$.
+
+The transfer function of a FIR filter is the Fourier transform of its coefficients so that
+the transfer function of rectangular window FIR filters are sinc functions. The expected
+transfer functions are displayed in Fig. \ref{fir1} (top) and the experiemental amplitude
+of the FIR output for varying filter window width and notch frequency are shown in Fig.
+\ref{fir1} (bottom). The notch frequency are in excellent agreement, the amplitude 
+measurements are plagued by poor resolution of the oscilloscope measurement.
 
 \begin{figure}[h!tb]
-\includegraphics[width=\linewidth]{mesures}
-\caption{}
-\label{fir}
+\includegraphics[width=.68\linewidth]{results/model.pdf}
+\includegraphics[width=.31\linewidth]{results/DSC_0368_3ann.JPG}
+\caption{Left: transfer function of rectangular FIR windows (top) and measured amplitude and notch
+frequencies (bottom). On the bottom chart, vertical lines are located at the observed notch
+frequency. Right: experimental setup, including arrows showing that the same driving signal
+is feeding both ADCs, and the two DAC outputs are either copies of one ADC or the filtered output
+of the other ADC.}
+\label{fir1}
 \end{figure}
+
+Beyond these oscilloscope measurements, datasets can be dumped from the {\tt data\_to\_ram}
+for further processing. Various
+test FIRs are designed by clearnig to 0 all coefficients except the first ones, which 
+might be either set to 1 for the first 16 coefficients, or set to 4 for the first 4 coefficients 
+(keeping the total power constant). Since sampling is at 125~MS/s, the cutoff frequency
+of a 16-tap long coefficient must be about 7.8~MHz: most of the recorded datasets
+(1 or 6~MHz) are not affected by the filter except for the bottom one in which the
+signal frequency becomes close to the cutoff frequency of the filter. The group delay 
+(time needed between filling input and providing the first output) is observed as the
+phase shift between input and output (Fig. \ref{fir2})
+
+\begin{figure}[h!tb]
+\includegraphics[width=\linewidth]{figures/mesures}
+\caption{Filtered output (blue) with respect ot the input (red) driving signal:
+{\tt data\_to\_ram} outputs.}
+\label{fir2}
+\end{figure}
+
+Collecting the filtered output on the {\tt data\_to\_ram} device demonstrates how the
+FPGA can be efficiently used either to process the stream straight from the acquisition
+interface through the various processing blocks, or as co-processor from data provided
+by the CPU and running through the FPGA before being recovered by the CPU.
 \end{document}
 
 cp ./project_1.runs/impl_1/design_1_wrapper.bit .
