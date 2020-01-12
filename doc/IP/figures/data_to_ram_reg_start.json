@@ -1,0 +1,4 @@
+{"reg":[
+    { "name": "start",   "bits": 32, "attr": "W" }
+]
+}

@@ -1,0 +1,5 @@
+{"reg":[
+    { "name": "BUSY",   "bits": 1, "attr": "R" },
+	{ "bits": 31 }
+]
+}
