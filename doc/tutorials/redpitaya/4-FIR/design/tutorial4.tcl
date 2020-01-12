@@ -49,7 +49,7 @@ set_property -dict [ list \
 set shiftB [ create_bd_cell -type ip -vlnv ggm:cogen:shifterReal:1.0 shiftB]
 set_property -dict [ list \
 	CONFIG.SIGNED_FORMAT true \
-	CONFIG.DATA_IN_SIZE $ADC_SIZE \
+	CONFIG.DATA_IN_SIZE 16 \
 	CONFIG.DATA_OUT_SIZE 14] $shiftB
 # dupplReal_1_to_2
 set dupplReal_1_to_2_0 [create_bd_cell -type ip -vlnv ggm:cogen:dupplReal_1_to_2:1.0 dupplReal_1_to_2_0]
@@ -59,7 +59,7 @@ set firReal_0 [create_bd_cell -type ip -vlnv ggm:cogen:firReal:1.0 firReal_0]
 set shifterReal_0 [create_bd_cell -type ip -vlnv ggm:cogen:shifterReal:1.0 shifterReal_0]
 
 set_property -dict [ list CONFIG.DATA_SIZE 14] $dupplReal_1_to_2_0
-set_property -dict [ list CONFIG.DATA_SIZE $ADC_SIZE] $dupplReal_1_to_2_1
+set_property -dict [ list CONFIG.DATA_SIZE 16] $dupplReal_1_to_2_1
 set_property -dict [ list CONFIG.DATA_IN_SIZE {16} \
 						CONFIG.DATA_OUT_SIZE {14}] $shifterReal_0
 set_property -dict [ list CONFIG.DATA_IN_SIZE $ADC_SIZE \
@@ -85,37 +85,37 @@ connect_bd_intf_net [get_bd_intf_pins $converters/phys_interface] \
 	[get_bd_intf_ports phys_interface_0]
 
 # ADC -> DAC (intf = connect interfaces)
-connect_bd_intf_net [get_bd_intf_pins $converters/dataA_in] \
-	[get_bd_intf_pins dupplReal_1_to_2_0/data2_out]
-connect_bd_intf_net [get_bd_intf_pins $converters/dataB_in] \
-	[get_bd_intf_pins shiftB/data_out]
-
-connect_bd_intf_net [get_bd_intf_pins $shiftA/data_out] \
-	[get_bd_intf_pins dupplReal_1_to_2_0/data_in]
+# voie A : ADC -> shiftA -> duppl -> DAC & data2RAM
 connect_bd_intf_net [get_bd_intf_pins $shiftA/data_in] \
 	[get_bd_intf_pins $converters/dataA_out]
-
+connect_bd_intf_net [get_bd_intf_pins $shiftA/data_out] \
+	[get_bd_intf_pins dupplReal_1_to_2_0/data_in]
+connect_bd_intf_net [get_bd_intf_pins $converters/dataA_in] \
+	[get_bd_intf_pins dupplReal_1_to_2_0/data2_out]
+connect_bd_intf_net -intf_net shift_data1 \
+	[get_bd_intf_pins dupplReal_1_to_2_0/data1_out] \
+	[get_bd_intf_pins dataReal_to_ram_0/data1_in]
+# voie B : ADC -> duppl -> shiftB -> DAC ou 
+#connect_bd_intf_net -intf_net adc_duppl1 \
+#	[get_bd_intf_pins $converters/dataB_out] \
+#	[get_bd_intf_pins dupplReal_1_to_2_1/data_in]
+# voie B : ADC -> FIR -> duppl -> shiftB -> DAC ou shift0 -> data2RAM
+connect_bd_intf_net -intf_net adc_fir1 \
+	[get_bd_intf_pins $converters/dataB_out] \
+	[get_bd_intf_pins firReal_0/data_in]
+connect_bd_intf_net -intf_net duppl_conv0 \
+	[get_bd_intf_pins firReal_0/data_out] \
+	[get_bd_intf_pins dupplReal_1_to_2_1/data_in]
 connect_bd_intf_net [get_bd_intf_pins $shiftB/data_in] \
 	[get_bd_intf_pins dupplReal_1_to_2_1/data2_out]
-
-#connect_bd_intf_net -intf_net adc_duppl0 \
-#	[get_bd_intf_pins $converters/dataA_out] \
-#	[get_bd_intf_pins dupplReal_1_to_2_0/data_in]
-connect_bd_intf_net -intf_net adc_duppl1 \
-	[get_bd_intf_pins $converters/dataB_out] \
-	[get_bd_intf_pins dupplReal_1_to_2_1/data_in]
-connect_bd_intf_net -intf_net duppl_conv0 \
-	[get_bd_intf_pins firReal_0/data_in] \
-	[get_bd_intf_pins dupplReal_1_to_2_1/data1_out]
+connect_bd_intf_net [get_bd_intf_pins $converters/dataB_in] \
+	[get_bd_intf_pins $shiftB/data_out]
 connect_bd_intf_net -intf_net fir_shift \
-	[get_bd_intf_pins firReal_0/data_out] \
+	[get_bd_intf_pins dupplReal_1_to_2_1/data1_out] \
 	[get_bd_intf_pins shifterReal_0/data_in]
 connect_bd_intf_net -intf_net shift_data2 \
 	[get_bd_intf_pins shifterReal_0/data_out] \
 	[get_bd_intf_pins dataReal_to_ram_0/data2_in]
-connect_bd_intf_net -intf_net shift_data1 \
-	[get_bd_intf_pins dupplReal_1_to_2_0/data1_out] \
-	[get_bd_intf_pins dataReal_to_ram_0/data1_in]
 
 #==========================
 # autoconnect and AXI	 =
