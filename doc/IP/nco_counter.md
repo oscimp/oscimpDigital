@@ -27,25 +27,31 @@ oscillator output.
 ## Registers
 
 __**REG_ID**__ (*BASE_ADDR + 0x00*)
+
 ![nco_counter_reg_id](figures/nco_counter_reg_id.svg)
 
 *Note*: read only
 
 __**REG_RST_ACCUM**__ (*BASE_ADDR + 0x00*)
+
 ![nco_counter_reg_rst_accum](figures/nco_counter_reg_rst_accum.svg)
 
 *Note*: write only
 
 __**REG_POFF**__ (*BASE_ADDR + 0x04*)
+
 ![nco_counter_reg_rst_poff](figures/nco_counter_reg_rst_poff.svg)
 
 __**REG_CTRL**__ (*BASE_ADDR + 0x08*)
+
 ![nco_counter_reg_ctrl](figures/nco_counter_reg_ctrl.svg)
 
 __**REG_PINC**__ (*BASE_ADDR + 0x0C*)
+
 ![nco_counter_reg_pinc](figures/nco_counter_reg_pinc.svg)
 
 __**REG_MAX_ACCUM**__ (*BASE_ADDR + 0x10*)
+
 ![nco_counter_reg_max_accum](figures/nco_counter_reg_max_accum.svg)
 
 ## TCL instanciation and connection
