@@ -26,17 +26,6 @@ oscillator output.
 
 ## Registers
 
-#define REG_RST_ACCUM 	0x00
-#define REG_POFF 		0x01
-#define REG_CTRL 		0x02
-#define REG_PINC 		0x03
-#define REG_MAX_ACCUM 	0x04
-/* specific */
-#define REG_PINC_L 		0x03
-#define REG_PINC_H 		0x04
-#define REG_MAX_ACCUM_L 0x05
-#define REG_MAX_ACCUM_H 0x06
-
 __**REG_ID**__ (*BASE_ADDR + 0x00*)
 ![nco_counter_reg_id](figures/nco_counter_reg_id.svg)
 
