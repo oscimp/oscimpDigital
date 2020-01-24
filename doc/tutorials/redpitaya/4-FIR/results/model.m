@@ -36,8 +36,8 @@ meas=[1060 1060 1060 1060 0990 0990 0870 0240 ;
       1600 1570 1500 1360 1150 0976 0470 0560 ;
       1730 1660 1570 1390 1140 0928 0330 0544];
 for k=1:4
-  % plot(freq,10*log10(meas(k,:)/(1.5*max(meas(k,:)))),'o');
-  plot(freq,20*log10(meas(k,:)/(1500)),'o');
+  plot(freq,10*log10(meas(k,:)/(max(meas(k,:)))),'o');
+  % plot(freq,20*log10(meas(k,:)/(1500)),'o');
 end
 
 % frequency at which the amplitude is lowest (notch position)
