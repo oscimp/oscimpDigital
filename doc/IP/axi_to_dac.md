@@ -1,6 +1,6 @@
 # axi_to_dac
 
-this IP is used to generates two scalar constant as data stream source.
+this IP is used to generate two scalar constant as data stream source.
 Each output are independtly sets from the CPU.
 
 * each output is packaged in an real interface
