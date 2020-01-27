@@ -85,6 +85,11 @@ performed on $Q$ bits, the output can be {\em truncated} to the {\em lower}
 Output Size bits ({\tt Data Out Size}).
 % JMF : verifier Output Size
 
+The default behaviour of the FIR filter is to decimate the output: doing so, only useful
+outputs will be computed, saving computational resources in the FPGA. In the TCL example
+in the {\tt design} directory, the decimation factor is {\tt DECIMATE\_FACTOR 5} so that
+the output feeding the DAC output is ``only'' clocked at 25~MS/s.
+
 The user might then decide to shift to the right the result to drop some of the 
 least-significant bits, as illustrated here with the selection of outputting 16~bits
 from the FIR filter (e.g. for further computations in the PL) and shifting the 2 least

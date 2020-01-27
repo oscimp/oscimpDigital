@@ -20,6 +20,8 @@ set build_path tmp
 set bd_path $build_path/$project_name.srcs/sources_1/bd/$project_name
 set repo_path $fpga_ip
 
+set FIR_OUT_SIZE [expr {$ADC_SIZE + 5}]
+
 file delete -force $build_path
 
 # Project and block design creation
@@ -41,31 +43,39 @@ set_property -dict [ list CONFIG.ADC_SIZE $ADC_SIZE \
 	CONFIG.DAC_EN true] $converters
 
 # shifter is mandatory for redpitaya 16 : ADC is 16bits DAC 14bits
-set shiftA [ create_bd_cell -type ip -vlnv ggm:cogen:shifterReal:1.0 shiftA]
+set expanderA_data [ create_bd_cell -type ip -vlnv ggm:cogen:expanderReal:1.0 expanderA_data]
+set_property -dict [ list \
+	CONFIG.format signed \
+	CONFIG.DATA_IN_SIZE $ADC_SIZE \
+	CONFIG.DATA_OUT_SIZE 16] $expanderA_data
+set shiftA_out [ create_bd_cell -type ip -vlnv ggm:cogen:shifterReal:1.0 shiftA_out]
 set_property -dict [ list \
 	CONFIG.SIGNED_FORMAT true \
 	CONFIG.DATA_IN_SIZE $ADC_SIZE \
-	CONFIG.DATA_OUT_SIZE 14] $shiftA
-set shiftB [ create_bd_cell -type ip -vlnv ggm:cogen:shifterReal:1.0 shiftB]
+	CONFIG.DATA_OUT_SIZE 14] $shiftA_out
+set shiftB_data [ create_bd_cell -type ip -vlnv ggm:cogen:shifterReal:1.0 shiftB_data]
 set_property -dict [ list \
 	CONFIG.SIGNED_FORMAT true \
-	CONFIG.DATA_IN_SIZE 16 \
-	CONFIG.DATA_OUT_SIZE 14] $shiftB
+	CONFIG.DATA_IN_SIZE $FIR_OUT_SIZE \
+	CONFIG.DATA_OUT_SIZE 16] $shiftB_data
+set shiftB_out [ create_bd_cell -type ip -vlnv ggm:cogen:shifterReal:1.0 shiftB_out]
+set_property -dict [ list \
+	CONFIG.SIGNED_FORMAT true \
+	CONFIG.DATA_IN_SIZE $FIR_OUT_SIZE \
+	CONFIG.DATA_OUT_SIZE 14] $shiftB_out
 # dupplReal_1_to_2
-set dupplReal_1_to_2_0 [create_bd_cell -type ip -vlnv ggm:cogen:dupplReal_1_to_2:1.0 dupplReal_1_to_2_0]
-set dupplReal_1_to_2_1 [create_bd_cell -type ip -vlnv ggm:cogen:dupplReal_1_to_2:1.0 dupplReal_1_to_2_1]
+set dupplDataA [create_bd_cell -type ip -vlnv ggm:cogen:dupplReal_1_to_2:1.0 dupplDataA]
+set dupplDataB [create_bd_cell -type ip -vlnv ggm:cogen:dupplReal_1_to_2:1.0 dupplDataB]
 set dataReal_to_ram_0 [create_bd_cell -type ip -vlnv ggm:cogen:dataReal_to_ram:1.0 dataReal_to_ram_0]
-set firReal_0 [create_bd_cell -type ip -vlnv ggm:cogen:firReal:1.0 firReal_0]
-set shifterReal_0 [create_bd_cell -type ip -vlnv ggm:cogen:shifterReal:1.0 shifterReal_0]
+set firReal [create_bd_cell -type ip -vlnv ggm:cogen:firReal:1.0 firReal]
 
-set_property -dict [ list CONFIG.DATA_SIZE 14] $dupplReal_1_to_2_0
-set_property -dict [ list CONFIG.DATA_SIZE 16] $dupplReal_1_to_2_1
-set_property -dict [ list CONFIG.DATA_IN_SIZE {16} \
-						CONFIG.DATA_OUT_SIZE {14}] $shifterReal_0
+set_property -dict [ list CONFIG.DATA_SIZE $ADC_SIZE] $dupplDataA
+set_property -dict [ list CONFIG.DATA_SIZE $FIR_OUT_SIZE] $dupplDataB
 set_property -dict [ list CONFIG.DATA_IN_SIZE $ADC_SIZE \
 						CONFIG.NB_COEFF  {32} \
-						CONFIG.DATA_OUT_SIZE {16}] $firReal_0
-set_property -dict [ list CONFIG.DATA_SIZE {14} \
+						CONFIG.DECIMATE_FACTOR 5 \
+						CONFIG.DATA_OUT_SIZE $FIR_OUT_SIZE] $firReal
+set_property -dict [ list CONFIG.DATA_SIZE {16} \
 						CONFIG.NB_SAMPLE {4096} \
 						CONFIG.NB_INPUT {2}] $dataReal_to_ram_0
 
@@ -85,36 +95,31 @@ connect_bd_intf_net [get_bd_intf_pins $converters/phys_interface] \
 	[get_bd_intf_ports phys_interface_0]
 
 # ADC -> DAC (intf = connect interfaces)
-# voie A : ADC -> shiftA -> duppl -> DAC & data2RAM
-connect_bd_intf_net [get_bd_intf_pins $shiftA/data_in] \
-	[get_bd_intf_pins $converters/dataA_out]
-connect_bd_intf_net [get_bd_intf_pins $shiftA/data_out] \
-	[get_bd_intf_pins dupplReal_1_to_2_0/data_in]
-connect_bd_intf_net [get_bd_intf_pins $converters/dataA_in] \
-	[get_bd_intf_pins dupplReal_1_to_2_0/data2_out]
-connect_bd_intf_net -intf_net shift_data1 \
-	[get_bd_intf_pins dupplReal_1_to_2_0/data1_out] \
-	[get_bd_intf_pins dataReal_to_ram_0/data1_in]
-# voie B : ADC -> duppl -> shiftB -> DAC ou 
-#connect_bd_intf_net -intf_net adc_duppl1 \
-#	[get_bd_intf_pins $converters/dataB_out] \
-#	[get_bd_intf_pins dupplReal_1_to_2_1/data_in]
-# voie B : ADC -> FIR -> duppl -> shiftB -> DAC ou shift0 -> data2RAM
-connect_bd_intf_net -intf_net adc_fir1 \
-	[get_bd_intf_pins $converters/dataB_out] \
-	[get_bd_intf_pins firReal_0/data_in]
-connect_bd_intf_net -intf_net duppl_conv0 \
-	[get_bd_intf_pins firReal_0/data_out] \
-	[get_bd_intf_pins dupplReal_1_to_2_1/data_in]
-connect_bd_intf_net [get_bd_intf_pins $shiftB/data_in] \
-	[get_bd_intf_pins dupplReal_1_to_2_1/data2_out]
-connect_bd_intf_net [get_bd_intf_pins $converters/dataB_in] \
-	[get_bd_intf_pins $shiftB/data_out]
-connect_bd_intf_net -intf_net fir_shift \
-	[get_bd_intf_pins dupplReal_1_to_2_1/data1_out] \
-	[get_bd_intf_pins shifterReal_0/data_in]
-connect_bd_intf_net -intf_net shift_data2 \
-	[get_bd_intf_pins shifterReal_0/data_out] \
+# voie A : ADC -> duppl -> expanderA_data -> data2RAM
+#                       |-> shiftA_out -> DAC
+connect_bd_intf_net [get_bd_intf_pins $converters/dataA_out] \
+	[get_bd_intf_pins $dupplDataA/data_in]
+connect_bd_intf_net [get_bd_intf_pins $dupplDataA/data2_out] \
+	[get_bd_intf_pins $shiftA_out/data_in]
+connect_bd_intf_net [get_bd_intf_pins $shiftA_out/data_out] \
+	[get_bd_intf_pins $converters/dataA_in]
+connect_bd_intf_net [get_bd_intf_pins $dupplDataA/data1_out] \
+	[get_bd_intf_pins $expanderA_data/data_in]
+connect_bd_intf_net [get_bd_intf_pins $expanderA_data/data_out] \
+	[get_bd_intf_pins $dataReal_to_ram_0/data1_in]
+# voie B : ADC -> FIR -> duppl -> shiftB -> DAC
+#                              |-> shift0 -> data2RAM
+connect_bd_intf_net [get_bd_intf_pins $converters/dataB_out] \
+	[get_bd_intf_pins $firReal/data_in]
+connect_bd_intf_net [get_bd_intf_pins $firReal/data_out] \
+	[get_bd_intf_pins $dupplDataB/data_in]
+connect_bd_intf_net [get_bd_intf_pins $dupplDataB/data2_out] \
+	[get_bd_intf_pins $shiftB_out/data_in]
+connect_bd_intf_net [get_bd_intf_pins $shiftB_out/data_out] \
+	[get_bd_intf_pins $converters/dataB_in]
+connect_bd_intf_net [get_bd_intf_pins $dupplDataB/data1_out] \
+	[get_bd_intf_pins $shiftB_data/data_in]
+connect_bd_intf_net [get_bd_intf_pins $shiftB_data/data_out] \
 	[get_bd_intf_pins dataReal_to_ram_0/data2_in]
 
 #==========================
@@ -125,7 +130,7 @@ apply_bd_automation -rule xilinx.com:bd_rule:axi4 \
     [get_bd_intf_pins dataReal_to_ram_0/s00_axi]
 apply_bd_automation -rule xilinx.com:bd_rule:axi4 \
     -config {Master "/ps7/M_AXI_GP0" Clk "Auto" } \
-    [get_bd_intf_pins firReal_0/s00_axi]
+    [get_bd_intf_pins firReal/s00_axi]
 apply_bd_automation -rule xilinx.com:bd_rule:processing_system7 \
 	-config {make_external "FIXED_IO, DDR" Master "Disable" Slave "Disable" } \
 	$ps7
