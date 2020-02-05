@@ -378,7 +378,7 @@ ad_ip_parameter duppl_xcorr CONFIG.DATA_SIZE 16
 ad_connect fifo2Cplx/data_out duppl_xcorr/data_in
 
 # prn1
-ad_ip_instance prn prn1_gen
+ad_ip_instance prnGenerator prn1_gen
 ad_ip_parameter prn1_gen CONFIG.PERIOD_LEN 1
 ad_ip_parameter prn1_gen CONFIG.BIT_LEN 7
 ad_ip_parameter prn1_gen CONFIG.PRN_NUM 1
@@ -387,7 +387,7 @@ ad_connect sys_ps7/FCLK_CLK0 prn1_gen/clk
 ad_connect sys_rstgen/peripheral_reset prn1_gen/reset
 
 # prn4
-ad_ip_instance prn prn4_gen
+ad_ip_instance prnGenerator prn4_gen
 ad_ip_parameter prn4_gen CONFIG.PERIOD_LEN 1
 ad_ip_parameter prn4_gen CONFIG.BIT_LEN 7
 ad_ip_parameter prn4_gen CONFIG.PRN_NUM 4
