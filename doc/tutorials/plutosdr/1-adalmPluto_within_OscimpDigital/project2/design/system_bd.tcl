@@ -303,7 +303,8 @@ ad_connect nco/sine_out duppl_1/data_in
 # mixer
 ad_ip_instance mixerComplex_sin mixer
 ad_ip_parameter mixer CONFIG.NCO_SIZE 16
-ad_ip_parameter mixer CONFIG.DATA_SIZE 16
+ad_ip_parameter mixer CONFIG.DATA_IN_SIZE 16
+ad_ip_parameter mixer CONFIG.DATA_OUT_SIZE 16
 
 ad_connect duppl_0/data1_out mixer/data_in
 ad_connect duppl_1/data1_out mixer/nco_in

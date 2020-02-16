@@ -1,7 +1,7 @@
 variable fpga_ip    $::env(OSCIMP_DIGITAL_IP)
-variable ggm_fpga_ip    $::env(GGM_FPGA_IP)
+
 puts $lib_dirs
-set_property  ip_repo_paths [list ${ggm_fpga_ip} ${fpga_ip} ${lib_dirs}] [current_project]
+set_property  ip_repo_paths [list ${fpga_ip} ${lib_dirs}] [current_project]
 update_ip_catalog
 
 # create board design
@@ -303,7 +303,8 @@ ad_connect axis2Complex/data_out duppl/data_in
 # mixer
 ad_ip_instance mixerComplex_sin mixer
 ad_ip_parameter mixer CONFIG.NCO_SIZE 16
-ad_ip_parameter mixer CONFIG.DATA_SIZE 16
+ad_ip_parameter mixer CONFIG.DATA_IN_SIZE 16
+ad_ip_parameter mixer CONFIG.DATA_OUT_SIZE 16
 
 ad_connect duppl/data1_out mixer/data_in
 ad_connect nco/sine_out mixer/nco_in
@@ -321,7 +322,7 @@ ad_cpu_interconnect 0x43C10000 bp_nco
 
 # clk domain change
 
-ad_ip_instance fifo_clk_change_complex clk_fifo_x
+ad_ip_instance clkChangeComplex clk_fifo_x
 ad_ip_parameter clk_fifo_x CONFIG.DATA_SIZE 16
 
 ad_connect bp_nco/data_out clk_fifo_x/data_in
@@ -387,7 +388,7 @@ ad_connect cacode_gen/gold_code_o select_cacode/slv_i
 ad_cpu_interconnect 0x43C20000 select_cacode
 
 # xcorr
-ad_ip_instance xcorr_gps_slow_complex xcorr_gps
+ad_ip_instance xcorr_prn_slow_complex xcorr_gps
 ad_ip_parameter xcorr_gps CONFIG.LENGTH 1023
 ad_ip_parameter xcorr_gps CONFIG.NB_BLK 12
 ad_ip_parameter xcorr_gps CONFIG.IN_SIZE 16

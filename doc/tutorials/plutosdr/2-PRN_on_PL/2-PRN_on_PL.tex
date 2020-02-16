@@ -161,7 +161,7 @@ demonstration, which is compiled thanks to the provided {\tt Makefile} assuming 
 OscImpDigital variables have been set properly. Because the datastream in the PlutoSDR is clocked
 at {\tt samp\_rate} (as defined by the GNU Radio flowgraph) and so is the GLFSR datastream
 provided by GNU Radio Companion, the datarate will be consistent during the correlation process.
-Hence, the VHDL implementation of the PRN is ({\tt fpga\_ip/prn/hdl}):
+Hence, the VHDL implementation of the PRN is ({\tt fpga\_ip/prnGenerator/hdl}):
 
 \begin{lstlisting}[language=VHDL]
 --http://users.ece.cmu.edu/~koopman/lfsr/7.txt
@@ -203,7 +203,7 @@ been taken care of by the additional implicit block since $27<50$.
 Hence, the TCL file defining the PlutoSDR firmware is appended ({\tt design/system\_bd.tcl}) with
 \begin{lstlisting}[language=TCL]
 # prn1
-ad_ip_instance prn prn1_gen
+ad_ip_instance prnGenerator prn1_gen
 ad_ip_parameter prn1_gen CONFIG.PERIOD_LEN 1
 ad_ip_parameter prn1_gen CONFIG.BIT_LEN 7
 ad_ip_parameter prn1_gen CONFIG.PRN_NUM 1
