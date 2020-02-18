@@ -34,94 +34,81 @@ update_ip_catalog
 ## instances (CTRL-i) ##
 ########################
 
-source $repo_path/redpitaya_converters/redpitaya_converters.tcl
-set converters [ create_bd_cell -type ip -vlnv ggm:cogen:redpitaya_converters:1.0 converters]
-set_property -dict [ list CONFIG.ADC_SIZE $ADC_SIZE \
-	CONFIG.ADC_EN true \
-	CONFIG.DAC_EN true] $converters
-
-# shifter is mandatory for redpitaya 16 : ADC is 16bits DAC 14bits
-set shiftA [ create_bd_cell -type ip -vlnv ggm:cogen:shifterReal:1.0 shiftA]
-set_property -dict [ list \
-	CONFIG.SIGNED_FORMAT true \
-	CONFIG.DATA_IN_SIZE $ADC_SIZE \
-	CONFIG.DATA_OUT_SIZE 14] $shiftA
-set shiftB [ create_bd_cell -type ip -vlnv ggm:cogen:shifterReal:1.0 shiftB]
-set_property -dict [ list \
-	CONFIG.SIGNED_FORMAT true \
-	CONFIG.DATA_IN_SIZE $ADC_SIZE \
-	CONFIG.DATA_OUT_SIZE 14] $shiftB
-# dupplReal_1_to_2
-set dupplReal_1_to_2_0 [create_bd_cell -type ip -vlnv ggm:cogen:dupplReal_1_to_2:1.0 dupplReal_1_to_2_0]
-set dupplReal_1_to_2_1 [create_bd_cell -type ip -vlnv ggm:cogen:dupplReal_1_to_2:1.0 dupplReal_1_to_2_1]
-set convertRealToComplex_0 [create_bd_cell -type ip -vlnv ggm:cogen:convertRealToComplex:1.0 convertRealToComplex_0]
-set dataComplex_to_ram_0 [create_bd_cell -type ip -vlnv ggm:cogen:dataComplex_to_ram:1.0 dataComplex_to_ram_0]
-
-set_property -dict [ list CONFIG.DATA_SIZE $ADC_SIZE] $dupplReal_1_to_2_0
-set_property -dict [ list CONFIG.DATA_SIZE $ADC_SIZE] $dupplReal_1_to_2_1
-set_property -dict [ list CONFIG.DATA_SIZE $ADC_SIZE] $convertRealToComplex_0
-set_property -dict [ list CONFIG.DATA_SIZE $ADC_SIZE \
-						CONFIG.NB_INPUT {1} \
-						CONFIG.NB_SAMPLE {4096}] $dataComplex_to_ram_0
-
 # Create instance: ps7, and set properties
 startgroup
 set ps7 [ create_bd_cell -type ip \
 	-vlnv xilinx.com:ip:processing_system7:5.5 ps7 ]
 set_property -dict [list CONFIG.PCW_IMPORT_BOARD_PRESET $board_preset ] $ps7
-endgroup
-
-# ====================================================================================
-# Connections 
-#
-
-# Create port connections (make external = CTRL-t)
-connect_bd_intf_net [get_bd_intf_pins $converters/phys_interface] \
-	[get_bd_intf_ports phys_interface_0]
-
-# ADC -> DAC (intf = connect interfaces)
-connect_bd_intf_net [get_bd_intf_pins $converters/dataA_in] \
-	[get_bd_intf_pins shiftA/data_out]
-connect_bd_intf_net [get_bd_intf_pins $converters/dataB_in] \
-	[get_bd_intf_pins shiftB/data_out]
-
-connect_bd_intf_net [get_bd_intf_pins $shiftA/data_in] \
-	[get_bd_intf_pins dupplReal_1_to_2_0/data2_out]
-
-connect_bd_intf_net [get_bd_intf_pins $shiftB/data_in] \
-	[get_bd_intf_pins dupplReal_1_to_2_1/data2_out]
-
-connect_bd_intf_net -intf_net adc_duppl0 \
-	[get_bd_intf_pins $converters/dataA_out] \
-	[get_bd_intf_pins dupplReal_1_to_2_0/data_in]
-connect_bd_intf_net -intf_net adc_duppl1 \
-	[get_bd_intf_pins $converters/dataB_out] \
-	[get_bd_intf_pins dupplReal_1_to_2_1/data_in]
-connect_bd_intf_net -intf_net duppl_conv0 \
-	[get_bd_intf_pins convertRealToComplex_0/dataI_in] \
-	[get_bd_intf_pins dupplReal_1_to_2_0/data1_out]
-connect_bd_intf_net -intf_net duppl_conv1 \
-	[get_bd_intf_pins convertRealToComplex_0/dataQ_in] \
-	[get_bd_intf_pins dupplReal_1_to_2_1/data1_out]
-
-connect_bd_intf_net -intf_net conv_data \
-	[get_bd_intf_pins convertRealToComplex_0/data_out] \
-	[get_bd_intf_pins dataComplex_to_ram_0/data1_in]
-
-#==========================
-# autoconnect and AXI	 =
-#==========================
-apply_bd_automation -rule xilinx.com:bd_rule:axi4 \
-    -config {Master "/ps7/M_AXI_GP0" Clk "Auto" } \
-    [get_bd_intf_pins dataComplex_to_ram_0/s00_axi]
 apply_bd_automation -rule xilinx.com:bd_rule:processing_system7 \
 	-config {make_external "FIXED_IO, DDR" Master "Disable" Slave "Disable" } \
 	$ps7
+endgroup
 
-## reset processing_rst : reset
-connect_bd_net -net rst_ps7_125M_peripheral_reset \
-	[get_bd_pins $converters/adc_rst_i] \
-	[get_bd_pins rst_ps7_125M/peripheral_reset]
+set converters [ create_bd_cell -type ip -vlnv ggm:cogen:redpitaya_converters:1.0 converters]
+set_property -dict [ list CONFIG.ADC_SIZE $ADC_SIZE \
+	CONFIG.ADC_EN true \
+	CONFIG.DAC_EN true] $converters
+source $repo_path/redpitaya_converters/redpitaya_converters.tcl
+connect_bd_intf_net [get_bd_intf_pins $converters/phys_interface] \
+	[get_bd_intf_ports phys_interface_0]
+
+# dupplDataA
+set dupplDataA [create_bd_cell -type ip -vlnv ggm:cogen:dupplReal_1_to_2:1.0 dupplDataA]
+set_property -dict [ list CONFIG.DATA_SIZE $ADC_SIZE] $dupplDataA
+connect_bd_intf_net [get_bd_intf_pins $converters/dataA_out] \
+	[get_bd_intf_pins dupplDataA/data_in]
+
+# dupplDataB
+set dupplDataB [create_bd_cell -type ip -vlnv ggm:cogen:dupplReal_1_to_2:1.0 dupplDataB]
+set_property -dict [ list CONFIG.DATA_SIZE $ADC_SIZE] $dupplDataB
+connect_bd_intf_net [get_bd_intf_pins $converters/dataB_out] \
+	[get_bd_intf_pins dupplDataB/data_in]
+
+# shifter is mandatory for redpitaya 16 : ADC is 16bits DAC 14bits
+# shiftA_out
+set shiftA_out [ create_bd_cell -type ip -vlnv ggm:cogen:shifterReal:1.0 shiftA_out]
+set_property -dict [ list \
+	CONFIG.SIGNED_FORMAT true \
+	CONFIG.DATA_IN_SIZE $ADC_SIZE \
+	CONFIG.DATA_OUT_SIZE 14] $shiftA_out
+connect_bd_intf_net [get_bd_intf_pins dupplDataA/data2_out] \
+	[get_bd_intf_pins $shiftA_out/data_in]
+connect_bd_intf_net [get_bd_intf_pins shiftA_out/data_out] \
+	[get_bd_intf_pins $converters/dataA_in]
+
+# shiftB_out
+set shiftB_out [ create_bd_cell -type ip -vlnv ggm:cogen:shifterReal:1.0 shiftB_out]
+set_property -dict [ list \
+	CONFIG.SIGNED_FORMAT true \
+	CONFIG.DATA_IN_SIZE $ADC_SIZE \
+	CONFIG.DATA_OUT_SIZE 14] $shiftB_out
+connect_bd_intf_net [get_bd_intf_pins dupplDataB/data2_out] \
+	[get_bd_intf_pins $shiftB_out/data_in]
+connect_bd_intf_net [get_bd_intf_pins shiftB_out/data_out] \
+	[get_bd_intf_pins $converters/dataB_in]
+
+# convert realToComplex
+set convertReal2Cplx [create_bd_cell -type ip -vlnv ggm:cogen:convertRealToComplex:1.0 convertReal2Cplx]
+set_property -dict [ list CONFIG.DATA_SIZE $ADC_SIZE] $convertReal2Cplx
+connect_bd_intf_net [get_bd_intf_pins dupplDataA/data1_out] \
+	[get_bd_intf_pins convertReal2Cplx/dataI_in]
+connect_bd_intf_net [get_bd_intf_pins dupplDataB/data1_out] \
+	[get_bd_intf_pins convertReal2Cplx/dataQ_in]
+
+# data2ram
+set data1600 [create_bd_cell -type ip -vlnv ggm:cogen:dataComplex_to_ram:1.0 data1600]
+set_property -dict [ list CONFIG.DATA_SIZE $ADC_SIZE \
+						CONFIG.NB_INPUT {1} \
+						CONFIG.NB_SAMPLE {4096}] $data1600
+connect_bd_intf_net [get_bd_intf_pins convertReal2Cplx/data_out] \
+	[get_bd_intf_pins data1600/data1_in]
+
+apply_bd_automation -rule xilinx.com:bd_rule:axi4 \
+    -config {Master "/ps7/M_AXI_GP0" Clk "Auto" } \
+    [get_bd_intf_pins data1600/s00_axi]
+
+connect_bd_net [get_bd_pins rst_ps7_125M/peripheral_reset] \
+	[get_bd_pins $converters/adc_rst_i]
 
 save_bd_design
 

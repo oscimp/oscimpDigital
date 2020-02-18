@@ -65,7 +65,8 @@ streams from the two ADCs on the other hand.
 Doing so is achieved by:
 \begin{enumerate}
 \item add {\tt dupplReal\_1\_to\_2}, {\tt convertRealToComplex} (converting two real
-data streams to one complex) and then {\tt dataComplex\_to\_ram}
+data streams to one complex) and then {\tt dataComplex\_to\_ram} (renamed as
+{\tt data1600}
 \item Double click on {\tt dupplReal\_1\_to\_2} to configure to 14 bit (or 16-bit if using
 the 16-bit Redpitaya) data (doing so on the two stream doublers). Same for 
 {convertRealToComplex} 
@@ -97,7 +98,7 @@ export BOARD_NAME=redpitaya
 export BR_DIR=${HOME}/buildroot-2018.08.1/
 \end{verbatim}
 
-Compilation is achieved from the {\tt \$OSCIMP\_DIGITAL\_DRIVER/dataComplex\_to\_ram\_core}
+Compilation is achieved from the {\tt \$OSCIMP\_DIGITAL\_DRIVER/data\_to\_ram\_core}
 directory by running \\
 {\tt make install} \\
 which will install the {\tt .ko} in 
@@ -234,7 +235,7 @@ Having completed all compilation and installation steps, we have in\\
 \item {\tt tutorial3.dtbo}, {\tt tutorial3\_us.sh} and {\tt tutorial3\_us} in
 {\tt tutorial3/bin} directory;
 \item {\tt tutorial3\_wrapper.bit.bin} in {\tt tutorial3/bitstreams};
-\item {\tt dataComplex\_to\_ram\_core.ko} in {\tt modules/}
+\item {\tt data\_to\_ram\_core.ko} in {\tt modules/}
 \end{enumerate} 
 %we are finally left with three files on the PC
 %to be transfered to the embedded board (e.g. Redpitaya):
