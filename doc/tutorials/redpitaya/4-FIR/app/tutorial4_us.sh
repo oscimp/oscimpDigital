@@ -3,7 +3,9 @@ CORE_MODULES_DIR=../../modules
 mkdir -p /lib/firmware
 cp ../bitstreams/tutorial4_wrapper.bit.bin /lib/firmware
 DTB_DIR=/sys/kernel/config/device-tree/overlays/fpga
-rmdir $DTB_DIR
+if [ -d $DTB_DIR ]; then
+	rmdir $DTB_DIR
+fi
 mkdir $DTB_DIR
 cat tutorial4.dtbo > $DTB_DIR/dtbo
 

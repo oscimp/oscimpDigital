@@ -2,12 +2,12 @@
 <project name="tutorial4" version="1.0">
 	<ips>
 		<ip name ="dataReal_to_ram" >
-			<instance name="data00" id = "0"
-				base_addr="0x43c00000" addr_size="0xffff" />
+			<instance name="data1600" id="0"
+				base_addr="0x43C00000" addr_size="0xffff" />
 		</ip>
 		<ip name ="firReal" >
-			<instance name="fir00" id = "0"
-				base_addr="0x43c10000" addr_size="0xffff" />
+			<instance name="fir00" id="0"
+				base_addr="0x43C10000" addr_size="0xffff" />
 		</ip>
 	</ips>
 </project>

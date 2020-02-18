@@ -10,7 +10,7 @@ int main()
 {int k;
  char c[16384];
  int fi,fo;
- fi=open("/dev/data00",O_RDWR);
+ fi=open("/dev/data1600",O_RDWR);
  fo=open("/tmp/data.bin",O_WRONLY|O_CREAT,S_IRWXU);
  fir_send_confSigned("/dev/fir00","coefs.txt",32);
  for (k=1;k<5;k++)

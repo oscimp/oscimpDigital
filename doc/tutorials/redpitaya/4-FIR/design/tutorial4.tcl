@@ -66,18 +66,18 @@ set_property -dict [ list \
 # dupplReal_1_to_2
 set dupplDataA [create_bd_cell -type ip -vlnv ggm:cogen:dupplReal_1_to_2:1.0 dupplDataA]
 set dupplDataB [create_bd_cell -type ip -vlnv ggm:cogen:dupplReal_1_to_2:1.0 dupplDataB]
-set dataReal_to_ram_0 [create_bd_cell -type ip -vlnv ggm:cogen:dataReal_to_ram:1.0 dataReal_to_ram_0]
-set firReal [create_bd_cell -type ip -vlnv ggm:cogen:firReal:1.0 firReal]
+set data1600 [create_bd_cell -type ip -vlnv ggm:cogen:dataReal_to_ram:1.0 data1600]
+set fir00 [create_bd_cell -type ip -vlnv ggm:cogen:firReal:1.0 fir00]
 
 set_property -dict [ list CONFIG.DATA_SIZE $ADC_SIZE] $dupplDataA
 set_property -dict [ list CONFIG.DATA_SIZE $FIR_OUT_SIZE] $dupplDataB
 set_property -dict [ list CONFIG.DATA_IN_SIZE $ADC_SIZE \
 						CONFIG.NB_COEFF  {32} \
 						CONFIG.DECIMATE_FACTOR 5 \
-						CONFIG.DATA_OUT_SIZE $FIR_OUT_SIZE] $firReal
+						CONFIG.DATA_OUT_SIZE $FIR_OUT_SIZE] $fir00
 set_property -dict [ list CONFIG.DATA_SIZE {16} \
 						CONFIG.NB_SAMPLE {4096} \
-						CONFIG.NB_INPUT {2}] $dataReal_to_ram_0
+						CONFIG.NB_INPUT {2}] $data1600
 
 # Create instance: ps7, and set properties
 startgroup
@@ -106,12 +106,12 @@ connect_bd_intf_net [get_bd_intf_pins $shiftA_out/data_out] \
 connect_bd_intf_net [get_bd_intf_pins $dupplDataA/data1_out] \
 	[get_bd_intf_pins $expanderA_data/data_in]
 connect_bd_intf_net [get_bd_intf_pins $expanderA_data/data_out] \
-	[get_bd_intf_pins $dataReal_to_ram_0/data1_in]
+	[get_bd_intf_pins $data1600/data1_in]
 # voie B : ADC -> FIR -> duppl -> shiftB -> DAC
 #                              |-> shift0 -> data2RAM
 connect_bd_intf_net [get_bd_intf_pins $converters/dataB_out] \
-	[get_bd_intf_pins $firReal/data_in]
-connect_bd_intf_net [get_bd_intf_pins $firReal/data_out] \
+	[get_bd_intf_pins $fir00/data_in]
+connect_bd_intf_net [get_bd_intf_pins $fir00/data_out] \
 	[get_bd_intf_pins $dupplDataB/data_in]
 connect_bd_intf_net [get_bd_intf_pins $dupplDataB/data2_out] \
 	[get_bd_intf_pins $shiftB_out/data_in]
@@ -120,17 +120,17 @@ connect_bd_intf_net [get_bd_intf_pins $shiftB_out/data_out] \
 connect_bd_intf_net [get_bd_intf_pins $dupplDataB/data1_out] \
 	[get_bd_intf_pins $shiftB_data/data_in]
 connect_bd_intf_net [get_bd_intf_pins $shiftB_data/data_out] \
-	[get_bd_intf_pins dataReal_to_ram_0/data2_in]
+	[get_bd_intf_pins data1600/data2_in]
 
 #==========================
 # autoconnect and AXI	 =
 #==========================
 apply_bd_automation -rule xilinx.com:bd_rule:axi4 \
     -config {Master "/ps7/M_AXI_GP0" Clk "Auto" } \
-    [get_bd_intf_pins dataReal_to_ram_0/s00_axi]
+    [get_bd_intf_pins data1600/s00_axi]
 apply_bd_automation -rule xilinx.com:bd_rule:axi4 \
     -config {Master "/ps7/M_AXI_GP0" Clk "Auto" } \
-    [get_bd_intf_pins firReal/s00_axi]
+    [get_bd_intf_pins fir00/s00_axi]
 apply_bd_automation -rule xilinx.com:bd_rule:processing_system7 \
 	-config {make_external "FIXED_IO, DDR" Master "Disable" Slave "Disable" } \
 	$ps7

@@ -14,14 +14,14 @@
 
 			firmware-name = "tutorial4_wrapper.bit.bin";
 
-			data00: data00@43c00000{
+			data1600: data1600@43C00000{
 				compatible = "ggm,dataToRam";
-				reg = <0x43c00000 0xffff>;
+				reg = <0x43C00000 0xffff>;
 			};
 
-			fir00: fir00@43c10000{
+			fir00: fir00@43C10000{
 				compatible = "ggm,fir";
-				reg = <0x43c10000 0xffff>;
+				reg = <0x43C10000 0xffff>;
 			};
 
 		};

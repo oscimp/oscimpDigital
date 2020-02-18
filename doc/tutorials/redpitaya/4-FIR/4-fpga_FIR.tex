@@ -50,9 +50,10 @@ complex stream: we will now stream two parallel real data, which could be extend
 two channels.
 
 \begin{figure}[h!tb]
-\begin{center}
-\includegraphics{objective}
-\end{center}
+\hspace{-2cm}
+%\begin{center}
+\includegraphics[width=1.2\textwidth]{figures/structs.pdf}
+%\end{center}
 
 \hspace*{-1.5cm}\includegraphics[angle=-90,width=1.2\linewidth]{combinedADC_DAC_data2ram_FIR.pdf}
 \caption{Schematic of the objective and final processing chain described in this document}
@@ -95,6 +96,38 @@ least-significant bits, as illustrated here with the selection of outputting 16~
 from the FIR filter (e.g. for further computations in the PL) and shifting the 2 least
 significant bits to send 14-bit wide words (as expected from the legacy Redpitaya ADC 
 datastream -- 16 bits for the 16-bit Redpitaya) to the PS.
+
+To summarize:
+\begin{itemize}
+\item disconnect interface between {\tt converters/dataB\_out} and {\tt dupplDataB/data\_in};
+\item add {\tt firReal} IP, renamed as {\tt fir00} with:
+\begin{itemize}
+\item {\tt DATA\_IN\_SIZE}: 14;
+\item {\tt DATA\_OUT\_SIZE}: 19;
+\item {\tt NB\_COEFF}: 32;
+\item {\tt DECIMATE\_FACTOR}: 5;
+\end{itemize} 
+\item update dupplDataB with {\tt DATA\_SIZE} = 19
+\item suppress {\tt convertRealToCplx} and {\tt data1600};
+\item add {\tt dataReal\_to\_ram} IP, renamed as {\tt data1600}, with:
+\begin{itemize}
+\item {\tt DATA\_SIZE} = 16;
+\item {\tt NB\_SAMPLE} = 4096;
+\item {\tt NB\_INPUT} = 2;
+\end{itemize}
+\item add {\tt expanderReal} IP, connect this block between {\tt dupplDataA} and
+{\tt data1600/data1\_in} with:
+\begin{itemize}
+\item {\tt DATA\_IN\_SIZE} = 14;
+\item {\tt DATA\_OUT\_SIZE} = 16;
+\end{itemize}
+\item add {\tt shifterReal} IP, connect this block between {\tt dupplDataB} and
+{\tt data1600/data2\_in} with:
+\begin{itemize}
+\item {\tt DATA\_IN\_SIZE} = 19;
+\item {\tt DATA\_OUT\_SIZE} = 16;
+\end{itemize}
+\end{itemize}
 
 \section{PS: Linux kernel driver}
 
