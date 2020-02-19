@@ -22,3 +22,8 @@ source $OSCIMP_DIGITAL/app/setenv.sh
 source $OSCIMP_DIGITAL/fpga_ip/setenv.sh
 source $OSCIMP_DIGITAL/lib/setenv.sh
 source $OSCIMP_DIGITAL/linux_driver/setenv.sh
+
+# /!\ locale settings for Vivado (uses '.' as separator, as opposed to the French ',')
+export LANG=en_US.UTF-8
+# /!\ check /etc/locale.gen: en_US.UTF-8 UTF-8 must be UNcommented. If it was commented:
+#     remove comment and execute as root locale-gen
