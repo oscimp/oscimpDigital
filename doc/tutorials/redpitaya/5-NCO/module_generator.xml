@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<drivers name="tutorial5" version="1.0">
-	<driver name ="data_to_ram" >
-		<board_driver name="data1600" id = "0"
-			base_addr="0x43c00000" addr_size="0xffff" />
-	</driver>
-	<driver name ="nco_counter">
-		<board_driver name="datanco0" id = "0"
-			base_addr="0x43c10000" addr_size="0xffff" />
-	</driver>
-</drivers>
+<project name="tutorial5" version="1.0">
+    <ips>
+        <ip name ="dataComplex_to_ram" >
+            <instance name="data1600" id = "0"
+                base_addr="0x43C10000" addr_size="0xffff" />
+        </ip>
+        <ip name ="nco_counter">
+            <instance name="datanco" id = "0"
+                base_addr="0x43C00000" addr_size="0xffff" />
+        </ip>
+    </ips>
+</project>

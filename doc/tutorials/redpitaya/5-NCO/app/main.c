@@ -12,7 +12,7 @@ int main()
  int fi,fo;
  fi=open("/dev/data1600",O_RDWR);
  fo=open("/tmp/data.bin",O_WRONLY|O_CREAT,0666);
- nco_counter_send_conf("/dev/datanco0", 125000000, 10000000, 32, 0,   1,   1);
+ nco_counter_send_conf("/dev/datanco", 125000000, 10000000, 32, 0,   1,   1);
                      // /dev            f_ck=125M  f_o=10M  acc offs pinc poff
  read(fi,c,4096*channels);
  write(fo,c,4096*channels);
