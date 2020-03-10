@@ -215,5 +215,33 @@ connect_bd_net [get_bd_pins $converters/rst_o] \
 
 See {\tt design/tutorial6.tcl} for the lines to be added to tutorial 2 to reach the expected result.
 
+\section{OscimpDigital wrapper}
+
+TCL is a verbose language and the commands are not consistent between Xilinx and Altera/Intel. Commands have
+been implemented to OscimpDigital to add an abstraction layer and add the compatibility with any TCL-compatible
+vendor (at the moment Xilinx and Altera/Intel).
+
+\begin{itemize}
+\item
+{\tt add\_ip\_and\_conf}: adds an IP and configures parameters, using only the OscimpDigital name and no need to 
+		provide the Xilinx VLNV -- Vendor, Library, Name, and Version -- identifier
+\item {\tt connect\_proc}: connect to AXI bus. The argument is the least significant byte with respect to the 0x43C0000 base
+address (start at 0x00000 and increment by 0x10000 for each new block to be consistent with Vivado's allocation of 64~KB blocks
+for each IP),
+\item {\tt connect\_proc\_clk}: connect the clock to the PS clock
+\item {\tt connect\_proc\_rst}: connect the reset to the PS reset
+\item {\tt connect\_intf}: connects interface to interface or signal to signal
+\item {\tt connect\_to\_fpga\_pins}: same as Make external
+\end{itemize}
+
+Using these commands, the developer only focuses on connecting blocks together without
+struggling with the details of each vendor implementation.
+
+Similarly, the proposed Makefile automates all synthesis steps, whichever vendor is addressed
+by a given platform: the project is synthesized using {\tt make project}.
+
+Using these commands, the previous project becomes:
+
+{\bf TODO}
 \end{document}
 
