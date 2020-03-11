@@ -44,7 +44,7 @@ git submodule update
 
 ## Software environnement
 
-Current Vivado version: 2018.2
+Current Vivado version: 2018.2 to 2019.2
 
 Software parts (applications, library and drivers), based on a set of
 *Makefile*, uses [buildroot](http://www.buildroot.org) to cross-compiles code.
@@ -56,6 +56,8 @@ For the specific case of the *Redpitaya* board, not officially supported by
 *buildroot*, see
 [red_readme](https://github.com/trabucayre/redpitaya/blob/master/README.md)
 
+For the specific case of the *PlutoSDR* board, not officially supported by 
+*buildroot*, see [plutosdr_readme](https://github.com/oscimp/PlutoSDR/blob/master/README.md)
 
 ## Configuration
 
@@ -68,18 +70,17 @@ cross-compilation.
 A sample script (*settings.sh.sample*) is proposed as reference to provide a
 complete variable set. You must copy this file and adapt its content to your
 specific case, mainly filling the fields:
-- *BOARD_NAME*: with the name of your board (*redpitaya*, *zc706*, ...). This
-variable will be used to determine subdirectories of nfs root (see *app*
-README for more details on this subject)
+- *BOARD_NAME*: with the name of your board (*redpitaya*, *redpitaya16*, *plutosdr*, *de0nanosoc* as described in the comment at the beginning of the configuration file). This
+variable will be used to determine subdirectories of NFS root, to build designs and run Makefiles accordingly.
 - *BR_DIR*: with the absolute path of your *buildroot*. this information is
 mandatory to have access to the cross-compiler, linux tree and some other
-applications.
+applications. See above the Software environnement section on how to install buildroot if needed.
 - *OSCIMP_DIGITAL_NFS* (optional): when you use *make install* for a Linux driver
 or an application, files are copied to a sub-directory of *$OSCIMP_DIGITAL_NFS/$BOARD_NAME*.
 By default *OSCIMP_DIGITAL_NFS=/nfs*. Change this variable if you want to
 install files in other location.
 
-Once this file has been filled, the command:
+Once this file has been filled and named *settings.sh*, the command:
 ```bash
 source /somewhere/settings.sh
 ```
