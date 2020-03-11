@@ -1,6 +1,8 @@
-#define which board. Must be adapted
-#name is not really strict but must be coherent
-#but for PlutoSDR must be plutosdr
+# define the board being used. Must be adapted to either:
+# plutosdr for the Xilinx Zynq-based ADI PlutoSDR board
+# redpitaya for the Xilinx Zynq-based 14-bit legacy Red Pitaya board
+# redpitaya16 for the new Xilinx Zynq-based 16-bit Red Pitaya board
+# de0nansoc for the Altera/Intel Terrasic DE0Nano SoC
 export BOARD_NAME=
 
 #define Buildroot location
