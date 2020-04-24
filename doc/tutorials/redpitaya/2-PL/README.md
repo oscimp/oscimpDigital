@@ -22,11 +22,11 @@ ADC output to the DAC input (Fig.
 
 ![Objective of the tutorial (top) and block design (bottom) including
 the processor, and the combined ADC/DAC block including clocking
-circuit.](objective.png)
+circuit.](figures/objective.png)
 
 ![Objective of the tutorial (top) and block design (bottom) including
 the processor, and the combined ADC/DAC block including clocking
-circuit.](combinedADC_DAC.png)
+circuit.](figures/combinedADC_DAC.png)
 
 <span id="bloc_design_final" label="bloc_design_final">\[bloc\_design\_final\]</span>
 
@@ -49,20 +49,20 @@ of the project (Fig.
 [\[createProj\_selectType\]](#createProj_selectType)).
 
 ![Selecting the project name and storage
-location<span label="createProj1"></span>](./createProj1.png)
+location<span label="createProj1"></span>](./figures/createProj1.png)
 
-![Selecting the project type.](./createProj_selectType.png)
+![Selecting the project type.](./figures/createProj_selectType.png)
 
 <span id="createProj_selectType" label="createProj_selectType">\[createProj\_selectType\]</span>
 
 ![Selecting the Zynq SOC type: the Redpitaya is fitted with a
 <span>xc7z010clg400-1</span> model of the Zynq, hence a Zynq-7000 in a
 “clg400” package, and a speed grade set to
--1.](./createProj_selectPart2019.png)
+-1.](./figures/createProj_selectPart2019.png)
 
 <span id="createProj_selectpart" label="createProj_selectpart">\[createProj\_selectpart\]</span>
 
-![Fenêtre récapitulative.](./createProj_summary.png)
+![Fenêtre récapitulative.](./figures/createProj_summary.png)
 
 <span id="createProj_summary" label="createProj_summary">\[createProj\_summary\]</span>
 
@@ -181,7 +181,7 @@ the IP name in the repository and must be added:
     (collaborative work).
 
 ![Adding constraints for mapping signals to FPGA
-pins.<span label="addSources"></span>](addSources.png)
+pins.<span label="addSources"></span>](figures/addSources.png)
 
 # Bitstream generation
 
@@ -198,7 +198,7 @@ HDL Wrapper</span>. Having completed this step, we click on
 <span>Vivado</span> graphical interface.
 
 ![Creating the wrapper (<span>top</span> of the design) needed to
-generate the bitstream](createHDLWrapper.png)
+generate the bitstream](figures/createHDLWrapper.png)
 
 .
 <span id="createHDLWrapper" label="createHDLWrapper">\[createHDLWrapper\]</span>
