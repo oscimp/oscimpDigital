@@ -55,7 +55,7 @@ two channels.
 \includegraphics[width=1.2\textwidth]{figures/structs.pdf}
 %\end{center}
 
-\hspace*{-1.5cm}\includegraphics[angle=-90,width=1.2\linewidth]{combinedADC_DAC_data2ram_FIR.pdf}
+\hspace*{-1.5cm}\includegraphics[width=1.2\linewidth]{combinedADC_DAC_data2ram_FIR.pdf}
 \caption{Schematic of the objective and final processing chain described in this document}
 \label{fin}
 \end{figure}
@@ -233,16 +233,16 @@ FPGA can be efficiently used either to process the stream straight from the acqu
 interface through the various processing blocks, or as co-processor from data provided
 by the CPU and running through the FPGA before being recovered by the CPU.
 \end{document}
-
-cp ./project_1.runs/impl_1/design_1_wrapper.bit .
-bootgen -image design_1_wrapper.bif -arch zynq -process_bitstream bin
-
-jmfriedt@rugged:~/xilinx/oimp/doc/tutorials/4-fpga_FIR/project_1/app$ /home/jmfriedt/enseignement/ufr/platforms/redpitaya/buildroot-2018.08.1/output/build/linux-3f3c7b60919d56119a68813998d3005bca501a40/scripts/dtc/dtc -@ -I dts -O dtb -o project_1.dtbo project_1.dts
-
- source /home/jmfriedt/xilinx/oimp/fpga_driver/sourceme.ggm 
- export BOARD_NAME=redpitaya
- export BR_DIR=/home/jmfriedt/enseignement/ufr/platforms/redpitaya/buildroot-2018.08.1/
- make
-
-
-/home/jmfriedt/enseignement/ufr/platforms/redpitaya/buildroot-2018.08.1/output/host/usr/bin/arm-linux-gcc -I /home/jmfriedt/xilinx/oimp/fpga_lib -o ma_lecture ma_lecture.c -L/home/jmfriedt/xilinx/oimp/fpga_lib -loscimp_fpga
+% 
+% cp ./project_1.runs/impl_1/design_1_wrapper.bit .
+% bootgen -image design_1_wrapper.bif -arch zynq -process_bitstream bin
+% 
+% jmfriedt@rugged:~/xilinx/oimp/doc/tutorials/4-fpga_FIR/project_1/app$ /home/jmfriedt/enseignement/ufr/platforms/redpitaya/buildroot-2018.08.1/output/build/linux-3f3c7b60919d56119a68813998d3005bca501a40/scripts/dtc/dtc -@ -I dts -O dtb -o project_1.dtbo project_1.dts
+% 
+%  source /home/jmfriedt/xilinx/oimp/fpga_driver/sourceme.ggm 
+%  export BOARD_NAME=redpitaya
+%  export BR_DIR=/home/jmfriedt/enseignement/ufr/platforms/redpitaya/buildroot-2018.08.1/
+%  make
+% 
+% 
+% /home/jmfriedt/enseignement/ufr/platforms/redpitaya/buildroot-2018.08.1/output/host/usr/bin/arm-linux-gcc -I /home/jmfriedt/xilinx/oimp/fpga_lib -o ma_lecture ma_lecture.c -L/home/jmfriedt/xilinx/oimp/fpga_lib -loscimp_fpga
