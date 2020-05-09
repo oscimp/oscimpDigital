@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>2-PL</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+</head>
+<body>
+<p><span><strong>Redpitaya: first Vivado project example, using the RF ADC and DAC</strong></span><br />
+ <br />
+G. Goavec-Mérou<br />
+ <br />
+</p>
+<p>This documents aims at providing basics on:</p>
+<ul>
+<li><p>creating a basic Vivado project and the associated block design,</p></li>
+<li><p>adding IP and connections between these processing blocks as well as towards the FPGA pins,</p></li>
+<li><p>generating the bitstream,</p></li>
+<li><p>converting the bitstream to a format usable with GNU/Linux and configuring the FPGA.</p></li>
+</ul>
+<p>This presentation will aim at connecting the Redpitaya radiofrequency ADC output to the DAC input (Fig. <a href="#bloc_design_final" data-reference-type="ref" data-reference="bloc_design_final">[bloc_design_final]</a>).</p>
+<figure>
+<img src="figures/objective.png" alt="Objective of the tutorial (top) and block design (bottom) including the processor, and the combined ADC/DAC block including clocking circuit." /><figcaption>Objective of the tutorial (top) and block design (bottom) including the processor, and the combined ADC/DAC block including clocking circuit.</figcaption>
+</figure>
+<figure>
+<img src="figures/combinedADC_DAC.png" alt="Objective of the tutorial (top) and block design (bottom) including the processor, and the combined ADC/DAC block including clocking circuit." style="width:97.0%" /><figcaption>Objective of the tutorial (top) and block design (bottom) including the processor, and the combined ADC/DAC block including clocking circuit.</figcaption>
+</figure>
+<p><span id="bloc_design_final" label="bloc_design_final">[bloc_design_final]</span></p>
+<h1 id="creating-the-design">Creating the design</h1>
+<p>Creating a new design for the Redpitaya requires configuring a project for the Zynq 7010 embedded on the board (Figs. <a href="#createProj1" data-reference-type="ref" data-reference="createProj1">1</a>, <a href="#createProj_selectType" data-reference-type="ref" data-reference="createProj_selectType">[createProj_selectType]</a>, <a href="#createProj_selectpart" data-reference-type="ref" data-reference="createProj_selectpart">[createProj_selectpart]</a> and <a href="#createProj_summary" data-reference-type="ref" data-reference="createProj_summary">[createProj_summary]</a>): despite not being defined in Xilinx Vivado, we provide manually the proper Zynq declination instead of the platform settings (Fig. <a href="#createProj_selectpart" data-reference-type="ref" data-reference="createProj_selectpart">[createProj_selectpart]</a>).</p>
+<p>Such a result is achieved by selecting a <span>RTL Project</span> so that all additional configurations are performed manually. The option <span><em>Do not specify sources at this time</em></span> prevents <span>Vivado</span> from asking the list of source files at the creation of the project (Fig. <a href="#createProj_selectType" data-reference-type="ref" data-reference="createProj_selectType">[createProj_selectType]</a>).</p>
+<figure>
+<img src="figures/./createProj1.png" alt="Selecting the project name and storage location" id="createProj1" style="width:50.0%" /><figcaption>Selecting the project name and storage location<span label="createProj1"></span></figcaption>
+</figure>
+<figure>
+<img src="figures/./createProj_selectType.png" alt="Selecting the project type." style="width:50.0%" /><figcaption>Selecting the project type.</figcaption>
+</figure>
+<p><span id="createProj_selectType" label="createProj_selectType">[createProj_selectType]</span></p>
+<figure>
+<img src="figures/./createProj_selectPart2019.png" alt="Selecting the Zynq SOC type: the Redpitaya is fitted with a xc7z010clg400-1 model of the Zynq, hence a Zynq-7000 in a “clg400” package, and a speed grade set to -1." style="width:70.0%" /><figcaption>Selecting the Zynq SOC type: the Redpitaya is fitted with a <span>xc7z010clg400-1</span> model of the Zynq, hence a Zynq-7000 in a “clg400” package, and a speed grade set to -1.</figcaption>
+</figure>
+<p><span id="createProj_selectpart" label="createProj_selectpart">[createProj_selectpart]</span></p>
+<figure>
+<img src="figures/./createProj_summary.png" alt="Fenêtre récapitulative." style="width:50.0%" /><figcaption>Fenêtre récapitulative.</figcaption>
+</figure>
+<p><span id="createProj_summary" label="createProj_summary">[createProj_summary]</span></p>
+<h1 id="creating-the-block-design">Creating the block design</h1>
+<p>The classical approach offered by Vivado is to assemble blocks graphically: while we shall depart later from this approach for large designs, we will use it for the smaller designs of the first tutorials. Assembling IPs graphically is achieved using the <span><em>block design</em></span> tool.</p>
+<p>In the left menu, double click on <span><em>Create Block Design</em></span>. Selecting the design name does not really matter but will define the final bitstream name: for consistency sake we <span><strong>advise to use the same name than the name of the project</strong></span>.</p>
+<p>The first item to be added is the <span><em>processing system</em></span> (representing CPU in the block design). Such a result is achieved by displaying (<span>CTRL + i</span> shortcut) a window allowing for the selection of all available IPs. In the list, add <span><em>ZYNQ7 Processing System</em></span> (search keyword <span>zynq</span>). Failing to add this IP, even if not needed, will result in a system freeze when configuring the FPGA from GNU/Linux.</p>
+<p>Once this block has been added, a green horizontal bar appears with the text <span><em>Run Block Automation</em></span>. Running this option will route the few mandatory connections.</p>
+<p>At the beginning of a project creation <span><em>block design</em></span> has no knowledge of the Redpitaya hardware configuration (amount of RAM, peripherals ...): defining such a configuration of the processing system is needed for further work. Such a result is achieved by double-clicking on the <span><em>processing system</em></span> block: on top of the newly created window, in the <span>Presets</span> menu, select <span><em>Apply configuration</em></span> and load the configuration file <span>redpitaya.tcl</span> (or <span>redpitaya16.tcl</span> for the 16-bit Redpitaya version <a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>) found in the <span>red_vivado_support</span> directory of the <a href="https://github.com/trabucayre/redpitaya/">https://github.com/trabucayre/redpitaya/</a> repository, or locally at<br />
+<span>/somewhere/oscimpDigital/fpga_ip/preset/redpitaya.tcl</span>.</p>
+<h1 id="configuring-vivado-to-use-custom-ips">Configuring Vivado to use custom IPs</h1>
+<p><span>Tools</span> <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>→</mo><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math> <span>Settings</span> <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>→</mo><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math> <span>IP</span> <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>→</mo><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math> <span>Repository</span> <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>→</mo><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math> <span>+</span> and add <span>somewhere/oscimpDigital/fpga_ip</span>. This operation is completed only once on a given Vivado installation, when accessing for the first time the custom IPs provided by the OscImp project.</p>
+<h1 id="inserting-a-new-block-in-vivado">Inserting a new block in Vivado</h1>
+<p>Handling ADC, DAC and the associated clocking circuitry is being taken care of by a single processing block: <span>redpitaya_converters</span>. This block is designed to handle the legacy 14-bit Redpitaya as well as the newer 16-bit Redpitaya.</p>
+<p>Since this design will not allow communicating with the PS, some blocks that will be used later are not added, such as the <span><em>axi interconnect</em></span> and the <span><em>Processor System Reset</em></span>. The latter block is however mandatory in the current case since it handles reset signals. Hence, having again hit <span>CTRL + i</span>, select <span><em>Processor System Reset</em></span> (search keyword <span>reset</span>). Now connect the <span>redpitaya_converters</span> <span>adc_rst_i</span> input to the <span>proc_sys_reset</span> output named <span>peripher_reset</span>.</p>
+<p>Forthermore, clock settings must be manually defined since here we do not rely on AXI communication to set these signals automatically as will be done later: connect <span>FCLK_CLK0</span> (of ps7) to <span>M_AXI_GP0_ACLK</span> (same block) and <span>slowest_sync_clk</span> (of <span>rst_ps7</span>).</p>
+<h1 id="connecting-blocks-to-the-fpga-pins">Connecting blocks to the FPGA pins</h1>
+<p>The block describing the ADC, DAC and internal signals must be connected to the FPGA pins (Fig. <a href="#bloc_design_final" data-reference-type="ref" data-reference="bloc_design_final">[bloc_design_final]</a>).</p>
+<p>Exporting a signal to the outer world is achieved by using the <span><em>make external</em></span> command obtained by selecting a given signal on a block (the line and its name should turn brown) and right-mouse click, or using the shortcut <span>CTRL + t</span>: apply this command to the <span>phys_interface</span> of the <span>redpitaya_converters</span> block.</p>
+<p>The <span>make external</span> command we have just used (CTRL+t shortcut) has exported each signal and now requires defining which of the FPGA pins they are connected to. Such constraints are defined by dedicated files with the <span>.xdc</span> extension. For the IP we have used in this design, these files are provided in the sub-directory with the IP name in the repository and must be added:</p>
+<ul>
+<li><p>in the <span>Sources</span> tab on the left of the schematic, unwrap <span>Constraints</span> and right-click on <span>constrs_1</span> (Fig. <a href="#addSources" data-reference-type="ref" data-reference="addSources">2</a>) and select <span><em>Add Sources</em></span></p></li>
+<li><p><span><em>Add or create constraints</em></span>;</p></li>
+<li><p>using the “+” button, <span><em>Add Files</em></span> and select the <span>xdc</span> files</p>
+<ul>
+<li><p><span>redpitaya_converters.xdc</span> must alway be selected;</p></li>
+<li><p>add either <span>redpitaya_converters_adc.xdc</span> or <span>redpitaya_converters_adc16.xdc</span> depending whether the legacy (14-bit) or newer (16-bit) Redpitaya is used</p></li>
+</ul>
+<p>located in the IP directories of the <span>oscimpDigital/fpga_ip/redpitaya_converters</span> repository.</p></li>
+<li><p>before validating with <span>Finish</span>, select <span><em>Copy constraints files into project</em></span>, otherwise the project will refer to the repository file using absolute paths, preventing the use of the project if moved to another computer or directory (collaborative work).</p></li>
+</ul>
+<figure>
+<img src="figures/addSources.png" alt="Adding constraints for mapping signals to FPGA pins." id="addSources" style="width:40.0%" /><figcaption>Adding constraints for mapping signals to FPGA pins.<span label="addSources"></span></figcaption>
+</figure>
+<h1 id="bitstream-generation">Bitstream generation</h1>
+<p>The project is now completed, but prior to generating the bitstream a last step is mandatory: creating a wrapper whose function is to assemble the various HDL source codes. This file also provides the <span>top</span> file of the design.</p>
+<p>Such a result is achieved by right-clicking in the <span>Sources</span> tab the name of the block design (Fig. <a href="#createHDLWrapper" data-reference-type="ref" data-reference="createHDLWrapper">[createHDLWrapper]</a>) and selecting <span>Create HDL Wrapper</span>. Having completed this step, we click on <span>Generate Bitstream</span> in the lower left part of the <span>Vivado</span> graphical interface.</p>
+<figure>
+<img src="figures/createHDLWrapper.png" alt="Creating the wrapper (top of the design) needed to generate the bitstream" style="width:50.0%" /><figcaption>Creating the wrapper (<span>top</span> of the design) needed to generate the bitstream</figcaption>
+</figure>
+<p>. <span id="createHDLWrapper" label="createHDLWrapper">[createHDLWrapper]</span></p>
+<h1 id="signed-bitstream-and-fpga-configuration">Signed bitstream and FPGA configuration</h1>
+<p>The previous steps have ended with the generation of a <span>.bit</span> located in the<br />
+<span>project_name/project_name.runs/impl_1</span> directory and called <span>project_name_wrapper.bit</span></p>
+<h2 id="creating-the-encrypted-bitstream">Creating the encrypted bitstream</h2>
+<p>The default file format of the bitstream generated by Vivado is a <span>.bit</span> file. The driver allowing to configure the PL from GNU/Linux requires a specific format including a dedicated header. Converting from one format to another is achieved by using the <span>bootgen</span> tool provided by the Vivado SDK.</p>
+<p>This tool expects a configuration file with a <span>.bif</span> extension and filled with</p>
+<pre><code>all:
+{
+  bitstream_name.bit
+}</code></pre>
+<p>so that the following command is executed</p>
+<div class="sourceCode" id="cb2" data-language="bash"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb2-1" title="1"><span class="ex">bootgen</span> -image bif_file.bif -arch zynq -process_bitstream bin</a></code></pre></div>
+<p>Following this command, a file named <span>bitstream_name.bit.bin</span> is generated in the current working directory.</p>
+<h2 id="configuring-the-pl-by-using-fpga_manager">Configuring the PL by using <span>fpga_manager</span></h2>
+<p>GNU/Linux provides a homogeneous framework for configuring the FPGA of SoC chips: <span>fpga_manager</span>. This framework expects the <span>.bit.bin</span> file to be located in the <span>/lib/firmware</span> of the target platform.</p>
+<p>Once the file is in the right location, the driver must be informed that the FPGA must be configured and which bitstream to use:</p>
+<div class="sourceCode" id="cb3" data-language="bash"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb3-1" title="1"><span class="bu">echo</span> <span class="st">&quot;bitstream_name.bit.bin&quot;</span> <span class="op">&gt;</span> /sys/class/fpga_manager/fpga0/firmware</a></code></pre></div>
+<p>which results in</p>
+<div class="sourceCode" id="cb4" data-language="bash"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb4-1" title="1"><span class="ex">fpga_manager</span> fpga0: writing bitstream_name.bit.bin to Xilinx Zynq FPGA Manager</a></code></pre></div>
+<p>being displayed in the console or in <span>/var/log/syslog</span> and the LED (blue on the Redpitaya platform) connected to <span>Prog done</span> will be lit.</p>
+<h2 id="using-the-devicetree-overlay-for-pl-configuration">Using the <span>devicetree</span> overlay for PL configuration</h2>
+<p>The devicetree overlay provides an alternative solution for configuring the FPGA in which all necessary resources – driver name, address space and bitstream name – are referenced in a single file and communicated to the kernel module. For the purpose of this design, this solution is oversized but offer a coherent approach with next tutorials, where Axi based IPs are used.</p>
+<p>Similar to the previous method, the bitstream must be located in <span>/lib/firmware</span>.</p>
+<p>Without getting in the details of the devicetree overlay format, the following code aims at modify <span>fpga_full</span> node, defined at board’s default devicetree, to provide, through attribute <span>firmware-name</span>, the bitstream name.</p>
+<pre><code>/dts-v1/;
+/plugin/;
+/ {
+    compatible = &quot;xlnx,zynq-7000&quot;;
+    fragment@0 {
+        target = &lt;&amp;fpga_full&gt;;
+        #address-cells = &lt;1&gt;;
+        #size-cells = &lt;1&gt;;
+        __overlay__ {
+            #address-cells = &lt;1&gt;;
+            #size-cells = &lt;1&gt;;
+
+            firmware-name = &quot;bitstream_name.bit.bin&quot;;
+        };
+    };
+};</code></pre>
+<p>This file is compiled by using the following command</p>
+<pre><code>/somewhere/buildroot/output/host/bin/dtc -@ -I dts -O dtb -o ${FILENAME}.dtbo ${FILENAME}.dts</code></pre>
+<p>in which</p>
+<ul>
+<li><p><span>-@</span> requires generating symbols that will be dynamically linked when loaded,</p></li>
+<li><p><span>-I dts</span> defines the format of the input file,</p></li>
+<li><p><span>-O dtb</span> defines the format of the output file,</p></li>
+<li><p><span>-o</span> the name of the generated file.</p></li>
+</ul>
+<p>Loading this file in memory is achieved in two steps:</p>
+<ol>
+<li><p>creating a directory hosting our overlay</p>
+<div class="sourceCode" id="cb7" data-language="bash"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb7-1" title="1"><span class="fu">mkdir</span> /sys/kernel/config/device-tree/overlays/myname</a></code></pre></div>
+<p>will create a directory automatically filled with the files needed to communicate with the driver</p>
+<div class="sourceCode" id="cb8" data-language="bash"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb8-1" title="1"><span class="ex">redpitaya</span><span class="op">&gt;</span> ls -l /sys/kernel/config/device-tree/overlays/myname/</a>
+<a class="sourceLine" id="cb8-2" title="2"><span class="ex">total</span> 0</a>
+<a class="sourceLine" id="cb8-3" title="3"><span class="ex">-rw-r--r--</span>    1 root     root             0 Jan  1 00:04 dtbo</a>
+<a class="sourceLine" id="cb8-4" title="4"><span class="ex">-rw-r--r--</span>    1 root     root          4096 Jan  1 00:04 path</a>
+<a class="sourceLine" id="cb8-5" title="5"><span class="ex">-r--r--r--</span>    1 root     root          4096 Jan  1 00:04 status</a></code></pre></div></li>
+<li><p>loading the overlay in the <span>devicetree</span> :</p>
+<div class="sourceCode" id="cb9" data-language="bash"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb9-1" title="1"><span class="fu">cat</span> gpio_red.dtbo <span class="op">&gt;</span> /sys/kernel/config/device-tree/overlays/myname/dtbo</a></code></pre></div>
+<p>will configure the PL by transferring the bitstream, insert, if needed, the associated module driver as defined by the “compatible” field which must be filled with a matching string in the driver.</p></li>
+</ol>
+<p>Returning to a state where the overlay functionalities are removed is achieved by erasing the directory:</p>
+<div class="sourceCode" id="cb10" data-language="bash"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb10-1" title="1"><span class="fu">rmdir</span> /sys/kernel/config/device-tree/overlays/myname</a></code></pre></div>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>In case of the 16-bit Redpitaya, we wish to echo the 16-bit ADC measurement to the 14-bit DAC. A bit-shift – <a href="https://github.com/oscimp/oscimpDigital/blob/master/doc/IP/shifter.md">https://github.com/oscimp/oscimpDigital/blob/master/doc/IP/shifter.md</a> – to the right by two bits is necessary to match data bus sizes. This shifter is automatically inserted when generating the Vivado project from the TCL script found in the <span>design</span> directory.<a href="#fnref1" class="footnote-back">↩</a></p></li>
+</ol>
+</section>
+</body>
+</html>
