@@ -46,7 +46,7 @@ git submodule update
 
 Current Vivado version: 2018.2 to 2019.2
 
-Software parts (applications, library and drivers), based on a set of
+Software parts (applications, libraries and drivers), based on a set of
 *Makefile*, uses [buildroot](http://www.buildroot.org) to cross-compiles code.
 
 Thus, you need to download, build and flash your board with a *buildroot*
@@ -98,3 +98,8 @@ Various FPGA design frameworks have been available. Here we list the reasons for
 - HLS (High-level Language Synthesis): at the moment most HLS designs require FIFOs and are not compatible with high throughput
 streaming data processing, as considered in the radiofrequency data processing for software defined radio
 - Migen/Mikymist/ARTIQ (M-Lab)
+
+## Getting started
+
+### With [Redpitaya STEM 125-14](https://www.redpitaya.com/f130/STEMlab-board)
+- [First setup](redpitaya125-14_getting_started.md)
