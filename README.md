@@ -102,4 +102,4 @@ streaming data processing, as considered in the radiofrequency data processing f
 ## Getting started
 
 ### With [Redpitaya STEM 125-14](https://www.redpitaya.com/f130/STEMlab-board)
-- [First setup](redpitaya125-14_getting_started.md)
+- [First setup](doc/redpitaya125-14_getting_started.md)
