@@ -19,10 +19,6 @@
 
 self.connect((self.analog_sig_source_x_1, 0), (self.audio_sink_0, 0))
 
-
-
-
-
 */
 
 int main(void)
@@ -40,7 +36,7 @@ int main(void)
 	top_block->connect(source, 0, audio_sink, 0);
 
 	top_block->start(); // Start threads and wait
-	printf("hit a touch to stop app\n");
+	printf("hit a key to stop app\n");
 	getchar();
 	top_block->stop();
 	top_block->wait();
