@@ -16,7 +16,7 @@ processed at each clock cycle, with no latencies introduced by FIFOs between blo
 ## Install
 
 This repository is composed of multiple associated submodules (see sub-READMEs
-to see each repository goal).
+to see each repository goal). Please refer to the [Wiki](https://github.com/oscimp/oscimpDigital/wiki) for pre-requisites and most significantly Buildroot. Vendor specific tools for synthetizing for the targeted FPGA are also assumed to be functional and accessible through the PATH.
 
 ### Download
 
