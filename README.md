@@ -4,8 +4,9 @@ oscillators, provides most frontend processing blocks for Software Defined Radio
 
 ## Motivation
 
-This ecosystem aims to provide a consistent software/hardware, chip independent
-(Xilinx Zynq, Altera/Intel Cyclone V soc, ...) solution, to assemble and build
+This ecosystem aims at providing a consistent software/hardware, chip independent
+(Xilinx Zynq, Altera/Intel Cyclone V soc, ... including the 
+[Redpitaya STEM 125-14](https://www.redpitaya.com/f130/STEMlab-board)board) solution, to assemble and build
 designs targeted for FPGA and to generate and cross-compile software, running
 on the CPU running embedded GNU/Linux, dedicated to communicate/configure
 logic parts. The highlights of oscimpDigital were presented at the [Maker Space conference](https://www.youtube.com/watch?v=SSzR_pnZnjs&feature=youtu.be) in 2019 and [FOSDEM](https://fosdem.org/2020/schedule/event/fsr_platform_independent_cpu_fpga_co_design/) in 2020.
@@ -101,7 +102,6 @@ Various FPGA design frameworks have been available. Here we list the reasons for
 streaming data processing, as considered in the radiofrequency data processing for software defined radio
 - Migen/Mikymist/ARTIQ (M-Lab)
 
-## Getting started
+## [Getting started](https://github.com/oscimp/oscimpDigital/wiki)
 
-### With [Redpitaya STEM 125-14](https://www.redpitaya.com/f130/STEMlab-board)
-- [First setup](doc/redpitaya125-14_getting_started.md)
+
