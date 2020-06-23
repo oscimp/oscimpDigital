@@ -61,7 +61,7 @@ __**REG_MAX_ACCUM**__ (*BASE_ADDR + 0x10*)
 ```tcl
 # add nco_counter with
 # output in 16 bits.
-set nco_counter[create_bd_cell -type ip -vlnv ggm:cogen:nco_counter:1.0 nco_counter]
+set nco_counter [create_bd_cell -type ip -vlnv ggm:cogen:nco_counter:1.0 nco_counter]
 set_property -dict [ list \
     CONFIG.DATA_SIZE 16 ] $nco_counter
 

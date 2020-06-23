@@ -40,7 +40,7 @@ __**REG_INPUT**__ (*BASE_ADDR + 0x04*)
 
 ```tcl
 # add switchReal with
-set switchReal[create_bd_cell -type ip -vlnv ggm:cogen:switchReal:1.0 switchReal]
+set switchReal [create_bd_cell -type ip -vlnv ggm:cogen:switchReal:1.0 switchReal]
 set_property -dict [ list \
     CONFIG.DATA_SIZE 16 \
 	CONFIG.DEFAULT_INPUT 0 ] $switchReal
@@ -97,7 +97,7 @@ close(fd);
 
 located in switch_conf.c, switch_conf.h
 
-### To select inpout stream
+### To select input stream
 ```c
 int switch_send_conf(char *filename, int input);
 ```

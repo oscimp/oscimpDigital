@@ -1,8 +1,7 @@
 # adder_substracter_real and adder_substracter_complex
 
-These IPs are used to add or subtract two real or complex data streams. These
-two stream are always considered as signed data. The data stream may be
-real interfaces (**adder_substracter_real** (figure [1](#adder_substracter_real)) or 
+These IPs are used to add or subtract two real or complex data streams.
+The data stream may be real interfaces (**adder_substracter_real** (figure [1](#adder_substracter_real)) or 
 complex interfaces (**adder_substracter_complex** figure [2](#adder_substracter_complex)). 
 
 Output size is *DATA_SIZE+1* with *DATA_SIZE* the input size.

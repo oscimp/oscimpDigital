@@ -93,7 +93,7 @@ __**REG_CONF**__ (*BASE_ADDR + 0x0C*)
 # dataA_out enable always high and dataB_out enable high only when register is
 #      written
 # dataA_out and dataB_out values updated at the same time
-set axi_to_dac[create_bd_cell -type ip -vlnv ggm:cogen:axi_to_dac:1.0 axi_to_dac]
+set axi_to_dac [create_bd_cell -type ip -vlnv ggm:cogen:axi_to_dac:1.0 axi_to_dac]
 set_property -dict [ list \
     CONFIG.DATA_SIZE 16 \
 	CONFIG.DATAA_DEFAULT_OUT 10 \

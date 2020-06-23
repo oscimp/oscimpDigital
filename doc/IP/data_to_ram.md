@@ -53,7 +53,7 @@ Fetch data_to_ram data from this register
 ```tcl
 # add dataReal_to_ram with
 # 16 bit inputs on a single channel.
-set dataReal_to_ram[create_bd_cell -type ip -vlnv ggm:cogen:dataReal_to_ram:1.0 dataReal_to_ram]
+set dataReal_to_ram [create_bd_cell -type ip -vlnv ggm:cogen:dataReal_to_ram:1.0 dataReal_to_ram]
 set_property -dict [ list \
     CONFIG.DATA_SIZE 16 \
 	CONFIG.NB_INPUT 1 \
