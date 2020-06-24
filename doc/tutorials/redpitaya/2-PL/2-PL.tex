@@ -202,10 +202,14 @@ since it handles reset signals. Hence, having again hit {\tt CTRL + i}, select
 {\em Processor System Reset} (search keyword {\tt reset}). Now connect the {\tt redpitaya\_converters}
 {\tt adc\_rst\_i} input to the {\tt proc\_sys\_reset} output named {\tt peripher\_reset}.
 
-Forthermore, clock settings must be manually defined since here we do not rely on AXI
+Furthermore, clock settings must be manually defined since here we do not rely on AXI
 communication to set these signals automatically as will be done later:
 connect {\tt FCLK\_CLK0} (of ps7) to {\tt M\_AXI\_GP0\_ACLK} (same block) and 
-{\tt slowest\_sync\_clk} (of {\tt rst\_ps7}).
+{\tt slowest\_sync\_clk} (of {\tt rst\_ps7})~; and connect {\tt FCLK\_RESET0\_N} of the PS7
+to {\tt ext\_reset\_in}.
+
+Finally, since the functionality of this design is to mirror the ADC input to the DAC output,
+connect {\tt dataA\_in} to {\tt dataA\_out} and {\tt dataB\_in} to {\tt dataB\_out}.
 
 \section{Connecting blocks to the FPGA pins}
 
@@ -489,4 +493,18 @@ erasing the directory:
 \begin{lstlisting}[language=bash]
 rmdir /sys/kernel/config/device-tree/overlays/myname
 \end{lstlisting}
+
+\section{Demonstration}
+
+Connect a signal synthesizer to the ADC analog input and an oscilloscope to the DAC analog output.
+The output must mirror the input with a delay due to the signal propagation in the FPGA, as shown
+in Fig. \ref{1}.
+
+\begin{figure}[h!tb]
+\includegraphics[width=0.49\linewidth]{ADC_DAC_delay_1MHz.jpg}
+\includegraphics[width=0.49\linewidth]{ADC_DAC_delay_4MHz.jpg}
+\caption{Left: 1-MHz signal mirrored from ADC to DAC. Right: 4~MHz signal, with a 180$^\circ$
+phase rotation indicative of the propagation delay.}
+\label{1}
+\end{figure}
 \end{document}
