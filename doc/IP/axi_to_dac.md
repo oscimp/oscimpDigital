@@ -121,6 +121,19 @@ apply_bd_automation -rule xilinx.com:bd_rule:axi4 \
     -config {Master "/processing_system7_0/M_AXI_GP0" Clk "Auto" } \
     [get_bd_intf_pins $axi_to_dac/s00_axi]
 ```
+
+## Testing from bash
+
+```bash
+redpitaya> devmem 0x43C00000          # read IP identifier
+0x00000001
+redpitaya> devmem 0x43C0000C 32 7     # enable chans A & B + synchronous update
+redpitaya> devmem 0x43C0000C          # check configuration
+0x00000007
+redpitaya> devmem 0x43C00004 32 0xfff # write chanA value
+redpitaya> devmem 0x43C00008 32 0x5ff # write chanB value: update output, 550 mV on A & 187 mV on B
+```
+
 ## Driver
 
 **axi_to_dac_core**
