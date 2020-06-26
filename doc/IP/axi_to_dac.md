@@ -4,17 +4,17 @@ this IP is used to generate two scalar constant as data stream source.
 Each output are independtly sets from the CPU.
 
 * each output is packaged in an real interface
-* by default the enable signal, contained in interface, goes high for one
-  clock cycle when user write a new value to the corresponding register. This
+* by default the enable signal, contained in the interface, goes high for one
+  clock cycle when user writes a new value to the corresponding register. This
   behaviour may be changed by setting *DATAX_EN_ALWAYS_HIGH* to true at the
   design time or by setting corresponding bits in *CONF* register at the
   run-time (see fig. 1).
-* by default each output channel value is fixed independtly, but it's possible to
-  synchronize all of them to update output at the same time. This configuration
+* by default each output channel value is fixed independently, but it is possible to
+  synchronize to update all outputs at the same time. This configuration
   may be done, at the design time, by setting *SYNCHRONIZE_CHAN* to true or, at
-  runtime, by setting bit 0 in *CONF* register . When IP is
+  runtime, by setting bit 0 in *CONF* register . When the IP is
   configured to have synchronous output, the user must write in dataA and dataB
-  register in this order to update both channels (see fig. 2).
+  registers in this order to update both channels (see fig. 2).
 
 ![axi_to_dac_en](figures/axi_to_dac_en.svg)
 
@@ -24,8 +24,8 @@ updated and dataB enable always high
 ![axi_to_dac_sync](figures/axi_to_dac_sync.svg)
 
 __Figure2__: axi_to_dac configured with synchronous channels. dataA is slave of
-dataB, so internal register is updated as soon as register is written, but
-output is updated at the same time dataB is updated.
+dataB, so internal registers are updated as soon as each register is written, but the
+output is updated at the same time than dataB is updated.
 
 ## IP
 
@@ -204,7 +204,7 @@ int axi_to_dac_full_conf(const char *filename,
   * *BOTH_ALWAYS_HIGH*: chan_a and chan_b enable are always_high.
 * *sync_chan*: if set to 0 each channel may be updated independtly. When set to
   1 chanA and chanB reg must be written (in this order) to update both output
-  channel
+  channels
 
 **return**
 
@@ -219,7 +219,7 @@ int axi_to_dac_set_chan(const char *filename, const enum output_chan_t chan,
 ```
 **param**
 * *filename*: device filename (*/dev/something*);
-* *chan*: wich channel must be updated (CHANA or CHANB);
+* *chan*: which channel must be updated (CHANA or CHANB);
 * *val*: value to write in the corresponding register;
 
 **return**
