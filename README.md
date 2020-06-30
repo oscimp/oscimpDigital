@@ -102,6 +102,6 @@ Various FPGA design frameworks have been available. Here we list the reasons for
 streaming data processing, as considered in the radiofrequency data processing for software defined radio
 - Migen/Mikymist/ARTIQ (M-Lab)
 
-## [Getting started](https://github.com/oscimp/oscimpDigital/wiki)
+## [Getting started](https://github.com/oscimp/oscimpDigital/wiki/Getting-started)
 
 
