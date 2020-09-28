@@ -10,7 +10,7 @@ It includes:
 * the control of the internal clok with an external 10 MHz reference clock.
 
 <p align="center">
-<img src='redpitaya_converters_12/redpitaya_converters_12.png' width='500'>
+<img src='figures/redpitaya_converters_12.png' width='500'>
 </p>
 
 ## Ports and interfaces
