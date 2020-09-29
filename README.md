@@ -73,7 +73,7 @@ cross-compilation.
 A sample script (*settings.sh.sample*) is proposed as reference to provide a
 complete variable set. You must copy this file and adapt its content to your
 specific case, mainly filling the fields:
-- *BOARD_NAME*: with the name of your board (*redpitaya*, *redpitaya16*, *plutosdr*, *de0nanosoc* as described in the comment at the beginning of the configuration file). This
+- *BOARD_NAME*: with the name of your board (*redpitaya*, *redpitaya16*, *plutosdr*, *de0nanosoc* *zedboard* as described in the comment at the beginning of the configuration file). This
 variable will be used to determine subdirectories of NFS root, to build designs and run Makefiles accordingly.
 - *BR_DIR*: with the absolute path of your *buildroot*. this information is
 mandatory to have access to the cross-compiler, linux tree and some other
