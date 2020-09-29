@@ -4,7 +4,7 @@ this IP is used to transfer one or multiple Real or Complex datastreams from
 the FPGA to the CPU.
 
 * each input is packaged in an real or complex interface
-* output is an AXI stream
+* output is an AXI 4 lite
 
 ## IP
 
@@ -20,6 +20,13 @@ will be transfered from **data_to_ram** FPGA block to CPU memory (default: 1024)
 * **DATA_FORMAT**: (string) signed or unsigned input data.
 * **USE_EOF**: (boolean) generate End Of Frame signal (default: false).
 
+
+**NOTE:** **DATA_IN_SIZE** may be any size > 1, but CPU is limited to 8, 16, 32 or 64bits.
+- when **DATA_IN_SIZE** match one size allowed by the CPU, internally this size is used
+- when **DATA_IN_SIZE** didn't match, samples are extended to nearest allowed size:
+ - if **DATA_FORMAT** is "signed" by using input **MSB**
+ - if **DATA_FORMAT** is "unsigned" by using '0'
+
 ## Ports and interfaces
 * **s00_axi**: (aximm interface) AXI 4 lite bus connected to the CPU
 * **s00_axi_reset**: (reset interface) active high reset signal, synchronous to s00_axi. Used for
@@ -28,6 +35,7 @@ will be transfered from **data_to_ram** FPGA block to CPU memory (default: 1024)
   AXI communication part.
 * **datan_i**: (real or complex interface) nth input data stream, with **n** between
 1 and **NB_INPUT** (<=12)
+* **interrupt_o**: an optional single bit to connect to the CPU interrupt input  
 
 ## Registers
 
@@ -72,15 +80,42 @@ apply_bd_automation -rule xilinx.com:bd_rule:axi4 \
 
 **data_to_ram_core**
 
-Access is done by ioctl and read:
+By default, read is blocking. To start acquisition before calling read() an
+*ioctl* is available:
 
-* **DCTR_START** to start filling memory.
-
-**Example**
+**DCTR_START** to start asynchroniouly filling memory.
 
 ```c
+[...]
+int i = 1;
+ioctl(fd, DCTR_START, &i);
+[...]
+```
+### interrupts
 
-int val[16384];
+By default, this driver use a polling method to know when the acquisition is done. This method is CPU consuming.
+An alternative is to use interrupt driven method.
+To use this, **interrupt_o** pin must be connected to the CPU interrupt controler
+and the dataxx_to_ram node in devicetree updated with line like:
+```c
+interrupt-parent = <&intc>;
+interrupts = <0 29 1>;
+```
+where:
+- the value of **interrupt-parent** depends on target device
+- the second value of **interrupts** depends on both target device and number of interrupt line used (for Zynq allowed values
+ are between 26 and 37, 53 and 60) 
+
+## Example
+
+For a dataComplex_to_ram configured with 2 16bits signed input and 1024 samples per channel
+```c
+#define NB_INPUT 2
+#define NB_SAMPLE 1024
+/* 2 x -> complex samples */
+#define SAMPLE_SIZE (2 * sizeof(short))
+#define ACQUIS_SIZE (NB_INPUT * NB_SAMPLE * SAMPLE_SIZE)
+int val[ACQUIS_SIZE];
 
 /* open device */
 int fd = open("/dev/data_to_ram", O_RDWR);
@@ -89,7 +124,7 @@ if (fd < 0) {
 	return;
 }
 
-read(fd,val,16384);
+read(fd,val, ACQUIS_SIZE);
 
 /* close device */
 close(fd);
