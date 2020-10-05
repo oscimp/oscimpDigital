@@ -1,3 +1,5 @@
+/!\ UNDER TEST
+
 # redpitaya_converters_12
 
 This IP represents the analog to digital and digital to analog converters of the redpitaya STEM250-12 "Signal-lab".
@@ -136,8 +138,6 @@ redpitaya_converters_12_spi_conf("/dev/my_converters_dev_name",1,0xff,0x01,1)
 ```
 
 ### Enable the referencing of the internal clock with the 10 MHz reference input:
-
-/!\ NOT FUNCTIONNAL YET, WORK IN PROGRESS
 
 Enable using python:
 
