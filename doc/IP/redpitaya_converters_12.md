@@ -41,6 +41,12 @@ It includes:
 This IP is developped for the redpitaya STEM250-12 and requires the corresponding buildroot.
 See https://github.com/trabucayre/redpitaya for further informations on the preparation of the buildroot.
 
+Modify the variable devicetree_image in (somewhere)/redpitaya/board/redpitaya/uEnv.txt:
+
+```
+devicetree_image=zynq-red_pitaya12.dtb
+```
+
 In the buildroot directory: 
 
 ```bash
@@ -52,7 +58,7 @@ make menuconfig
 make
 ```
 
-Then follow the usual protocol: https://github.com/oscimp/oscimpDigital/wiki/2Prepare.
+Finally follow the usual protocol: https://github.com/oscimp/oscimpDigital/wiki/2Prepare.
 
 ### Zynq
 
@@ -61,7 +67,7 @@ The **ZYNQ7 Processing System** block must also be adapted to the redpitaya STEM
 1. Eventually add the Zynq block to your block design.
 2. Double click on it.
 3. Click on presets, then apply configuration.
-4. Choose (somewhere)/oscimpDigital/fpga_ip/preset/redpitaya12.tcl and apply.
+4. Choose $OSCIMP_DIGITAL/fpga_ip/preset/redpitaya12.tcl and apply.
 
 Done !
 
@@ -93,7 +99,7 @@ echo 909 > /sys/class/gpio/unexport
 	- right click on Sources/Constraits,
 	- then Add sources, Add or Create Constraints,
 	- in the next section: Add files,
-	- in (somewhere)/oscimpDigital/fpga_ip/redpitaya_converters_12 directory, seelect redpitaya_converters_12.xdc and redpitaya_converters_adc_12.xdc,
+	- in $OSCIMP_DIGITAL/fpga_ip/redpitaya_converters_12 directory, seelect redpitaya_converters_12.xdc and redpitaya_converters_adc_12.xdc,
 	- Finish.
 3. Apply the Run Connection Automation proposition.
 4. Right click on **phys_interface**, then Make external.
