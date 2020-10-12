@@ -75,6 +75,11 @@ connect_bd_intf_net [get_bd_intf_pins $dataReal_to_ram/data1_in] \
 apply_bd_automation -rule xilinx.com:bd_rule:axi4 \
     -config {Master "/processing_system7_0/M_AXI_GP0" Clk "Auto" } \
     [get_bd_intf_pins $dataReal_to_ram/s00_axi]
+
+# OPTIONAL: connect interrupt (only one interrupt)
+connect_bd_net [get_bd_pins $dataReal_to_ram/interupt_o] \
+        [get_bd_pins $ps7/irq_f2p]
+
 ```
 ## Driver
 
