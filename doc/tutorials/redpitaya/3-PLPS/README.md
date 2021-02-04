@@ -132,7 +132,7 @@ the dtbo and to install all files in
 <span>$OSCIMP\_DIGITAL\_NFS/tutorial3</span>.
 
 This task is done by this command:  
-<span>fpga\_app/tools/module\_generator/module\_generator
+<span>/somewhere/oscimpDigital/app/tools/module\_generator/module\_generator
 my\_file.xml</span>
 
 After generation, a new directory, called <span>app</span> is present in
