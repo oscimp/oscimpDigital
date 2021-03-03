@@ -4,7 +4,7 @@ DAC**</span>
 G. Goavec-Mérou  
    
 
-This documents aims at providing basics on:
+This document aims at providing basics on:
 
   - creating a basic Vivado project and the associated block design,
 
@@ -79,7 +79,7 @@ Selecting the design name does not really matter but will define the
 final bitstream name: for consistency sake we <span>**advise to use the
 same name than the name of the project**</span>.
 
-The first item to be added is the <span>*processing system*</span>
+The first item to add is the <span>*processing system*</span>
 (representing CPU in the block design). Such a result is achieved by
 displaying (<span>CTRL + i</span> shortcut) a window allowing for the
 selection of all available IPs. In the list, add <span>*ZYNQ7 Processing
@@ -88,7 +88,7 @@ IP, even if not needed, will result in a system freeze when configuring
 the FPGA from GNU/Linux.
 
 Once this block has been added, a green horizontal bar appears with the
-text <span>*Run Block Automation*</span>. Running this option will route
+text <span>*Run Block Automation*</span>. Run this option. This will route
 the few mandatory connections.
 
 At the beginning of a project creation <span>*block design*</span> has
@@ -106,19 +106,19 @@ configuration*</span> and load the configuration file
 
 # Configuring Vivado to use custom IPs
 
-<span>Tools</span> \(\rightarrow\) <span>Settings</span> \(\rightarrow\)
-<span>IP</span> \(\rightarrow\) <span>Repository</span> \(\rightarrow\)
-<span>+</span> and add <span>somewhere/oscimpDigital/fpga\_ip</span>.
+<span>Tools</span> → <span>Settings</span> →
+<span>IP</span> → <span>Repository</span> →
+<span>"+"</span> and add <span>somewhere/oscimpDigital/fpga\_ip</span>.
 This operation is completed only once on a given Vivado installation,
 when accessing for the first time the custom IPs provided by the OscImp
 project.
 
 # Inserting a new block in Vivado
 
-Handling ADC, DAC and the associated clocking circuitry is being taken
-care of by a single processing block:
+Handling ADC, DAC and the associated clocking circuitry is managed by a single processing block:
 <span>redpitaya\_converters</span>. This block is designed to handle the
-legacy 14-bit Redpitaya as well as the newer 16-bit Redpitaya.
+legacy 14-bit Redpitaya as well as the newer 16-bit Redpitaya. Add it to
+the design using Ctrl+i.
 
 Since this design will not allow communicating with the PS, some blocks
 that will be used later are not added, such as the <span>*axi
@@ -130,23 +130,24 @@ reset signals. Hence, having again hit <span>CTRL + i</span>, select
 <span>adc\_rst\_i</span> input to the <span>proc\_sys\_reset</span>
 output named <span>peripher\_reset</span>.
 
-Forthermore, clock settings must be manually defined since here we do
-not rely on AXI communication to set these signals automatically as will
-be done later: connect <span>FCLK\_CLK0</span> (of ps7) to
+Furthermore, clock settings must be manually defined since we do
+not rely on AXI communication here to set these signals automatically as this will
+be done later : connect <span>FCLK\_CLK0</span> (of ps7) to
 <span>M\_AXI\_GP0\_ACLK</span> (same block) and
 <span>slowest\_sync\_clk</span> (of <span>rst\_ps7</span>).
 
 # Connecting blocks to the FPGA pins
 
 The block describing the ADC, DAC and internal signals must be connected
-to the FPGA pins (Fig. [\[bloc\_design\_final\]](#bloc_design_final)).
+to the FPGA pins. Create all the remaining internal connections following this figure : (Fig. [\[bloc\_design\_final\]](#bloc_design_final)).
 
-Exporting a signal to the outer world is achieved by using the
+Exporting a signal to the outer world is achieved using the
 <span>*make external*</span> command obtained by selecting a given
 signal on a block (the line and its name should turn brown) and
 right-mouse click, or using the shortcut <span>CTRL + t</span>: apply
 this command to the <span>phys\_interface</span> of the
-<span>redpitaya\_converters</span> block.
+<span>redpitaya\_converters</span> block. Make the <span>phys_interface</span>
+pin external with this method.
 
 The <span>make external</span> command we have just used (CTRL+t
 shortcut) has exported each signal and now requires defining which of
@@ -162,20 +163,18 @@ the IP name in the repository and must be added:
   - <span>*Add or create constraints*</span>;
 
   - using the “+” button, <span>*Add Files*</span> and select the
-    <span>xdc</span> files
+    <span>xdc</span> files located in the IP directories of the
+    <span>oscimpDigital/fpga\_ip/redpitaya\_converters</span>
+    repository.
     
       - <span>redpitaya\_converters.xdc</span> must alway be selected;
     
       - add either <span>redpitaya\_converters\_adc.xdc</span> or
         <span>redpitaya\_converters\_adc16.xdc</span> depending whether
         the legacy (14-bit) or newer (16-bit) Redpitaya is used
-    
-    located in the IP directories of the
-    <span>oscimpDigital/fpga\_ip/redpitaya\_converters</span>
-    repository.
 
-  - before validating with <span>Finish</span>, select <span>*Copy
-    constraints files into project*</span>, otherwise the project will
+  - before validating with <span>Finish</span>, check <span>*Copy
+    constraints files into project*</span> checkbox, otherwise the project will
     refer to the repository file using absolute paths, preventing the
     use of the project if moved to another computer or directory
     (collaborative work).
@@ -194,7 +193,7 @@ Such a result is achieved by right-clicking in the <span>Sources</span>
 tab the name of the block design (Fig.
 [\[createHDLWrapper\]](#createHDLWrapper)) and selecting <span>Create
 HDL Wrapper</span>. Having completed this step, we click on
-<span>Generate Bitstream</span> in the lower left part of the
+<span>Generate Bitstream</span> at the bottom of the left-most pannel of the
 <span>Vivado</span> graphical interface.
 
 ![Creating the wrapper (<span>top</span> of the design) needed to
@@ -209,6 +208,7 @@ The previous steps have ended with the generation of a <span>.bit</span>
 located in the  
 <span>project\_name/project\_name.runs/impl\_1</span> directory and
 called <span>project\_name\_wrapper.bit</span>
+This operation takes some time so wait until Vivado prompts a pop-up telling you that the work is done.
 
 ## Creating the encrypted bitstream
 
@@ -219,21 +219,23 @@ Converting from one format to another is achieved by using the
 <span>bootgen</span> tool provided by the Vivado SDK.
 
 This tool expects a configuration file with a <span>.bif</span>
-extension and filled with
+extension and filled with :
 
     all:
     {
       bitstream_name.bit
     }
 
-so that the following command is executed
+so, create a file `bif_file.bif` containing the previous text. Then,
+make sure that you have run the `source /tools/Xilinx/Vivado/2019.2/settings64.sh` in this terminal,
+else you won't be able to launch the `bootgen` command. Then, run the following command :
 
 ``` bash
 bootgen -image bif_file.bif -arch zynq -process_bitstream bin
 ```
 
-Following this command, a file named
-<span>bitstream\_name.bit.bin</span> is generated in the current working
+Following this command will generate a file named
+<span>bitstream\_name.bit.bin</span> in the current working
 directory.
 
 ## Configuring the PL by using <span>fpga\_manager</span>
@@ -241,10 +243,12 @@ directory.
 GNU/Linux provides a homogeneous framework for configuring the FPGA of
 SoC chips: <span>fpga\_manager</span>. This framework expects the
 <span>.bit.bin</span> file to be located in the
-<span>/lib/firmware</span> of the target platform.
+<span>/lib/firmware</span> of the target platform. Transfer this `.bit.bin` file
+to the target platform (if you use nfs for example, simply copy this file into the /nfs 
+directory of the host computer and from your target platform OS, mount this location and copy the `.bit.bin` file in `/lib/firmware`).
 
 Once the file is in the right location, the driver must be informed that
-the FPGA must be configured and which bitstream to use:
+the FPGA must be configured and which bitstream to use (replace "bitstream_name.bit.bin" by the name of your `.bit.bin` file):
 
 ``` bash
 echo "bitstream_name.bit.bin" > /sys/class/fpga_manager/fpga0/firmware
@@ -256,7 +260,7 @@ which results in
 fpga_manager fpga0: writing bitstream_name.bit.bin to Xilinx Zynq FPGA Manager
 ```
 
-being displayed in the console or in <span>/var/log/syslog</span> and
+being displayed in the console or in <span>/var/log/messages</span> and
 the LED (blue on the Redpitaya platform) connected to <span>Prog
 done</span> will be lit.
 
