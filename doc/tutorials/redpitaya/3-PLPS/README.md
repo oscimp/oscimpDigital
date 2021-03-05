@@ -261,9 +261,9 @@ You can copy this file in the nfs folder and analyze these data on your hosta
 computer with GNU/Octave with the following lines
 
 ``` octave
-f=fopen('data.bin')
+f=fopen('data.bin') %must return a number different from -1. If it's the case, you may not have the permission to read this file
 d=fread(f,inf,'int16');
-plot(d(2:2:end));
+plot(d(2:2:end)); %if you used channel 2. use d(1:2:end) if you used the channel 1
 ```
 
 > (you may need to grant you privileges on the data.bin file on your host computer to import the data in Octave.
