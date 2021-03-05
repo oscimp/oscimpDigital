@@ -63,10 +63,9 @@ Connection Automation</span> for connecting to the AXI bus.
 
 The driver needed to fetch data on the PS from Linux will be
 <span>data\_to\_ram\_core</span>. Compiling this kernel module requires
-exporting the variables
+exporting the variables in your oscimpDigital/settings.sh
 
-    export BOARD_NAME=redpitaya
-    export BR_DIR=${HOME}/buildroot-2018.08.1/
+    source /somewhere/oscimpDigital/settings.sh
 
 Compilation is achieved from the
 <span>$OSCIMP\_DIGITAL\_DRIVER/data\_to\_ram\_core</span> directory by
@@ -86,8 +85,9 @@ driver.
 
 The plugin to the devicetree is generated thanks to the
 <span>module\_generator</span> tool located in <span>
-$OSCIMP\_DIGITAL\_APP/tools/module\_generator</span>: this tool is
-designed to get the definition of all resources from an XML file written
+$OSCIMP\_DIGITAL\_APP/tools/module\_generator</span> (or in /usr/local/bin if you
+followed the installation instruction of the README.md of ModuleGenerator):
+this tool is designed to get the definition of all resources from an XML file written
 manually. In this example, the configuration file is
 
 ``` xml
@@ -118,16 +118,14 @@ starting point and range as provided in each IP attribute by Vivado
 Makefile. This variable is used to avoid application to be linked to the
 liboscimp\_fpga (see. 4-FIR for library introduction).
 
-This XML file may be written manually or by using a script :
+Write the *project\_name.xml* file in the parent directory of your project folder manually or by using this command in the root directory of your project (don't forget to source settings64.sh in */tools/Xilinx/Vivado/YYYY.R/* ) :
 
     vivado -mode batch -source $OSCIMP_DIGITAL_IP/scripts/gen_module_generator_xml.tcl -tclargs . project_name bd_name
 
-Where the first argument is the directory where .xpr is stored, the
-second is the name of the project and the last is the name of the block
-design.
+Where the *project_name* is the name of the directory where .xpr is stored (which is normally the name of your project) and bd_name is the name of the block
+design (the name of the .bin file without *"\_wrapper.bin"* in *project_name/project_name.runs/impl\_1/*).
 
-This script generate a file called project\_name.xml in the upper
-directory.
+This script generate a file called project\_name.xml in the parent directory of your project folder.
 
 ![Address range used by each IP able to communicate between the PL and
 PS through the AXI bus.<span label="addr"></span>](figures/adresses.png)
@@ -151,7 +149,7 @@ create
 <span>$OSCIMP\_DIGITAL\_NFS/$BOARD\_NAME/tutorial3</span>, and 2/ copy
 binary files in a sub-directory called <span>bin</span>.
 
-The rest needs some explanations.
+**Before** executing make or make install, read the three following sections.
 
 ## Devicetree overlay
 
@@ -213,8 +211,8 @@ the overlay and loads the core driver.
 
 ## Source code
 
-This file is not provided by <span>module\_generator</span> and must be
-created/written manually.
+This file is **not provided** by <span>module\_generator</span> and **must be
+created/written manually**.
 
 ``` c
 #include <stdio.h>
@@ -229,24 +227,28 @@ int main()
  close(fi); close(fo);
 }
 ```
+If you named *"data1600"* in a different way, change it in the `fi=open("/dev/yourIpName"` command.
+If you selected an other number of sample than 4096, multiply this number by 4 and replace the two *"16384"* in the code by the result.
+This code opens <span>/dev/data1600</span> to read 5 time 16384 samples
+and write these values in a in binary format file data.bin located in *"/tmp/"*.
 
-where we open <span>/dev/data1600</span> to read 5 time 16384 samples
-and write these values in an other file in binary format.
+# Compile and install
 
-# On the Redpitaya ...
-
-Having completed all compilation and installation steps, we have in  
-<span>$OSCIMP\_DIGITAL\_NFS/$BOARD\_NAME</span>:
+Now run `make install` in the app directory. We now have in <span>$OSCIMP\_DIGITAL\_NFS/$BOARD\_NAME</span> :
 
 1.  <span>tutorial3.dtbo</span>, <span>tutorial3\_us.sh</span> and
     <span>tutorial3\_us</span> in <span>tutorial3/bin</span> directory;
 
-2.  <span>tutorial3\_wrapper.bit.bin</span> in
-    <span>tutorial3/bitstreams</span>;
+2.  an empty folder *bitstreams* <span>tutorial3/</span>
 
 3.  <span>data\_to\_ram\_core.ko</span> in <span>modules/</span>
 
-The next task, before using the application is to load the bitstream,
+Create the *Your_block_design_wrapper.bit.bin* file with the same procedure described in the previous tutorial.
+Copy this file to the <span>$OSCIMP\_DIGITAL\_NFS/$BOARD\_NAME/tutorial3/bitstreams/</span> directory.
+
+# On the Redpitaya ...
+
+Before using the application, we must load the bitstream,
 the overlay and the driver. This is done by the command: `sh
 tutorial3_us.sh`.
 
@@ -254,14 +256,18 @@ If all goes well, the blue LED on the Redpitaya board will light up (the
 bitstream has been used to configure the FPGA) and the kernel module is
 loaded. The last step is to fetch data from userspace: `./tutorial3_us`
 
-whos execution will generate a binary data file loaded in GNU/Octave
-with
+whos execution will generate a binary data in /tmp/data.bin file.
+You can copy this file in the nfs folder and analyze these data on your host
+computer with GNU/Octave with the following lines
 
 ``` octave
 f=fopen('data.bin')
 d=fread(f,inf,'int16');
 plot(d(2:2:end));
 ```
+
+> (you may need to grant you privileges on the data.bin file on your host computer to import the data in Octave.
+> One way to do so is to use the command `chmod uga+rw data.bin` as root)
 
 providing a result as exhibited in Fig. [4](#adc) in which the input of
 the ADC is directly connected to the non-differential to differential
