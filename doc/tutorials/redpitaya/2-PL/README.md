@@ -136,10 +136,27 @@ be done later : connect <span>FCLK\_CLK0</span> (of ps7) to
 <span>M\_AXI\_GP0\_ACLK</span> (same block) and
 <span>slowest\_sync\_clk</span> (of <span>rst\_ps7</span>).
 
+
 # Connecting blocks to the FPGA pins
 
 The block describing the ADC, DAC and internal signals must be connected
 to the FPGA pins. Create all the remaining internal connections following this figure : (Fig. [\[bloc\_design\_final\]](#bloc_design_final)).
+
+>  In case of the 16-bit Redpitaya, we wish to echo the 16-bit ADC
+>  measurement to the 14-bit DAC. If we plug directly the output_A and output_B on input_A and input_B,
+>  the most significant bits may be truncatured during the measure. That's why we must add a bit-shifter
+>  IP that will erease the two less significant bits to get a 14 bits word. **(Note that your measure amplitude
+>  will be divided by 2^2 with this method !)**.
+
+>  To do so, hit <span>CTRL + i</span> and look for the IP "shifterReal" 
+>  <https://github.com/oscimp/oscimpDigital/blob/master/doc/IP/shifter.md>.
+>  Insert two of them and configure them by double-clicking on them to convert
+>  16 bits input to 14 bits output. Then plug output A and B of the redpitaya IP
+>  On the shifters inputs and plug the shifters outputs to the input A and B of the redpitaya IP.
+
+>  The shifters are automatically inserted when generating the Vivado
+>  project from the TCL script found in the <span>design</span>
+>  directory.
 
 Exporting a signal to the outer world is achieved using the
 <span>*make external*</span> command obtained by selecting a given
@@ -301,7 +318,7 @@ board’s default devicetree, to provide, through attribute
 This file is compiled by using the following command
 
     /somewhere/buildroot/output/host/bin/dtc -@ -I dts -O dtb -o ${FILENAME}.dtbo ${FILENAME}.dts
-
+A bit-shift – https://github.com/oscimp/oscimpDigital/blob/master/doc/IP/shifter.md – to the right by two bits is necessary to match data bus sizes. This shifter is automatically inserted when generating the Vivado project from the TCL script found in the design directory.
 in which
 
   - <span>-@</span> requires generating symbols that will be dynamically
@@ -348,11 +365,3 @@ achieved by erasing the directory:
 ``` bash
 rmdir /sys/kernel/config/device-tree/overlays/myname
 ```
-
-1.  In case of the 16-bit Redpitaya, we wish to echo the 16-bit ADC
-    measurement to the 14-bit DAC. A bit-shift –
-    <https://github.com/oscimp/oscimpDigital/blob/master/doc/IP/shifter.md>
-    – to the right by two bits is necessary to match data bus sizes.
-    This shifter is automatically inserted when generating the Vivado
-    project from the TCL script found in the <span>design</span>
-    directory.
