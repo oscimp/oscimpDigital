@@ -218,7 +218,7 @@ created/written manually**.
 #include <stdio.h>
 #include <stdint.h>
 #include <fcntl.h>
-#include <unistd.h>
+#include <unistd.h>a
 
 int main()
 {int k,fi,fo; char c[16384];
@@ -227,7 +227,7 @@ int main()
  close(fi); close(fo);
 }
 ```
-If you named *"data1600"* in a different way, change it in the `fi=open("/dev/yourIpName"` command.
+If you named *"data1600"* in a different way, change it in the `fi=open("/dev/yourIpName,O_RDWR)"` command.
 If you selected an other number of sample than 4096, multiply this number by 4 and replace the two *"16384"* in the code by the result.
 This code opens <span>/dev/data1600</span> to read 5 time 16384 samples
 and write these values in a in binary format file data.bin located in *"/tmp/"*.
@@ -257,7 +257,7 @@ bitstream has been used to configure the FPGA) and the kernel module is
 loaded. The last step is to fetch data from userspace: `./tutorial3_us`
 
 whos execution will generate a binary data in /tmp/data.bin file.
-You can copy this file in the nfs folder and analyze these data on your host
+You can copy this file in the nfs folder and analyze these data on your hosta
 computer with GNU/Octave with the following lines
 
 ``` octave
