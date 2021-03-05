@@ -21,23 +21,24 @@ Transfering data towards the PS <span>*in addition*</span> to sending
 the stream to the DAC requires duplicating the data on the one hand, and
 interleaving the two streams from the two ADCs on the other hand.
 
-Doing so is achieved by:
+To do so :
 
-1.  add <span>dupplReal\_1\_to\_2</span>,
-    <span>convertRealToComplex</span> (converting two real data streams
-    to one complex) and then <span>dataComplex\_to\_ram</span> (renamed
-    as <span>data1600</span>
+1.  add two stream doublers IP <span>*dupplReal\_1\_to\_2*</span>, one
+    <span>*convertRealToComplex*</span> IP (converting two real data streams
+    to one complex) and one <span>*dataComplex\_to\_ram*</span> IP . Rename the last one
+    as <span>*data1600*</span> using the pannel "Source File Properties" on the
+    left of the diagram area. This will be helpful for the steps 
 
 2.  Double click on <span>dupplReal\_1\_to\_2</span> to configure to 14
     bit (or 16-bit if using the 16-bit Redpitaya) data (doing so on the
     two stream doublers). Same for <span>convertRealToComplex</span>
 
 3.  Link <span>data1\_out</span> of each <span>dupplReal</span> to
-    <span>data1\_in</span> and <span>data2\_in</span> respectively of  
+    <span>dataI\_in</span> and <span>dataQ\_in</span> respectively of  
     <span>convertRealToComplex</span>
 
 4.  Cut the wires linking the ADC and DAC, and use the two free outputs
-    of the <span>dupplReal\_1\_to\_2</span> blocks
+    of the <span>dupplReal\_1\_to\_2</span> blocks to link them to dataA_in and dataB_in.
 
 5.  Connect <span>dataA\_out</span> and <span>dataB\_out</span> of the
     ADCs to the two free inputs of the <span>dupplReal\_1\_to\_2</span>
@@ -48,7 +49,12 @@ Doing so is achieved by:
     Input</span> to 1 and <span>Nb Sample</span> to the number of
     samples to be transfered. For example, defining 4096 <span>**sample
     pairs**</span> (complex numbers) each encoded as 16-bit values, or a
-    total of 16384 bytes available to the PS.
+    total of 16384 bytes available to the PS. Note the number of samples.
+    When you are complete the "Source code" section of this tutorial
+    below, replace "4096" by this number.
+
+7.  Link the data_out pin of the convertRealToComplex IP to data1_In pin of the data1600 (dataComplex_to_ram) IP
+8.  Run Connection Auto in the green horizontal bar at the top of the diagram area. This will add the missing mandatory block and connect the data1600 IP correctly. 
 
 Once these blocks have been defined and connected, execute <span>Run
 Connection Automation</span> for connecting to the AXI bus.
