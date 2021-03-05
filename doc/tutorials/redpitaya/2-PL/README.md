@@ -117,8 +117,9 @@ project.
 
 Handling ADC, DAC and the associated clocking circuitry is managed by a single processing block:
 <span>redpitaya\_converters</span>. This block is designed to handle the
-legacy 14-bit Redpitaya as well as the newer 16-bit Redpitaya. Add it to
-the design using Ctrl+i.
+legacy 14-bit Redpitaya as well as the 16-bit Redpitaya. Add it to
+the design using Ctrl+i. Then double click on the IP and **check that the ADC bus size matches your
+Redpitaya** (14 for Redpitaya14 and 16 for redpitaya16)
 
 Since this design will not allow communicating with the PS, some blocks
 that will be used later are not added, such as the <span>*axi
