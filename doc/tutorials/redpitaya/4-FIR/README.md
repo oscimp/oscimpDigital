@@ -23,35 +23,39 @@ document<span label="fin"></span>](figures/combinedADC_DAC_data2ram_FIR.png)
 
 The ADC to DAC and ADC to RAM blocks are the same as before, with stream
 dupplication every time a new datastream must reach two users. The
-novely is now the use of a FIR filter, whose input width the match the
-incoming datastream width.
+novelty here is the use of a FIR filter.
 
-Double click on the FIR block and update the Data Width (<span>Data In
-Size</span>) to 14 bits (or 16-bits for the 16-bit Redpitaya). The input
-data width (in bits) is called \(P\).
+From the program of the previous tutorial, add a FIR_Real IP. Double click
+on the FIR block and update the Data Width (<span>Data In Size</span>) to
+14 bits (or 16-bits for the 16-bit Redpitaya).
 
-The coefficient width \(M\) (<span>COEFF Size</span>) will define the
+The coefficient width (<span>COEFF Size</span>) will define the
 size of the data transferred from the PS to the PL, as stored as a
 column of decimal values written in human readable ASCII format. The
-number of coefficients \(N\) (<span>Nb COEFF</span>) and number of bits
-defining each coefficient are defined at synthesis time and must match
+number of coefficients (<span>Nb COEFF</span>) and the number of bits of
+(<span>Data Out Size</span>) are defined at synthesis time and must match
 the largest expected filter (as well as available resources).
 
-Theoretically, \(Q=P+M+\log_2(N)\) bits are generated at the output of
-the FIR convolution. Practically, this number of bits is grossly
-over-estimated, and truncation can be considered based on the knowledge
-of the coefficients defining the FIR. Taking the \(\log_2\) of the sum
-of the absolute values of the coefficients will give a much more
-conservative number of bits relevant at the output. While all internal
-computations are performed on \(Q\) bits, the output can be
-<span>*truncated*</span> to the <span>*lower*</span> Output Size bits
-(<span>Data Out Size</span>).
+How to choose (<span>Data Out Size</span>) ? Let us call the input data width
+(in bits) P, the coefficient width (in bits) M the number of coefficients N and the output data width (in bits) Q.
+Theoretically, if we don't want our output to saturate, we have to take \(Q=P+M+\log_2(N)\) bits.
+In practice, this number of bits is grossly over-estimated. The cardinal sinus distribution of the
+coefficients makes that one coefficient prevails on the others. That's why removing \(\log_2(N)\)
+of the sum of will give a much more conservative number of bits relevant at the output.
 
-The default behaviour of the FIR filter is to decimate the output: doing
-so, only useful outputs will be computed, saving computational resources
-in the FPGA. In the TCL example in the <span>design</span> directory,
+How to choose (<span>Nb COEFF</span>) ? The criteria that will help you choose is the transition band width.
+The more steep your transition is, the more coefficients you will need. In fact, to have a filter that
+corresponds to the wanted template, you will need N >= fs/df, where fs is your sampling frequency and
+df is your transition width.
+
+The DECIMATE FACTOR allows you to save computational resources in the FPGA by dividing the sampling frequency
+(which is 125 MHz on RedPitaya14 and 122.88MHz on RedPitaya 16)
+In the TCL example that you can find in the <span>design</span> directory,
 the decimation factor is <span>DECIMATE\_FACTOR 5</span> so that the
-output feeding the DAC output is “only” clocked at 25 MS/s.
+output feeding the DAC output is “only” clocked at 25 MS/s (= 125/5).
+
+BE AWARE that if you plug the output of the FIR into the data2ram, this later one will only record the output of the FIR
+at the rythm of fs/DECIMATE_FACTOR. 
 
 The user might then decide to shift to the right the result to drop some
 of the least-significant bits, as illustrated here with the selection of
