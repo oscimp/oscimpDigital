@@ -40,7 +40,7 @@ How to choose (<span>Data Out Size</span>) ? Let us call the input data width
 (in bits) P, the coefficient width (in bits) M the number of coefficients N and the output data width (in bits) Q.
 Theoretically, if we don't want our output to saturate, we have to take \(Q=P+M+\log_2(N)\) bits.
 In practice, this number of bits is grossly over-estimated. The cardinal sinus distribution of the
-coefficients makes that one coefficient prevails on the others. That's why removing \(\log_2(N)\)
+coefficients makes roughly that only one coefficient prevails on the others. That's why removing \(\log_2(N)\)
 of the sum of will give a much more conservative number of bits relevant at the output.
 
 How to choose (<span>Nb COEFF</span>) ? The criteria that will help you choose is the transition band width.
