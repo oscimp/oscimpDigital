@@ -79,8 +79,9 @@ To summarize:
       - <span>DATA\_OUT\_SIZE</span>: 19;
     
       - <span>NB\_COEFF</span>: 32;
-    
+      - <span>COEFF\_SIZE</span>: 16;
       - <span>DECIMATE\_FACTOR</span>: 1;
+      - <span>ID</span>: 1 (you can left it to the default value since it's a deprecated option and it's not used anymore)
 
   - update dupplDataB with <span>DATA\_SIZE</span> = 19
 
@@ -110,18 +111,22 @@ To summarize:
       - <span>DATA\_OUT\_SIZE</span> = 16;
 
 When you are done, if it was not the previous program but a new project, don't forget to add the constraints and set up the HDL wrapper as shown in the first tutorial.
+
 Then, generate the bitstream.
 
 # PS: Linux kernel driver
 
 Rather than using a single complex stream to communicate with the PS, we
 have now selected the <span>dataReal\_to\_ram</span> to define multiple
-real streams. The driver is the same than
-<span>dataComplex\_to\_ram</span>, so that this part of the XML may be
-left unchanged (memory address must be checked, as shown for example on
-Fig. [3](#addr)), in addition to which we wish to communicate with the
-FIR to define the coefficients. This time, the
-<span>module\_generator</span> XML configuration file should look like
+real streams. The result will be the same as <span>dataComplex\_to\_ram</span>,
+so the driver is the same. So, This part of the XML may be
+left unchanged (yet, don't forget to check the memory address, as shown for example on
+Fig. [3](#addr)). We define a new block to communicate with the
+FIR to define the coefficients.
+
+You can use the module generator as shown in the second tutorial to generate this XML
+or you can do it by hand.
+This time, the <span>module\_generator</span> XML configuration file should look like
 
 ``` xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -142,16 +147,16 @@ FIR to define the coefficients. This time, the
 ![Address range used by the IPs as defined by
 Vivado.<span label="addr"></span>](figures/address.png)
 
-# On the Redpitaya ...
+# Installing the program on the RedPitaya ...
 
-For communicating with the FIR, we will benefit from an existing library
+To communicate with the FIR, we will benefit from an existing library
 function as implemented in <span>liboscimp\_fpga</span> (see
-$OSCIMP\_DIGITAL\_LIB). This library must be installed by:
+$OSCIMP\_DIGITAL\_LIB). This library must be installed with :
 
     make && make install
 
 to place the .so in <span>buildroot</span> <span>target</span> dir (the
-board must be flashed again), or by
+board must be flashed again), or with
 
     make && make install_ssh
 
@@ -161,6 +166,10 @@ directory by using <span> ssh</span>. By default target IP is
 configuration with
 
     make && IP=AA.BB.CC.DD.EE make install_ssh
+    
+Then, generates the encrypted bitstream and the app folder and install the program on the redpitaya as shown in the second tutorial.
+
+You can copy this C code which will configure the FIR with the 33 coefficients that you will provide in a file "coefs.txt" (more on that in the next section), and which will then perform 5 consecutive data to ram bursts (like in the previous tutorial) :
 
 ``` c
 #include <stdio.h>
@@ -168,7 +177,7 @@ configuration with
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <unistd.h>
-#include "fir_conf.h" // library for communicating with the FIR
+#include "fir_conf.h" // library to communicate with the FIR
 
 
 int main()
@@ -177,7 +186,7 @@ int main()
  int fi,fo;
  fi=open("/dev/data1600",O_RDWR);
  fo=open("/tmp/data.bin",O_WRONLY|O_CREAT,S_IRWXU);
- fir_send_confSigned("/dev/fir00","coefs.txt",32);
+ fir_send_confSigned("/dev/fir00","coefs.txt",33);
  for (k=1;k<5;k++)
   {read(fi,c,16384);
    write(fo,c,16384);
@@ -187,6 +196,48 @@ int main()
  return 0;
 }
 ```
+
+# Providing coefficients to the FIR
+
+Several algorithms will help you find coefficients for the FIR you want to design. Here, we propose you to use the firls algorithm that you can find in matlab/GNU Octave or in the numpy python module. With this method, you can design every type of filter you want, but it will have a linear phase since the generated coefficients are symetrical.
+
+In the Octave console (or matlab), type this line to get access to the firls fuction :
+
+``` m
+pkg load signal
+```
+then use the firls function like that :
+``` m
+b = firls(33,[0 0.3 0.6 1],[1 1 0 0]);
+```
+The first number is the number of coefficients, the second parameter is an array of normalized frequencies (fs = 2), and the last one is an array containing the gain you want at the coresponding frequencies described in the second parameter. Here for instance, we have a filter designed to let pass frequencies 0 to 0.3\*fs/2 (=18.75MHz on RedPitaya 14) and to cut those between 0.6\*fs/2 and fs/2.
+
+The coefficients are now stored in the b variable, but are really low. To exploit the whole capacity of your Vivado program, we want that the maximum absolute value of the list of coefficients to be the maximum absolute value a coefficient can have, which is defined by the COEFF_SIZE parameter of your FIR IP in Vivado. For instance, if COEFF_SIZE is 16, since we work with unsigned int, we have 1 bit which indicated the sign (+ or -), and 15 which can indicate a value. So, our maximum absolute value is 2^15-1 = 32767. If this value is too high (you get overflows and strange results on the scope), you can lower this value to adjust the gain of the filter as you whish.
+
+So, divide the b array by its maximum value and multiply it by the the maximum value you want. Since the FIR IP only handles signed integers, we want to get rid of the coma :
+``` m
+b = floor(b./max(b).*32767);
+```
+
+Then, copy this array of coefficient into a file named coefs.txt in the bin directory of the project folder in the nfs directory (nfs/redpitaya/tutorial4/bin). This file must be a row of signed integers. Then, each time you use the command :
+``` bash
+./tutorial4_us
+```
+ The main.c program will load the coefficients in coefs.txt in the FIR. If you want to change your FIR, you can do it on the fly by just modifying coefs.txt and then relaunching this command.
+
+# Troubleshooting
+
+If you get strange results on the scope, there are several places where a mistake can be made :
+ - in Vivado :
+ 	- check that each input is fed by an output with the expected number of bits
+ 	- check that the RedPitaya IP is configured for the good model
+ 	- check that your FIR block has a sufficient number of output bits. Don't hesitate to increase the data_out_size value.
+ 	- check that you didn't forget to configure the Zynq IP.
+ - in your selection of coefficients
+ 	- if you have a problem of gain, increase the maximum of the coefficients (and don't forget to increase also the data_out_size value of the FIR IP in Vivado).
+
+
+# Example
 
 Examples of outputs of running this program are given in Figs.
 [5](#fir1) and [6](#fir2): all filter lengths are set to 32, with a
