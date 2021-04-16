@@ -103,6 +103,8 @@ configuration*</span> and load the configuration file
 <span>red\_vivado\_support</span> directory of the
 <https://github.com/trabucayre/redpitaya/> repository, or locally at  
 <span>/somewhere/oscimpDigital/fpga\_ip/preset/redpitaya.tcl</span>.
+When you add the configuration file, the console may rise a few critical warnings,*
+but this is normal. Just press ok and continue to the next step.
 
 # Configuring Vivado to use custom IPs
 
