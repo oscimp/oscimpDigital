@@ -39,6 +39,9 @@ from *data_in* interface, and *nco_i_i* and *nco_q_i* from *nco_in* interface.
 * **NCO_SIZE**: (natural) NCO stream bus size (default: 16).
 * **DATA_IN_SIZE**: (natural) input data stream bus size (default: 16).
 * **DATA_OUT_SIZE**: (natural) output data stream bus size (default: 16).
+* **ENABLE_SEL**: (string) **data_in** (default) or **nco_in**: used to select
+  primary/master source. **data_out** sample rate and clock domain will be same
+  as **data_in** or **nco_in** according to this parameter.
 
 ## Ports and interfaces
 
