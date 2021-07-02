@@ -1,6 +1,7 @@
 # windowReal
 
-This role of this IP is to multiply a time signal by a time window.
+This role of this IP is to multiply a time signal by a time window in order to reduce the noise florr added by signal leakage.
+*Be careful*, applying a window function change the peak power estimation.
 
 <p align="center">
 <img src='figures/windowReal.png' width='500'>
@@ -57,12 +58,12 @@ liboscimp_fpga.fir_send_conf(my_pretty_window.dat, /dev/MY_WINDOW_IP, 2**COEFF_A
 
 4/ Generate the coefficients file for the windowing. For instance using octave:
 
-* For a Han window:
+* For a Hanning window:
 
 ```octave
 nb_coeff = 2048 ; % here 2048 is an example for 2**COEFF_ADDR_SIZE
 coeff_size = 16 ; % COEFF_SIZE
-csvwrite('hann.dat', round(hanning(nb_coeff)*2^(coeff_size-1)));
+csvwrite('hann.dat', round(hanning(nb_coeff)*2^(coeff_size-1))); % generate float coefficients and convert to int16
 ```
 
 * For a Blackman-Harris window:
@@ -71,8 +72,10 @@ csvwrite('hann.dat', round(hanning(nb_coeff)*2^(coeff_size-1)));
 pkg load signal
 nb_coeff = 2048 ; % here 2048 is an example for 2**COEFF_ADDR_SIZE
 coeff_size = 16 ; % COEFF_SIZE
-csvwrite('blackmanharris.dat', round(blackmanharris(nb_coeff)*2^(coeff_size-1)));
+csvwrite('blackmanharris.dat', round(blackmanharris(nb_coeff)*2^(coeff_size-1))); % generate float coefficients and convert to int16
 ```
+
+* See [octave signal package man page](https://octave.sourceforge.io/signal/overview.html) for other windowing functions and details.
 
 5/ Load the window coefficients. From the board, using python:
 
