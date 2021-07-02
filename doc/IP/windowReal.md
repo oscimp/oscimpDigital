@@ -1,7 +1,8 @@
 # windowReal
 
-This role of this IP is to multiply a time signal by a time window in order to reduce the noise florr added by signal leakage.
-*Be careful*, applying a window function change the peak power estimation.
+This role of this IP is to multiply a time signal by a time window in order to reduce the noise floor added by signal leakage.
+
+*Be careful*, applying a window function change the peak power estimation. Prefer flattop window function if you have to estimate peak power.
 
 <p align="center">
 <img src='figures/windowReal.png' width='500'>
