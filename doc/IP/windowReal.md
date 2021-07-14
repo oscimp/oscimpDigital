@@ -16,18 +16,15 @@ This role of this IP is to multiply a time signal by a time window in order to r
 
 ## Ports and interfaces
 
-* **s00_axi**: (aximm interface) AXI 4 lite bus connected to the CPU
-* **s00_axi_aclk**: (clock interface) clock signal, synchronous to s00_axi. Used for
-  AXI communication part.
-* **s00_axi_reset**: (reset interface) active high reset signal, synchronous to s00_axi. Used for
-  AXI communication part.
+* **s00_axi**: (aximm interface) AXI 4 lite bus connected to the CPU.
+* **s00_axi_aclk**: (clock interface) clock signal, synchronous to s00_axi. Used for AXI communication part.
+* **s00_axi_reset**: (reset interface) active high reset signal, synchronous to s00_axi. Used for AXI communication part.
 * **data_in**: (real interface) input data stream.
 * **data_out**: (real interface) output data stream.
 
 ## Driver
 
-The driver used for the windowReal IP is the same as the fir driver:
-fir_core
+The driver used for the windowReal IP is the same as the fir driver: **fir_core**
 
 ## Function to configure IP
 
@@ -38,7 +35,7 @@ int fir_send_conf(const char *filename, const char *fileCoeff, const int coeffSi
 
 Or for instance in python using python wrapper:
 ```python
-liboscimp_fpga.fir_send_conf(my_pretty_window.dat, /dev/MY_WINDOW_IP, 2**COEFF_ADDR_SIZE)
+liboscimp_fpga.fir_send_conf(/dev/MY_WINDOW_IP, my_pretty_window.dat, 2**COEFF_ADDR_SIZE)
 ```
 
 ## Use it!
