@@ -45,6 +45,9 @@ liboscimp_fpga.fft_send_conf("/dev/MY_FFT_IP", "my_real_fft_coefficients.dat", "
 
 1/ Make a bitstream. For instance for a fft on 2048 samples, the design **adc -> windowReal -> fft -> dataComplex_to_ram** can be synthetised from the following tcl script:
 
+<details>
+<summary> <strong> See the tcl script! </strong> </summary>
+
 ```tcl
 # Create instance: redpitaya_converters_0, and set properties
 add_ip_and_conf redpitaya_converters redpitaya_converters_0 {
@@ -89,13 +92,14 @@ connect_intf dataComplex_to_ram_1 data1_in fft_1 data_out
 connect_proc dataComplex_to_ram_1 s00_axi 0x20000
 
 ```
+</details>
 
 2/ Add the IP fft to your my_project.xml file:
 
 ```xml
         <ip name ="fft" >
-            <instance name="my_fft_dev_name" id = "0"
-                base_addr="0x43XXXXX" addr_size="0xffff" />
+            <instance name="fft_1" id = "0"
+                base_addr="0x43C1000" addr_size="0xffff" />
         </ip>
 ```
 
@@ -129,6 +133,9 @@ liboscimp_fpga.fft_send_conf("/dev/my_window_dev_name", "fft_im.dat", "fft_re.da
 
 To send the data from the dataComplex_to_ram to a remote computer, use for instance a python data sender script:
 
+<details>
+<summary> <strong> See the python sender script! </strong> </summary>
+
 ```python
 import zmq, time
 
@@ -145,11 +152,75 @@ while True:
     with open('/dev/dataComplex_to_ram_1', 'rb') as f:
         sock.send(f.read(nb_samples*data_size/8*nb_channels))
 ```
+</details>
 
-8/ Plot the FFT. 
+8/ Plot the FFT. For this specific application, the python script below makes a live plot of the FFT from the data sent by the board:
 
-Still in preparation :).
+<details>
+<summary> <strong> See the python receiver/plot script! </strong> </summary>
 
-9/ Comparison with CPU FFT.
+```python
+#!/usr/bin/env python
 
-Still in preparation :).
+import zmq, time, numpy, struct, sys, pyqtgraph
+from pyqtgraph.Qt import QtCore, QtGui
+
+ip = '138.131.232.155' # ip of the remote board
+port = '9901' # port on which is sent the data
+dt = 50 # update time (ms)
+format = '4096i' # NB_SAMPLE * 2 (real and imaginary) / i for 32 bits int data
+freq = 125e6 # sampling frequency of the board
+
+## Communication protocol
+context = zmq.Context()
+sock = context.socket(zmq.SUB)
+sock.setsockopt(zmq.SUBSCRIBE, "".encode('utf-8'))
+sock.setsockopt(zmq.CONFLATE,1)
+sock.connect("tcp://"+ip+":"+port)
+
+## configure the plot
+window = pyqtgraph.GraphicsWindow()
+window.setWindowTitle('my_pretty_spectrum IP:'+ip+':'+port)
+p = window.addPlot(title='my_pretty_spectrum')
+p.showGrid(True,True)
+curve = p.plot(pen='y')
+
+def update(freq):
+    ## receive the data
+    value = struct.unpack(format.encode('utf-8'), sock.recv())
+    lendat = len(value[0::2])
+    dataRe = value[0::2] # Real part
+    dataIm = value[1::2] # Imaginary part
+    ## frequency axis
+    freq_axis = numpy.linspace(-freq/2, freq/2 , lendat)
+    ## compute the spectrum
+    spectrum = [numpy.log10(numpy.sqrt(k**2 + j**2)) for k, j in zip(dataRe, dataIm)]
+    ## reorder the frequencies
+    spectrum = spectrum[lendat/2:] + spectrum[:lendat/2]
+    ## update the curve and disable auto range after the first plot
+    curve.setData(freq_axis, spectrum, pen=pyqtgraph.mkPen(1, width=1))
+    p.enableAutoRange('xy', False)
+
+## update the plot
+timer = pyqtgraph.QtCore.QTimer()
+timer.timeout.connect(lambda: update(freq))
+timer.start(dt)
+
+if (sys.flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
+        QtGui.QApplication.instance().exec_()
+```
+</details>
+
+You are done!
+
+<p align="center">
+<img src='figures/fft_plot.png' width='800'>
+</p>
+
+
+## Final notes /!\
+
+(in construction)
+- The values in the FFT need to be scaled
+- Effect of window and power estimation
+- bram used
