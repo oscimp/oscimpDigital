@@ -35,7 +35,7 @@ int fir_send_conf(const char *filename, const char *fileCoeff, const int coeffSi
 
 Or for instance in python using python wrapper:
 ```python
-liboscimp_fpga.fir_send_conf(/dev/MY_WINDOW_IP, my_pretty_window.dat, 2**COEFF_ADDR_SIZE)
+liboscimp_fpga.fir_send_conf("/dev/MY_WINDOW_IP", "my_pretty_window.dat", 2**COEFF_ADDR_SIZE)
 ```
 
 ## Use it!
@@ -78,7 +78,7 @@ csvwrite('blackmanharris.dat', round(blackmanharris(nb_coeff)*2^(coeff_size-1)))
 5/ Load the window coefficients. From the board, using python:
 
 ```python
-liboscimp_fpga.fir_send_conf(blackmanharris.dat, /dev/my_window_dev_name, 2048)
+liboscimp_fpga.fir_send_conf("/dev/my_window_dev_name", "blackmanharris.dat", 2048)
 ```
 
 6/ Inject any signal to the input of the board and connect the output to an oscilloscope. Then observe the window effect:
