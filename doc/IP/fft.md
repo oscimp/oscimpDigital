@@ -35,7 +35,7 @@ To configure the fft, use the functions located in fft_conf.c and fft_conf.h:
 int fft_send_conf(const char *filename, const char *fileCoeffRe, const char *fileCoeffIm, const int coeffSize);
 ```
 
-Or for instance in python using python wrapper:
+Or for instance in python using the python wrapper:
 ```python
 liboscimp_fpga.fft_send_conf("/dev/MY_FFT_IP", "my_real_fft_coefficients.dat", "my_imaginary_fft_coefficients.dat", 2**LOG_2_N_FFT)
 ```
@@ -49,7 +49,7 @@ liboscimp_fpga.fft_send_conf("/dev/MY_FFT_IP", "my_real_fft_coefficients.dat", "
 <summary> <strong> See the tcl script! </strong> </summary>
 
 ```tcl
-# Create instance: redpitaya_converters_0, and set properties
+## Create instance: redpitaya_converters_0, and set properties
 add_ip_and_conf redpitaya_converters redpitaya_converters_0 {
         ADC_SIZE 14 \
         ADC_EN true \
@@ -57,8 +57,16 @@ add_ip_and_conf redpitaya_converters redpitaya_converters_0 {
         CLOCK_DUTY_CYCLE_STABILIZER_EN true}
 connect_to_fpga_pins redpitaya_converters_0 phys_interface phys_interface_0
 
-# redpitaya_converters reset
+## redpitaya_converters reset
 connect_proc_rst redpitaya_converters_0 adc_rst_i
+
+######################################################
+#                                                    #
+# The above converters are specific to a redpitaya   #
+# board, however any device could be used            #
+#                                                    #
+######################################################
+
 
 ## Create instance: windowReal_1, and set properties
 add_ip_and_conf windowReal windowReal_1 {
@@ -103,11 +111,13 @@ connect_proc dataComplex_to_ram_1 s00_axi 0x20000
         </ip>
 ```
 
+Or generate the xml file from your tcl project: in the tcl directory `make xml`.
+
 3/ To cofigure and use the window, see the [windowReal](https://github.com/oscimp/oscimpDigital/blob/master/doc/IP/windowReal.md) IP documentation.
 
 4/ Follow the instructions [here](https://github.com/oscimp/oscimpDigital/wiki/4Testing) to install your bitstream and applications, and run your bitstream. 
 
-5/ Generate the real and imaginary coefficients files for the fft computation. For instance using octave:
+5/ Generate the real and imaginary coefficients files for the FFT computation. For instance using octave:
 
 ```octave
 nb_coeff = 2048 ; % here 2048 is an example for 2**LOG_2_N_FFT = 2**11
@@ -123,7 +133,7 @@ csvwrite('fft_im.dat', round(transpose(im)))
 csvwrite('fft_re.dat', round(transpose(re)))
 ```
 
-6/ Load fft window coefficients. From the board, using python:
+6/ Load the fft coefficients. From the board, using python:
 
 ```python
 liboscimp_fpga.fft_send_conf("/dev/my_window_dev_name", "fft_im.dat", "fft_re.dat", 2048)
@@ -168,7 +178,7 @@ from pyqtgraph.Qt import QtCore, QtGui
 ip = '138.131.232.155' # ip of the remote board
 port = '9901' # port on which is sent the data
 dt = 50 # update time (ms)
-format = '4096i' # NB_SAMPLE * 2 (real and imaginary) / i for 32 bits int data
+format = '4096i' # NB_SAMPLE * 2 (real and imaginary) // i for 32 bits int data
 freq = 125e6 # sampling frequency of the board
 
 ## Communication protocol
@@ -220,7 +230,6 @@ You are done!
 
 ## Final notes /!\
 
-(in construction)
-- The values in the FFT need to be scaled
-- Effect of window and power estimation
-- bram used
+- No scale is applied to the output values of the FFT in the example above. If the power level is required in the spectrum plot, a scale must be applied to the output values of the FFT.
+- The use of a window changes the peak power estimation. Prefer flattop window function if you have to estimate peak power.
+- Keep in mind that this FFT IP works with the FPGA BRAM, that is limited. If a kind of 1 million points FFT is targeted, other solutions may be used: FFT using DMA, sparse FFT algorithm...  
