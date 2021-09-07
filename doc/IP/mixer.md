@@ -10,7 +10,7 @@ Output size must be fixed by the user:
  * *DATA_IN_SIZE + NCO_SIZE* for *mixerComplex_sin*
 * with a *DATA_OUT_SIZE* fixed to greater value, some sign bit(s) will be added at
   MSB;
-* with a lower value, a right shift (division by 2^n) will be apply.
+* with a lower value, a right shift (division by 2^n) will be applied.
 
 **NOTE: chronograms shows latency between input and output when no shift are
 done. If *DATA_OUT_SIZE* is smaller than internal size an additional clock cycle is
