@@ -12,6 +12,9 @@ Output size must be fixed by the user:
   MSB;
 * with a lower value, a right shift (division by 2^n) will be applied.
 
+Notice that with a configuration that does not maximize the multiplication factor to the operand size, the shift at the output will
+actually make the multiplier act as a *divider*.
+
 **NOTE: chronograms shows latency between input and output when no shift are
 done. If *DATA_OUT_SIZE* is smaller than internal size an additional clock cycle is
 added**
