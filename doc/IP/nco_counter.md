@@ -136,6 +136,38 @@ int nco_counter_send_conf(const char *filename,
 * 0 if filename exists and register has been accessed successfully;
 * negative number if something went wrong
 
+### To configure phase increment and phasse offset control (interface vs AXI bus)
+
+```c
+int nco_counter_set_pinc_poff_sw(const char *filename,
+        const char pinc_sw, const char poff_sw)
+```
+
+**param**
+
+* *filename*: device filename (*/dev/something*)
+* *pinc_sw*: control phase increment from interface (another IP) or AXI bus
+* *poff_sw*: control phase offset from interface (another IP) or AXI bus
+
+```c
+int nco_counter_get_pinc_sw(const char *filename, const char poff_sw)
+```
+
+**param**
+
+* *filename*: device filename (*/dev/something*)
+* *pinc_software*: control phase increment from interface (another IP) or AXI bus
+* *poff_sw*: control phase offset from interface (another IP) or AXI bus
+
+```c
+int nco_counter_get_poff_sw(const char *filename, const char poff_sw)
+```
+
+**param**
+
+* *filename*: device filename (*/dev/something*)
+* *poff_sw*: control phase offset from interface (another IP) or AXI bus
+
 ### Set NCO configuration
 
 ```c
