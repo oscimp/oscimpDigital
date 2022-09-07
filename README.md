@@ -15,6 +15,11 @@ logic parts. The highlights of oscimpDigital were presented at the [European GNU
 The assumption underlying all IP block design is a pipelined stream of data 
 processed at each clock cycle, with no latencies introduced by FIFOs between blocks.
 
+The tree structure of the project aims at clearly separating the FPGA IPs, Linux kernel modules, userspace libraries 
+and documentation:
+
+<img src="doc/conferences/gnuradioDays2019/img/structRepo.png"> 
+
 ## Install
 
 This repository is composed of multiple associated submodules (see sub-READMEs
