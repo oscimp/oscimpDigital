@@ -1,0 +1,27 @@
+/dts-v1/;
+/plugin/;
+
+/ {
+	compatible = "xlnx,zynq-7000";
+
+	fragment0 {
+		target = <&fpga_full>;
+		#address-cells = <1>;
+		#size-cells = <1>;
+		__overlay__ {
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			firmware-name = "adcChanADmaDirect_wrapper.bit.bin";
+
+			data00: data00@43C01000 {
+				compatible = "ggm,dataDmaDirect";
+				reg = <0x40400000 0xffff>,
+					  <0x43C01000 0xfff>;
+				interrupt-parent = <&intc>;
+				interrupts = <0 29 1>;
+			};
+
+		};
+	};
+};
