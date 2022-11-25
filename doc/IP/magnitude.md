@@ -1,8 +1,9 @@
 # magnitude
 
-This IP is used to perform $real \time real + imag \time imag$ of the complex input stream
+This IP is used to perform $$real \times real + imag \times imag$$ of the complex input stream
 
-|[magnitude_output](figures/magnitude.svg)
+[magnitude_output]: figures/magnitude.svg "magnitude_output"
+![Magnitude block internal behaviour][magnitude_output]
 
 __figure1__: Magnitude block internal behaviour.
 
