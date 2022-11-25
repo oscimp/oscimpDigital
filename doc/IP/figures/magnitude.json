@@ -1,0 +1,17 @@
+{"signal": [
+  { "name": "clk",         "wave": "p....", "period":4},
+  ["input",
+    { "name": "data_en_i", "wave": "lh...", "period":4},
+    { "name": "data_i_i",  "wave": "x333.", "phase":0.8, "period":4, "data":["nI1", "nI2",  "nI3"]},
+    { "name": "data_q_i",  "wave": "x333.", "phase":0.8, "period":4, "data":["nQ1", "nQ2",  "nQ3"]}
+  ],
+  { "name": "data_i_s",    "wave": "xx333", "phase":3.8, "period":4, "data":["nI1*nI1", "nI2*nI2", "nI3*nI3"]},
+  { "name": "data_q_s",    "wave": "xx333", "phase":3.8, "period":4, "data":["nQ1*nQ1", "nQ2*nQ2", "nQ3*nQ3"]},
+  { "name": "data_s",      "wave": "xx333", "phase":3.3, "period":4, "data":["nI1*nI1 + nQ1*nQ1", "nI2*nI2 + nQ2*nQ2", "nI3*nI3 + nQ3*nQ3"]},
+  ["output",
+    { "name": "data_en_o", "wave": "l.h..", "period":4},
+    { "name": "data_o",    "wave": "x.333", "period":4,
+      "data":["nI1*nI1 + nQ1*nQ1", "nI2*nI2 + nQ2*nQ2", "nI3*nI3 + nQ3*nQ3"]}
+  ]
+]
+}
