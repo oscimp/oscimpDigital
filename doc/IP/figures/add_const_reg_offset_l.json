@@ -1,0 +1,4 @@
+{"reg":[
+    { "name": "OFFSET_L",   "bits": 32, "attr": "RW" }
+]
+}
