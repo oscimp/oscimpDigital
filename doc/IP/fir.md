@@ -7,9 +7,8 @@ version of the processing block.
 **firReal** must be used for a real data stream and **firComplex** for a complex
 data stream.
 
-<strong>
-see [redpitaya tutorial 4](https://github.com/oscimp/oscimpDigital/tree/master/doc/tutorials/redpitaya/4-FIR)
-for a complete example.</strong>
+**see [redpitaya tutorial 4](https://github.com/oscimp/oscimpDigital/tree/master/doc/tutorials/redpitaya/4-FIR)
+for a complete example.**
 
 <p align="center">
 <img src='figures/fir.png' width='500'>
