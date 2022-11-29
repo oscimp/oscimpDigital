@@ -7,6 +7,12 @@ Used to apply a n-bit shift left or right (multiply/divide by 2^n):
 * if input bus size is greater than output bus size, a shift right is applied by
   discarding LSB (ie. propagating only output bus size MSB from input bus size)
 
+[shifter_scheme]: figures/shifter2.svg "shifter_scheme"
+![shifter block internal scheme][shifter_scheme]
+
+__figure1__: shifter block principle: when **out** > **in** additionals LSB are added,
+when **out** < **in** LSB are removed
+
 ## IP
 * **shifterReal**: fixed shift (design time) working with real interface
 * **shifterComplex**: fixed shift (design time) working with complex interface
