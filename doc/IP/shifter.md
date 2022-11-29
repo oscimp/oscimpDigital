@@ -1,17 +1,34 @@
 # shifter
 
 Used to apply a n-bit shift left or right (multiply/divide by 2^n):
+
 * if output bus size is greater than input bus size a shift left is applied by
   adding a serie of 0 at LSB
 * if both buses have the same size, then nothing is done
 * if input bus size is greater than output bus size, a shift right is applied by
   discarding LSB (ie. propagating only output bus size MSB from input bus size)
 
+**Notes:
+shifterReal and shifterComplex are used, as shown in fig 1, to discard (divide
+by 2^n) or to append (multiply by 2^n) LSB. shifterReal_dyn and shifterComplex_dyn are used to propagate
+a fixed size slice of input data with a divide only behaviour (see figure 2).
+**
+
 [shifter_scheme]: figures/shifter2.svg "shifter_scheme"
 ![shifter block internal scheme][shifter_scheme]
 
 __figure1__: shifter block principle: when **out** > **in** additionals LSB are added,
 when **out** < **in** LSB are removed
+
+[shifter_dyn_scheme]: figures/shifter_dyn.svg "shifter_dyn_scheme"
+![shifter dynamic block internal scheme][shifter_dyn_scheme]
+
+__figure2__: shifter dynamic block principle with different shift configured
+from AXI (green: no shift, blue: with a shift == 2, red: with a shift == 6)
+
+### **Internal propagation delay**
+
+1 clock cycle
 
 ## IP
 * **shifterReal**: fixed shift (design time) working with real interface
