@@ -13,8 +13,8 @@ Adding two N bits values requires for the output stream and for security N+1 bit
 
 - when output size is greater than N+1 bits extra MSB will be added
 - when output size is lower than N+1: output will be truncated. If overflow
-  appears output will set to max/min value ($$-2^{n-1}$$ or $$2^{n-1}-1$$ when
-  signed, or $$2^{n}-1$$ when unsigned).
+  appears output will set to max/min value ( $-2^{n-1}$ or $2^{n-1}-1$ when
+  signed, or $2^{n}-1$ when unsigned).
 
 
 ### **Internal propagation delay**
