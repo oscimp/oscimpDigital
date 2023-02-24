@@ -18,6 +18,7 @@ or an expander to adapts data bus size**
 ## Generic
 
 * **DATA_SIZE**: (natural) input data stream bus size (default: 16).
+* **SIGN_CORRECTION**: (bool) 0: output is unsigned, 1: output is <0 when q<0
 
 ## Ports and interfaces
 
