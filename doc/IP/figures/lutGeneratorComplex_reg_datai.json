@@ -1,0 +1,4 @@
+{"reg":[
+    { "name": "RAM_DATAI",   "bits": 32, "attr": "RO" }
+]
+}

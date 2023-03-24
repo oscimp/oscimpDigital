@@ -1,0 +1,4 @@
+{"reg":[
+    { "name": "PRESCALER",   "bits": 32, "attr": "RW" }
+]
+}
