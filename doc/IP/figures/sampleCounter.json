@@ -1,0 +1,28 @@
+{"signal": [
+  { "name": "clk",         "wave": "p........", "period":1},
+  ["sampleCounterReal",
+  { "name": "int_count",   "wave": "3.3.3.3..", "data": ["0", "1", "2", "3"],    "node":".....u...."},
+  { "name": "data_en_i",   "wave": "010.1010.",                                  "node":".a........"},
+  { "name": "data_i",      "wave": "x3..3.3..", "data":["0x30", "0x02", "0x04"], "node":"....e....."},
+  { "name": "data_en_o",   "wave": "0.10.1010",                                  "node":"..g......."},
+  { "name": "data_o",      "wave": "x.3..3.3.", "data":["0x30", "0x02", "0x04"], "node":".....k...."},
+  { "name": "counter_en_o","wave": "0.10.1010",                                  "node":"..m......."},
+  { "name": "counter_o",   "wave": "x.3..3.3.", "data":["0", "1", "2"],          "node":"........r."}
+  ],
+  {},
+  ["sampleCounterComplex",
+  { "name": "int_count",   "wave": "3.3.3.3..", "data": ["0", "1", "2", "3"]   },
+  { "name": "data_en_i",   "wave": "010.1010."                                 },
+  { "name": "data_q_i",    "wave": "x3..3.3..", "data":["0x30", "0x02", "0x04"]},
+  { "name": "data_q_o",    "wave": "x3..3.3..", "data":["0x03", "0x20", "0x40"]},
+  { "name": "data_en_o",   "wave": "0.10.1010"                                 },
+  { "name": "data_q_o",    "wave": "x.3..3.3.", "data":["0x30", "0x02", "0x04"]},
+  { "name": "data_i_o",    "wave": "x.3..3.3.", "data":["0x03", "0x20", "0x40"]},
+  { "name": "counter_en_o","wave": "0.10.1010"                                 },
+  { "name": "counter_o",   "wave": "x.3..3.3.", "data":["0", "1", "2"]         }
+  ]
+],
+"edge": [
+  "a~>g", "a~>m", "e~>k", "u~>r"
+]
+}
