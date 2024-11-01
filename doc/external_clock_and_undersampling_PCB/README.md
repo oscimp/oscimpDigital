@@ -7,7 +7,10 @@ also acting as low pass filter.
 
 For external clocking, only populate the balun and channel closest to the border of the PCB. The
 other two channels are for undersampling by bypassing the unbalanced to balanced differential
-amplifiers.
+amplifiers. Follow
+https://redpitaya.readthedocs.io/en/latest/developerGuide/hardware/125-14/top.html#external-125-14
+for wiring modifications (two resistors to be flipped) to disconnect the quartz crystal oscillator
+and connect the clock input to the PCLK external source pins.
 
 Replacing the active amplifier with a broadband balun (tested over the whole track-and-hold 
 range up to 875 MHz input frequency) requires soldering three tiny wires (differential pair 
