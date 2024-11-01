@@ -5,15 +5,15 @@ in report.pdf, and the associated KiCAD files (courtesy of Gilles Martin, FEMTO-
 translated from Eagle) for undersampling by getting rid of the unbalanced-balanced amplifier 
 also acting as low pass filter. 
 
-For external clocking, only populate the balun and channel closest to the border of the PCB. The
+For external clocking (125 MHz), only populate the balun and channel closest to the border of the PCB. The
 other two channels are for undersampling by bypassing the unbalanced to balanced differential
 amplifiers. Follow
-https://redpitaya.readthedocs.io/en/latest/developerGuide/hardware/125-14/top.html#external-125-14
+[these instructions](https://redpitaya.readthedocs.io/en/latest/developerGuide/hardware/125-14/top.html#external-125-14)
 for wiring modifications (two resistors to be flipped) to disconnect the quartz crystal oscillator
 and connect the clock input to the PCLK external source pins.
 
 Replacing the active amplifier with a broadband balun (tested over the whole track-and-hold 
-range up to 875 MHz input frequency) requires soldering three tiny wires (differential pair 
-+ Vref) on each channel at your own risks after removing the inductors connecting the differential 
+range up to 875 MHz input frequency) requires soldering three tiny wires (differential pair and Vref) 
+on each channel at your own risks after removing the inductors connecting the differential 
 amplifier output to the ADC inputs. The Vref signal trace must be cut before soldering a 
 wire to the via pad whose varnish will have been removed with a sharp blade.
