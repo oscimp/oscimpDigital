@@ -1,0 +1,207 @@
+EESchema-LIBRARY Version 2.4
+#encoding utf-8
+#
+# extension_clk_adc-eagle-import_C-EUC0402
+#
+DEF extension_clk_adc-eagle-import_C-EUC0402 C 0 40 Y Y 1 L N
+F0 "C" 60 15 59 H V L BNN
+F1 "extension_clk_adc-eagle-import_C-EUC0402" 60 -185 59 H V L BNN
+F2 "" 0 0 50 H I C CNN
+F3 "" 0 0 50 H I C CNN
+DRAW
+S -80 -80 80 -60 1 0 0 F
+S -80 -40 80 -20 1 0 0 F
+P 2 1 0 0 0 -100 0 -80 N
+P 2 1 0 0 0 0 0 -20 N
+X 1 1 0 100 100 D 0 0 1 0 P
+X 2 2 0 -200 100 U 0 0 1 0 P
+ENDDRAW
+ENDDEF
+#
+# extension_clk_adc-eagle-import_C-EUC0603
+#
+DEF extension_clk_adc-eagle-import_C-EUC0603 C 0 40 Y Y 1 L N
+F0 "C" 60 15 59 H V L BNN
+F1 "extension_clk_adc-eagle-import_C-EUC0603" 60 -185 59 H V L BNN
+F2 "" 0 0 50 H I C CNN
+F3 "" 0 0 50 H I C CNN
+DRAW
+S -80 -80 80 -60 1 0 0 F
+S -80 -40 80 -20 1 0 0 F
+P 2 1 0 0 0 -100 0 -80 N
+P 2 1 0 0 0 0 0 -20 N
+X 1 1 0 100 100 D 0 0 1 0 P
+X 2 2 0 -200 100 U 0 0 1 0 P
+ENDDRAW
+ENDDEF
+#
+# extension_clk_adc-eagle-import_DBL_6
+#
+DEF extension_clk_adc-eagle-import_DBL_6 J 0 40 Y Y 1 L N
+F0 "J" -200 350 56 H V L BNN
+F1 "extension_clk_adc-eagle-import_DBL_6" 0 0 50 H I C CNN
+F2 "" 0 0 50 H I C CNN
+F3 "" 0 0 50 H I C CNN
+DRAW
+P 2 1 0 0 -200 -300 -200 300 N
+P 2 1 0 0 -200 300 200 300 N
+P 2 1 0 0 200 -300 -200 -300 N
+P 2 1 0 0 200 300 200 -300 N
+X P1 P$1 -400 200 200 R 50 50 1 0 B
+X P2 P$2 400 200 200 L 50 50 1 0 B
+X P3 P$3 -400 0 200 R 50 50 1 0 B
+X P4 P$4 400 0 200 L 50 50 1 0 B
+X P5 P$5 -400 -200 200 R 50 50 1 0 B
+X P6 P$6 400 -200 200 L 50 50 1 0 B
+ENDDRAW
+ENDDEF
+#
+# extension_clk_adc-eagle-import_DINA3_L
+#
+DEF extension_clk_adc-eagle-import_DINA3_L #FRAME 0 40 Y Y 2 L N
+F0 "#FRAME" 0 0 50 H I C CNN
+F1 "extension_clk_adc-eagle-import_DINA3_L" 0 0 50 H I C CNN
+F2 "" 0 0 50 H I C CNN
+F3 "" 0 0 50 H I C CNN
+DRAW
+T 0 700 750 85 0 2 0 >DRAWING_NAME Normal 0 L B
+T 0 500 50 85 0 2 0 >LAST_DATE_TIME Normal 0 L B
+T 0 3400 50 85 0 2 0 >SHEET Normal 0 L B
+T 0 50 50 85 0 2 0 Date: Normal 0 L B
+T 0 50 450 85 0 2 0 "Document Number:" Normal 0 L B
+T 0 3500 450 85 0 2 0 REV: Normal 0 L B
+T 0 2850 50 85 0 2 0 Sheet: Normal 0 L B
+T 0 50 750 85 0 2 0 TITLE: Normal 0 L B
+P 2 2 0 0 0 0 0 200 N
+P 2 2 0 0 0 0 2800 0 N
+P 2 2 0 0 0 200 0 600 N
+P 2 2 0 0 0 200 2800 200 N
+P 2 2 0 0 0 600 0 900 N
+P 2 2 0 0 0 900 0 1400 N
+P 2 2 0 0 0 900 4000 900 N
+P 2 2 0 0 2800 0 4000 0 N
+P 2 2 0 0 2800 200 2800 0 N
+P 2 2 0 0 2800 200 3450 200 N
+P 2 2 0 0 3450 200 4000 200 N
+P 2 2 0 0 3450 600 0 600 N
+P 2 2 0 0 3450 600 3450 200 N
+P 2 2 0 0 4000 200 4000 0 N
+P 2 2 0 0 4000 600 3450 600 N
+P 2 2 0 0 4000 600 4000 200 N
+P 2 2 0 0 4000 900 4000 600 N
+P 2 2 0 0 4000 1400 0 1400 N
+P 2 2 0 0 4000 1400 4000 900 N
+ENDDRAW
+ENDDEF
+#
+# extension_clk_adc-eagle-import_GND
+#
+DEF extension_clk_adc-eagle-import_GND #GND 0 40 Y Y 1 L P
+F0 "#GND" 0 0 50 H I C CNN
+F1 "extension_clk_adc-eagle-import_GND" -100 -100 59 H V L BNN
+F2 "" 0 0 50 H I C CNN
+F3 "" 0 0 50 H I C CNN
+DRAW
+P 2 1 0 0 -75 0 75 0 N
+X GND 1 0 100 100 D 0 0 1 0 W
+ENDDRAW
+ENDDEF
+#
+# extension_clk_adc-eagle-import_R-US_R0603
+#
+DEF extension_clk_adc-eagle-import_R-US_R0603 R 0 40 Y Y 1 L N
+F0 "R" -150 59 59 H V L BNN
+F1 "extension_clk_adc-eagle-import_R-US_R0603" -150 -130 59 H V L BNN
+F2 "" 0 0 50 H I C CNN
+F3 "" 0 0 50 H I C CNN
+DRAW
+P 2 1 0 0 -100 0 -85 40 N
+P 2 1 0 0 -85 40 -60 -40 N
+P 2 1 0 0 -60 -40 -35 40 N
+P 2 1 0 0 -35 40 -10 -40 N
+P 2 1 0 0 -10 -40 15 40 N
+P 2 1 0 0 15 40 40 -40 N
+P 2 1 0 0 40 -40 65 40 N
+P 2 1 0 0 65 40 90 -40 N
+P 2 1 0 0 90 -40 100 0 N
+X 1 1 -200 0 100 R 0 0 1 0 P
+X 2 2 200 0 100 L 0 0 1 0 P
+ENDDRAW
+ENDDEF
+#
+# extension_clk_adc-eagle-import_SMA_BORD
+#
+DEF extension_clk_adc-eagle-import_SMA_BORD J 0 40 Y Y 1 L N
+F0 "J" 0 130 59 H V L BNN
+F1 "extension_clk_adc-eagle-import_SMA_BORD" 0 -200 59 H V L BNN
+F2 "" 0 0 50 H I C CNN
+F3 "" 0 0 50 H I C CNN
+DRAW
+A 1 0 101 114 906 1 0 12 N 100 20 0 100
+A 1 0 100 -906 -114 1 0 12 N 0 -100 100 -20
+P 2 1 0 0 0 20 70 20 N
+P 2 1 0 0 70 -20 0 -20 N
+P 2 1 0 0 70 20 80 0 N
+P 2 1 0 0 80 0 70 -20 N
+P 2 1 0 0 100 -100 70 -70 N
+P 2 1 0 0 100 0 80 0 N
+X 1 1 200 0 100 L 0 0 1 0 P
+X 2 G@1 200 -100 100 L 0 0 1 0 P
+X 2 G@2 200 -100 100 L 0 0 1 0 P
+X 2 G@3 200 -100 100 L 0 0 1 0 P
+X 2 G@4 200 -100 100 L 0 0 1 0 P
+ENDDRAW
+ENDDEF
+#
+# extension_clk_adc-eagle-import_SMD2
+#
+DEF extension_clk_adc-eagle-import_SMD2 PAD 0 40 Y Y 1 L N
+F0 "PAD" -45 73 59 H V L BNN
+F1 "extension_clk_adc-eagle-import_SMD2" -45 -130 59 H V L BNN
+F2 "" 0 0 50 H I C CNN
+F3 "" 0 0 50 H I C CNN
+DRAW
+P 2 1 0 0 -40 -40 40 40 N
+P 2 1 0 0 -40 40 40 -40 N
+X P 1 100 0 100 L 0 0 1 0 P
+ENDDRAW
+ENDDEF
+#
+# extension_clk_adc-eagle-import_TC1-1-13M
+#
+DEF extension_clk_adc-eagle-import_TC1-1-13M TR 0 40 Y Y 1 L N
+F0 "TR" -300 300 59 H V L BNN
+F1 "extension_clk_adc-eagle-import_TC1-1-13M" -300 200 59 H V L BNN
+F2 "" 0 0 50 H I C CNN
+F3 "" 0 0 50 H I C CNN
+DRAW
+A -200 -100 50 0 900 1 0 10 N -150 -100 -200 -50
+A -200 -100 50 900 1800 1 0 10 N -200 -50 -250 -100
+A -200 100 50 0 900 1 0 10 N -150 100 -200 150
+A -200 100 50 900 1800 1 0 10 N -200 150 -250 100
+A -100 -100 50 0 900 1 0 10 N -50 -100 -100 -50
+A -100 -100 50 900 1800 1 0 10 N -100 -50 -150 -100
+A -100 100 50 0 900 1 0 10 N -50 100 -100 150
+A -100 100 50 900 1800 1 0 10 N -100 150 -150 100
+A 50 -100 50 0 900 1 0 10 N 100 -100 50 -50
+A 50 -100 50 900 1800 1 0 10 N 50 -50 0 -100
+A 50 100 50 0 900 1 0 10 N 100 100 50 150
+A 50 100 50 900 1800 1 0 10 N 50 150 0 100
+A 150 -100 50 0 900 1 0 10 N 200 -100 150 -50
+A 150 -100 50 900 1800 1 0 10 N 150 -50 100 -100
+A 150 100 50 0 900 1 0 10 N 200 100 150 150
+A 150 100 50 900 1800 1 0 10 N 150 150 100 100
+P 2 1 0 0 -250 -100 -300 -100 N
+P 2 1 0 0 -250 100 -300 100 N
+P 2 1 0 0 -50 -100 0 -100 N
+P 2 1 0 0 -50 100 0 100 N
+P 2 1 0 0 200 -100 250 -100 N
+P 2 1 0 0 200 100 250 100 N
+X SEC_DOT P$1 350 -100 100 L 0 0 1 0 P
+X SEC P$3 350 100 100 L 0 0 1 0 P
+X PR P$4 -400 100 100 R 0 0 1 0 P
+X PR_DOT P$6 -400 -100 100 R 0 0 1 0 P
+ENDDRAW
+ENDDEF
+#
+#End Library
