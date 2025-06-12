@@ -27,6 +27,12 @@ to see each repository goal). Please refer to the [Wiki](https://github.com/osci
 is available at [the Wiki page](https://github.com/oscimp/oscimpDigital/wiki). The case of the Redpitaya STEM 125-14 is
 detailed at the bottom of the page.
 
+Software versions: OscimpDigital relies on Buildroot and Vivado. The version of Buildroot should not matter much 
+*except* for the REMI web server whose API keeps on changing: the latest tested version of Buildroot is 2024.11.1
+while earlier versions might rely on the old REMI API.
+
+Vivado 2019 and 2021 are regularly used with OscimpDigital.
+
 ### Download
 
 To download this repository and submodules in one command, you need to use
