@@ -21,6 +21,15 @@ and documentation:
 
 <img src="doc/conferences/gnuradioDays2019/img/structRepo.png"> 
 
+## Versions
+
+As all opensource software that keeps on evolving, tight API constraints require using specific software versions. We aim at
+keeping up to date with latest revisions, so that older versions might/will fail. This set of specifications might help debug failures
+to setup OscimpDigital:
+* Linux kernel >= 6 MUST be used (GPIO indices starting at 512 and not 906)
+* Buildroot >= 2024 MUST be used (REMI web server API)
+* Vivado 2019 or 2021 (but 2022.2 is failing at the moment)
+
 ## Install
 
 This repository is composed of multiple associated submodules (see sub-READMEs
