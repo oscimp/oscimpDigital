@@ -1,7 +1,8 @@
 # define the board being used. Must be adapted to either:
 # plutosdr for the Xilinx Zynq-based ADI PlutoSDR board
-# redpitaya for the Xilinx Zynq-based 14-bit legacy Red Pitaya board
-# redpitaya16 for the new Xilinx Zynq-based 16-bit Red Pitaya board
+# redpitaya for the Xilinx Zynq-based STEMlab 14-bit legacy Red Pitaya board
+# redpitaya12 for the Xilinx Zynq-based SIGNALlab 12-bit Red Pitaya Board
+# redpitaya16 for the new Xilinx Zynq-based SDRlab 16-bit Red Pitaya board
 # de0nansoc for the Altera/Intel Terrasic DE0Nano SoC
 export BOARD_NAME=
 
