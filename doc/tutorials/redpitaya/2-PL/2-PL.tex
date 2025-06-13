@@ -131,7 +131,7 @@ of the Zynq, hence a Zynq-7000 in a ``clg400'' package, and a speed grade set to
 \begin{center}
 \includegraphics[width=0.5\textwidth]{./createProj_summary.png}
 \end{center}
-\caption{Fen\^etre r\'ecapitulative.}
+\caption{Final summary of the configuration.}
 \label{createProj_summary}
 \end{figure}
 
@@ -373,13 +373,14 @@ all:
 }
 \end{lstlisting}
 
-so that the following command is executed
+so that the following command is executed in the {\tt project\_name.runs/impl\_1} subdirectory
+of the Vivado project
 \begin{lstlisting}[language=bash]
 bootgen -image bif_file.bif -arch zynq -process_bitstream bin
 \end{lstlisting}
 
 Following this command, a file named {\tt bitstream\_name.bit.bin} is generated in
-the current working directory.
+the working directory.
 
 \subsection{Configuring the PL by using {\tt fpga\_manager}}
 

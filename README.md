@@ -6,8 +6,9 @@ oscillators, provides most frontend processing blocks for Software Defined Radio
 
 This ecosystem aims at providing a consistent software/hardware, chip independent
 (Xilinx Zynq, Altera/Intel Cyclone V soc, ... including the 
-[Redpitaya STEM 125-14](https://www.redpitaya.com/f130/STEMlab-board) and
-[Redpitaya SDRlab 122-16](https://www.redpitaya.com/p52/sdrlab-122-16-standard-kit) boards) solution, to assemble and build
+[Redpitaya STEMlab 125-14](https://redpitaya.com/stemlab-125-14) and
+[Redpitaya SDRlab 122-16](https://www.redpitaya.com/p52/sdrlab-122-16-standard-kit) and
+[Redpitaya SIGNALlab 250-12](https://redpitaya.com/signallab-250-12) boards) solution, to assemble and build
 designs targeted for FPGA and to generate and cross-compile software, running
 on the CPU running embedded GNU/Linux, dedicated to communicate/configure
 logic parts. The highlights of oscimpDigital were presented at the [European GNU Radio Days 2019](https://youtu.be/fQgIJl7vu2s), [Maker Space conference](https://www.youtube.com/watch?v=SSzR_pnZnjs&feature=youtu.be) in 2019 and [FOSDEM](https://fosdem.org/2020/schedule/event/fsr_platform_independent_cpu_fpga_co_design/) in 2020.
@@ -26,6 +27,12 @@ This repository is composed of multiple associated submodules (see sub-READMEs
 to see each repository goal). Please refer to the [Wiki](https://github.com/oscimp/oscimpDigital/wiki) for pre-requisites and most significantly Buildroot. Vendor specific tools for synthetizing for the targeted FPGA are also assumed to be functional and accessible through the PATH. A **detailed description** of the installation steps for various boards
 is available at [the Wiki page](https://github.com/oscimp/oscimpDigital/wiki). The case of the Redpitaya STEM 125-14 is
 detailed at the bottom of the page.
+
+Software versions: OscimpDigital relies on Buildroot and Vivado. The version of Buildroot should not matter much 
+*except* for the REMI web server whose API keeps on changing: the latest tested version of Buildroot is 2024.11.1
+while earlier versions might rely on the old REMI API.
+
+Vivado 2019 and 2021 are regularly used with OscimpDigital.
 
 ### Download
 

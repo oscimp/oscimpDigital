@@ -25,7 +25,7 @@ source $OSCIMP_DIGITAL/fpga_ip/setenv.sh    # defines OSCIMP_DIGITAL_IP
 source $OSCIMP_DIGITAL/lib/setenv.sh        # OSCIMP_DIGITAL_LIB
 source $OSCIMP_DIGITAL/linux_driver/setenv.sh
 
-export PATH=$PATH:$OSCIMP_DIGITAL_APP/tools/module_generator:$OSCIMP_DIGITAL_IP/tools/
+export PATH=$PATH:$OSCIMP_DIGITAL_APP/tools/module_generator:$OSCIMP_DIGITAL_IP/tools/:$OSCIMP_DIGITAL_APP/tools/webserver_generator/
 
 # /!\ locale settings for Vivado (uses '.' as separator, as opposed to the French ',')
 export LANG=en_US.UTF-8

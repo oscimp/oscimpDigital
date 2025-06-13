@@ -29,7 +29,7 @@ Adding two N bits values requires for the output stream and for security N+1 bit
 
 * **format**: (string) data are only positive (unsigned) or may be negative
   (signed) (default: signed).
-* **add_val**: (natural) default offset used.
+* **add_val**: (natural) default offset used, size DATA_IN_SIZE.
 * **DATA_IN_SIZE**: (natural) input data stream bus size (default: 16).
 * **DATA_OUT_SIZE**: (natural) output data stream bus size (default: 18).
 
