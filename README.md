@@ -6,8 +6,9 @@ oscillators, provides most frontend processing blocks for Software Defined Radio
 
 This ecosystem aims at providing a consistent software/hardware, chip independent
 (Xilinx Zynq, Altera/Intel Cyclone V soc, ... including the 
-[Redpitaya STEM 125-14](https://www.redpitaya.com/f130/STEMlab-board) and
-[Redpitaya SDRlab 122-16](https://www.redpitaya.com/p52/sdrlab-122-16-standard-kit) boards) solution, to assemble and build
+[Redpitaya STEMlab 125-14](https://redpitaya.com/stemlab-125-14) and
+[Redpitaya SDRlab 122-16](https://www.redpitaya.com/p52/sdrlab-122-16-standard-kit) and
+[Redpitaya SIGNALlab 250-12](https://redpitaya.com/signallab-250-12) boards) solution, to assemble and build
 designs targeted for FPGA and to generate and cross-compile software, running
 on the CPU running embedded GNU/Linux, dedicated to communicate/configure
 logic parts. The highlights of oscimpDigital were presented at the [European GNU Radio Days 2019](https://youtu.be/fQgIJl7vu2s), [Maker Space conference](https://www.youtube.com/watch?v=SSzR_pnZnjs&feature=youtu.be) in 2019 and [FOSDEM](https://fosdem.org/2020/schedule/event/fsr_platform_independent_cpu_fpga_co_design/) in 2020.
