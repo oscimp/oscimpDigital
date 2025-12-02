@@ -151,8 +151,9 @@ This time, the {\tt module\_generator} XML configuration file should look like
 
 \lstinputlisting[language=xml]{./module_generator.xml}
 
-\noindent which matches the output of {\tt make xml} in the {\tt design} directory
-after synthesizing the project.
+This file does need to be manually written since the tool {\tt make xml} in the
+{\tt design} directory will parse the generated Vivado output and generate the appropriate
+XML file in the project directory.
 
 %\begin{verbatim}
 %<?xml version="1.0" encoding="utf-8"?>
