@@ -1,3 +1,4 @@
+% ATTENTION seule la voie 2 est FIR, la voie 1 est identit'e
 \documentclass[12pt,oneside]{article}
 \usepackage{makeidx,anysize,mflogo,xspace,float,epsfig,url}
 \usepackage{amsmath,amsfonts,amssymb,a4wide} 
@@ -101,32 +102,41 @@ To summarize:
 \begin{itemize}
 \item disconnect interface between {\tt converters/dataB\_out} and {\tt dupplDataB/data\_in};
 \item add {\tt firReal} IP, renamed as {\tt fir00} with:
+
+{\footnotesize
 \begin{itemize}
 \item {\tt DATA\_IN\_SIZE}: 14;
 \item {\tt DATA\_OUT\_SIZE}: 19;
 \item {\tt NB\_COEFF}: 32;
 \item {\tt DECIMATE\_FACTOR}: 5;
 \end{itemize} 
+}
 \item update dupplDataB with {\tt DATA\_SIZE} = 19
 \item suppress {\tt convertRealToCplx} and {\tt data1600};
 \item add {\tt dataReal\_to\_ram} IP, renamed as {\tt data1600}, with:
+{\footnotesize
 \begin{itemize}
 \item {\tt DATA\_SIZE} = 16;
 \item {\tt NB\_SAMPLE} = 4096;
 \item {\tt NB\_INPUT} = 2;
 \end{itemize}
+}
 \item add {\tt expanderReal} IP, connect this block between {\tt dupplDataA} and
 {\tt data1600/data1\_in} with:
+{\footnotesize
 \begin{itemize}
 \item {\tt DATA\_IN\_SIZE} = 14;
 \item {\tt DATA\_OUT\_SIZE} = 16;
 \end{itemize}
+}
 \item add {\tt shifterReal} IP, connect this block between {\tt dupplDataB} and
 {\tt data1600/data2\_in} with:
+{\footnotesize
 \begin{itemize}
 \item {\tt DATA\_IN\_SIZE} = 19;
 \item {\tt DATA\_OUT\_SIZE} = 16;
 \end{itemize}
+}
 \end{itemize}
 
 \section{PS: Linux kernel driver}
@@ -140,6 +150,9 @@ addition to which we wish to communicate with the FIR to define the coefficients
 This time, the {\tt module\_generator} XML configuration file should look like
 
 \lstinputlisting[language=xml]{./module_generator.xml}
+
+\noindent which matches the output of {\tt make xml} in the {\tt design} directory
+after synthesizing the project.
 
 %\begin{verbatim}
 %<?xml version="1.0" encoding="utf-8"?>
@@ -232,6 +245,33 @@ Collecting the filtered output on the {\tt data\_to\_ram} device demonstrates ho
 FPGA can be efficiently used either to process the stream straight from the acquisition
 interface through the various processing blocks, or as co-processor from data provided
 by the CPU and running through the FPGA before being recovered by the CPU.
+
+Rather than use a ``simple'' $|sinc()|$ transfer from setting a few taps to 1 and others to
+0, a FIR design is obtained with \verb~round((firls(31,[0 .04 .08 1],[1 1 0 0]))*64)~
+and \verb~round((firls(31,[0 .02 .04 1],[1 1 0 0]))*64)~ whose output is observed on a network
+analyzer and plotted with GNUPlot's (Fig. \ref{gnuplot})
+
+{\footnotesize
+\begin{verbatim}
+pl 'FIR_S12_p02_p04.csv' u ($1/1e6):2,'FIR_S12_p04_p08.csv' u ($1/1e6):2
+set yrange [-60:15]
+set xlabel 'freq (MHz)'
+set ylabel 'S12 (dB)'
+set grid 
+replot
+set term postscript color
+set output "output.eps"
+repl
+\end{verbatim}
+}
+
+\begin{figure}[h!tb]
+\includegraphics[angle=-90,width=\linewidth]{FIR_S12.pdf}
+
+\includegraphics[width=\linewidth]{IMG_20251202_155143_491small.jpg}
+\caption{Characterization of the digital FIR filter using a network analyzer.}
+\label{gnuplot}
+\end{figure}
 \end{document}
 % 
 % cp ./project_1.runs/impl_1/design_1_wrapper.bit .
